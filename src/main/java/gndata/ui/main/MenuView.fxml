@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<MenuBar xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gndata.ui.main.MenuCtrl">
+
+        <Menu text="File">
+
+            <MenuItem text="New Project" onAction="#createProject"/>
+            <MenuItem text="Open Project" onAction="#openProject"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Exit" onAction="#exit"/>
+        </Menu>
+
+
+</MenuBar>

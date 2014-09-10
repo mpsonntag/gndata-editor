@@ -1,0 +1,11 @@
+.text-field {
+    -fx-background-color: grey, white;
+}
+
+.tab-pane {
+    -fx-padding: 1em;
+}
+
+.vbox {
+    -fx-padding: 1em;
+}
