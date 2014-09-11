@@ -1,0 +1,11 @@
+language: java
+
+branches:
+  only:
+  - master
+
+jdk:
+  - oraclejdk8
+
+notifications:
+  irc: "chat.freenode.net#gnode"
