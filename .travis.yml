@@ -12,3 +12,5 @@ after_success:
 
 notifications:
   irc: "chat.freenode.net#gnode"
+  email:
+    on_failure: always
