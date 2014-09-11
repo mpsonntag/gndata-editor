@@ -26,7 +26,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  * The class provides methods for de-/serialisation, loading and saving of configuration
  * classes. Configuration classes should be beans.
  */
-public class AbstractConfig {
+public abstract class AbstractConfig {
 
     /**
      * Serializes the config to json and writes it to the specified file.
