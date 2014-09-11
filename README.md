@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/G-Node/gndata-editor.png?branch=master)](https://travis-ci.org/G-Node/gndata-editor)
+
 gndata-editor
 =============
 
