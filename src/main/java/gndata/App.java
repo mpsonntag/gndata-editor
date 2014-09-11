@@ -14,8 +14,8 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception
     {
-        AquaFx.style();
-        //setUserAgentStylesheet(STYLESHEET_MODENA);
+        //AquaFx.style();
+        setUserAgentStylesheet(STYLESHEET_MODENA);
 
         Injector injector = Guice.createInjector(new AppModule());
 
