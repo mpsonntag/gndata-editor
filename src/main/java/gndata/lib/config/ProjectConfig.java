@@ -10,12 +10,15 @@ package gndata.lib.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
  * Project configuration;
  */
 public class ProjectConfig extends AbstractConfig {
+
+    public static final Path IN_PROJECT_PATH = Paths.get(".gnode", "settings.json");
 
     private String name;
     private String description;
@@ -69,6 +72,6 @@ public class ProjectConfig extends AbstractConfig {
      * @return The path to the configuration file.
      */
     public static String makeConfigPath(String projectPath) {
-        return Paths.get(projectPath, ".gnode/settings.json").toString();
+        return Paths.get(projectPath, IN_PROJECT_PATH.toString()).toString();
     }
 }
