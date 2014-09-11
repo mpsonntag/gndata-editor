@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -30,19 +31,21 @@ public class AbstractConfig {
     /**
      * Serializes the config to json and writes it to the specified file.
      *
-     * @param fileName      The name / location of the file to write.
+     * @param filePath      Path to the configuration file to write.
      *
      * @throws IOException If the storing of the configuration failed.
      */
-    public void store(String fileName) throws IOException {
-        try (Writer out = Files.newBufferedWriter(Paths.get(fileName), TRUNCATE_EXISTING, CREATE)) {
+    public void store(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        Files.createDirectories(path.getParent());
+        try (Writer out = Files.newBufferedWriter(path, TRUNCATE_EXISTING, CREATE)) {
             Gson gson = new GsonBuilder()
                     .setPrettyPrinting()
                     .create();
             String json = gson.toJson(this);
             out.write(json);
         } catch (IOException e) {
-            throw new IOException("Unable to write configuration file: " + fileName, e);
+            throw new IOException("Unable to write configuration file: " + filePath, e);
         }
     }
 
@@ -51,19 +54,19 @@ public class AbstractConfig {
      * Note: this method should be used by subclasses in order to implement
      * a more specific load method.
      *
-     * @param fileName      The json configuration file to read from.
+     * @param filePath      Path to the json configuration file to read from.
      * @param cls           The class of the configuration type.
      *
      * @throws IOException
      */
-    protected static <T extends AbstractConfig> T load(String fileName, Class<T> cls) throws IOException {
-        try (Reader in = Files.newBufferedReader(Paths.get(fileName))) {
+    protected static <T extends AbstractConfig> T load(String filePath, Class<T> cls) throws IOException {
+        try (Reader in = Files.newBufferedReader(Paths.get(filePath))) {
             Gson gson = new GsonBuilder()
                     .serializeNulls()
                     .create();
             return  gson.fromJson(in, cls);
         } catch (IOException e) {
-            throw new IOException("Unable to read configuration file: " + fileName, e);
+            throw new IOException("Unable to read configuration file: " + filePath, e);
         }
     }
 }

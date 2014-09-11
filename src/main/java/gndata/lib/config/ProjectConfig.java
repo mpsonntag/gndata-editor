@@ -10,6 +10,7 @@ package gndata.lib.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * Project configuration;
@@ -41,21 +42,33 @@ public class ProjectConfig extends AbstractConfig {
      * Loads the project settings from a json file.
      * If the file does not exist, a default configuration is created.
      *
-     * @param fileName      The name of the config file.
+     * @param filePath      Path to the project config file.
      *
      * @return The loaded configuration.
      *
      * @throws IOException If the loading fails.
      */
-    public static ProjectConfig load(String fileName) throws IOException {
-        File file = new File(fileName);
+    public static ProjectConfig load(String filePath) throws IOException {
+        File file = new File(filePath);
         if (file.exists()) {
-            return AbstractConfig.load(fileName, ProjectConfig.class);
+            return AbstractConfig.load(filePath, ProjectConfig.class);
         } else {
             ProjectConfig config = new ProjectConfig();
             // set defaults here if necessary
-            config.store(fileName);
+            config.store(filePath);
             return config;
         }
+    }
+
+    /**
+     * Returns a path to the default configuration file location based on the
+     * project path.
+     *
+     * @param projectPath   Path to the project root.
+     *
+     * @return The path to the configuration file.
+     */
+    public static String makeConfigPath(String projectPath) {
+        return Paths.get(projectPath, ".gnode/settings.json").toString();
     }
 }
