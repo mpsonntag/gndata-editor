@@ -1,4 +1,4 @@
-package gndata.ui.main;
+package gndata.app.ui.main;
 
 import gndata.AppState;
 import javafx.event.ActionEvent;

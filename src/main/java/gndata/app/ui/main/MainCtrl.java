@@ -1,4 +1,4 @@
-package gndata.ui.main;
+package gndata.app.ui.main;
 
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;

@@ -1,9 +1,8 @@
 package gndata;
 
-import com.aquafx_project.AquaFx;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import gndata.ui.main.MainView;
+import gndata.app.ui.main.MainView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

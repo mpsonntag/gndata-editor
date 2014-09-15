@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 
 <MenuBar xmlns:fx="http://javafx.com/fxml"
-      fx:controller="gndata.ui.main.MenuCtrl">
+      fx:controller="gndata.app.ui.main.MenuCtrl">
 
         <Menu text="File">
 
