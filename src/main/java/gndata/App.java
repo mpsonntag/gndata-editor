@@ -2,6 +2,7 @@ package gndata;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import gndata.app.state.AppState;
 import gndata.app.ui.main.MainView;
 import javafx.application.Application;
 import javafx.scene.Scene;

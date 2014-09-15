@@ -1,6 +1,6 @@
 package gndata.app.ui.main;
 
-import gndata.AppState;
+import gndata.app.state.AppState;
 import javafx.event.ActionEvent;
 
 import javax.inject.Inject;
