@@ -8,8 +8,8 @@
 
 package gndata.lib.config;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -20,10 +20,18 @@ public class ProjectConfig extends AbstractConfig {
 
     public static final Path IN_PROJECT_PATH = Paths.get(".gnode", "settings.json");
 
+    private String projectPath;
     private String name;
     private String description;
 
-    public ProjectConfig() {}
+
+    public String getProjectPath() {
+        return projectPath;
+    }
+
+    public void setProjectPath(String projectPath) {
+        this.projectPath = projectPath;
+    }
 
     public String getName() {
         return name;
@@ -45,33 +53,25 @@ public class ProjectConfig extends AbstractConfig {
      * Loads the project settings from a json file.
      * If the file does not exist, a default configuration is created.
      *
-     * @param filePath      Path to the project config file.
+     * @param projectPath   Path to the project config file.
      *
      * @return The loaded configuration.
      *
      * @throws IOException If the loading fails.
      */
-    public static ProjectConfig load(String filePath) throws IOException {
-        File file = new File(filePath);
-        if (file.exists()) {
+    public static ProjectConfig load(Path projectPath) throws IOException {
+        Path absPath  = projectPath.toAbsolutePath();
+        Path filePath = absPath.resolve(IN_PROJECT_PATH);
+        if (Files.exists(filePath)) {
             return AbstractConfig.load(filePath, ProjectConfig.class);
         } else {
             ProjectConfig config = new ProjectConfig();
             // set defaults here if necessary
-            config.store(filePath);
+            config.setFilePath(filePath);
+            config.setProjectPath(absPath.toString());
+            config.store();
             return config;
         }
     }
 
-    /**
-     * Returns a path to the default configuration file location based on the
-     * project path.
-     *
-     * @param projectPath   Path to the project root.
-     *
-     * @return The path to the configuration file.
-     */
-    public static String makeConfigPath(String projectPath) {
-        return Paths.get(projectPath, IN_PROJECT_PATH.toString()).toString();
-    }
 }

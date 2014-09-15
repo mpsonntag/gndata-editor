@@ -10,6 +10,7 @@ package gndata.lib.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 public class GlobalConfig extends AbstractConfig {
 
     private List<ProjectItem> projects = new ArrayList<>();
+
 
     public List<ProjectItem> getProjects() {
         return projects;
@@ -43,14 +45,15 @@ public class GlobalConfig extends AbstractConfig {
      *
      * @throws java.io.IOException If the loading fails.
      */
-    public static GlobalConfig load(String filePath) throws IOException {
-        File file = new File(filePath);
+    public static GlobalConfig load(Path filePath) throws IOException {
+        File file = filePath.toFile();
         if (file.exists()) {
             return AbstractConfig.load(filePath, GlobalConfig.class);
         } else {
             GlobalConfig config = new GlobalConfig();
             // set defaults here if necessary
-            config.store(filePath);
+            config.setFilePath(filePath);
+            config.store();
             return config;
         }
     }
@@ -62,8 +65,8 @@ public class GlobalConfig extends AbstractConfig {
      *
      * @return The path to the configuration file.
      */
-    public static String makeConfigPath() {
-        return Paths.get(System.getProperty("user.home"), ".gndata", "config.json").toString();
+    public static Path makeConfigPath() {
+        return Paths.get(System.getProperty("user.home"), ".gndata", "config.json").toAbsolutePath();
     }
 
     /**
