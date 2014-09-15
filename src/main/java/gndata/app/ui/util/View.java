@@ -1,4 +1,4 @@
-package gndata.ui.util;
+package gndata.app.ui.util;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

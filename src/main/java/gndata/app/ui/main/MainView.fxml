@@ -7,7 +7,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.ui.main.MainCtrl"
+            fx:controller="gndata.app.ui.main.MainCtrl"
             prefHeight="400.0" prefWidth="600.0"
             fx:id="view">
 
