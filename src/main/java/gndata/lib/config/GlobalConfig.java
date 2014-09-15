@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Global application configuration.
  */
-public class AppConfig extends AbstractConfig {
+public class GlobalConfig extends AbstractConfig {
 
     private List<ProjectItem> projects = new ArrayList<>();
 
@@ -43,12 +43,12 @@ public class AppConfig extends AbstractConfig {
      *
      * @throws java.io.IOException If the loading fails.
      */
-    public static AppConfig load(String filePath) throws IOException {
+    public static GlobalConfig load(String filePath) throws IOException {
         File file = new File(filePath);
         if (file.exists()) {
-            return AbstractConfig.load(filePath, AppConfig.class);
+            return AbstractConfig.load(filePath, GlobalConfig.class);
         } else {
-            AppConfig config = new AppConfig();
+            GlobalConfig config = new GlobalConfig();
             // set defaults here if necessary
             config.store(filePath);
             return config;
