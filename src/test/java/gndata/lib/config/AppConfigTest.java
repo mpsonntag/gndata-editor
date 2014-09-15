@@ -8,16 +8,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static gndata.lib.config.AppConfig.ProjectItem;
+import static gndata.lib.config.GlobalConfig.ProjectItem;
 
 public class AppConfigTest {
 
-    AppConfig conf;
+    GlobalConfig conf;
     Path tmpPath;
 
     @Before
     public void setUp() throws Exception {
-        conf = new AppConfig();
+        conf = new GlobalConfig();
         tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "config.json");
     }
 
@@ -38,11 +38,11 @@ public class AppConfigTest {
 
     @Test
     public void testLoadStore() throws Exception {
-        conf = AppConfig.load(tmpPath.toString());
+        conf = GlobalConfig.load(tmpPath.toString());
         assert(conf.getProjects().isEmpty());
         conf.getProjects().add(new ProjectItem("myName", "myPath"));
         conf.store(tmpPath.toString());
-        conf = AppConfig.load(tmpPath.toString());
+        conf = GlobalConfig.load(tmpPath.toString());
         ProjectItem item = conf.getProjects().get(0);
         assert(item.name.equals("myName"));
         assert(item.path.equals("myPath"));
@@ -50,7 +50,7 @@ public class AppConfigTest {
 
     @Test
     public void testMakeConfigPath() throws Exception {
-        assert(AppConfig.makeConfigPath().contains(System.getProperty("user.home")));
+        assert(GlobalConfig.makeConfigPath().contains(System.getProperty("user.home")));
     }
 
 }
