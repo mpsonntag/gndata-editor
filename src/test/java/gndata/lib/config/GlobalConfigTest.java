@@ -38,11 +38,11 @@ public class GlobalConfigTest {
 
     @Test
     public void testLoadStore() throws Exception {
-        conf = GlobalConfig.load(tmpPath);
+        conf = GlobalConfig.load(tmpPath.toString());
         assert(conf.getProjects().isEmpty());
         conf.getProjects().add(new ProjectItem("myName", "myPath"));
         conf.store();
-        conf = GlobalConfig.load(tmpPath);
+        conf = GlobalConfig.load(tmpPath.toString());
         ProjectItem item = conf.getProjects().get(0);
         assert(item.name.equals("myName"));
         assert(item.path.equals("myPath"));
@@ -50,7 +50,7 @@ public class GlobalConfigTest {
 
     @Test
     public void testMakeConfigPath() throws Exception {
-        assert(GlobalConfig.makeConfigPath().toString().contains(System.getProperty("user.home")));
+        assert(GlobalConfig.makeConfigPath().contains(System.getProperty("user.home")));
     }
 
 }

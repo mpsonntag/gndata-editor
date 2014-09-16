@@ -30,13 +30,13 @@ public class ProjectConfigTest {
 
     @Test
     public void testLoadStore() throws Exception {
-        conf = ProjectConfig.load(tmpPath);
+        conf = ProjectConfig.load(tmpPath.toString());
         assert(conf.getName() == null);
         assert(conf.getDescription() == null);
         conf.setName("myName");
         conf.setDescription("myDescription");
         conf.store();
-        conf = ProjectConfig.load(tmpPath);
+        conf = ProjectConfig.load(tmpPath.toString());
         assertEquals(conf.getName(), "myName");
         assertEquals(conf.getDescription(), "myDescription");
     }

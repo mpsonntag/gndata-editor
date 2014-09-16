@@ -59,15 +59,18 @@ public class ProjectConfig extends AbstractConfig {
      *
      * @throws IOException If the loading fails.
      */
-    public static ProjectConfig load(Path projectPath) throws IOException {
-        Path absPath  = projectPath.toAbsolutePath();
+    public static ProjectConfig load(String projectPath) throws IOException {
+        Path absPath  = Paths.get(projectPath)
+                .toAbsolutePath()
+                .normalize();
         Path filePath = absPath.resolve(IN_PROJECT_PATH);
+
         if (Files.exists(filePath)) {
-            return AbstractConfig.load(filePath, ProjectConfig.class);
+            return AbstractConfig.load(filePath.toString(), ProjectConfig.class);
         } else {
             ProjectConfig config = new ProjectConfig();
             // set defaults here if necessary
-            config.setFilePath(filePath);
+            config.setFilePath(filePath.toString());
             config.setProjectPath(absPath.toString());
             config.store();
             return config;
