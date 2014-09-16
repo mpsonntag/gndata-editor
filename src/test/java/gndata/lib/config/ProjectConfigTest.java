@@ -1,5 +1,6 @@
 package gndata.lib.config;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +18,14 @@ public class ProjectConfigTest {
 
     @Before
     public void setUp() throws Exception {
-        tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "config.json");
+        tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
     }
 
     @After
     public void tearDown() throws Exception {
-        Files.deleteIfExists(tmpPath);
+        if (Files.exists(tmpPath)) {
+            FileUtils.deleteDirectory(tmpPath.toFile());
+        }
     }
 
     @Test
@@ -32,15 +35,10 @@ public class ProjectConfigTest {
         assert(conf.getDescription() == null);
         conf.setName("myName");
         conf.setDescription("myDescription");
-        conf.store(tmpPath.toString());
+        conf.store();
         conf = ProjectConfig.load(tmpPath.toString());
         assertEquals(conf.getName(), "myName");
         assertEquals(conf.getDescription(), "myDescription");
-    }
-
-    @Test
-    public void testMakeConfigPath() throws Exception {
-        assert(ProjectConfig.makeConfigPath("somePath").endsWith("settings.json"));
     }
 
 }

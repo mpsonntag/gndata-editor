@@ -18,8 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * Base class for configurations.
@@ -28,24 +27,45 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  */
 public abstract class AbstractConfig {
 
+    private String filePath;
+
     /**
-     * Serializes the config to json and writes it to the specified file.
+     * Getter for the path to the configuration file from which the configuration was loaded.
      *
-     * @param filePath      Path to the configuration file to write.
+     * @return The path to the configuration file.
+     */
+    public String getFilePath() {
+        return filePath;
+    }
+
+    /**
+     * Setter for the path to the configuration file.
+     *
+     * @param filePath The path to the configuration file.
+     */
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    /**
+     * Serializes the config to json and writes it to a file. The method  uses {@link #getFilePath()}
+     * for storing the configuration.
      *
      * @throws IOException If the storing of the configuration failed.
      */
-    public void store(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        Files.createDirectories(path.getParent());
-        try (Writer out = Files.newBufferedWriter(path, TRUNCATE_EXISTING, CREATE)) {
+    public void store() throws IOException {
+        Path tmpPath = Paths.get(filePath);
+        Files.createDirectories(tmpPath.getParent());
+
+        try (Writer out = Files.newBufferedWriter(tmpPath, TRUNCATE_EXISTING, CREATE)) {
             Gson gson = new GsonBuilder()
                     .setPrettyPrinting()
+                    .serializeNulls()
                     .create();
             String json = gson.toJson(this);
             out.write(json);
         } catch (IOException e) {
-            throw new IOException("Unable to write configuration file: " + filePath, e);
+            throw new IOException("Unable to write configuration file: " + this.filePath, e);
         }
     }
 
@@ -60,11 +80,17 @@ public abstract class AbstractConfig {
      * @throws IOException
      */
     protected static <T extends AbstractConfig> T load(String filePath, Class<T> cls) throws IOException {
-        try (Reader in = Files.newBufferedReader(Paths.get(filePath))) {
+        Path tmpPath = Paths.get(filePath)
+                .toAbsolutePath()
+                .normalize();
+
+        try (Reader in = Files.newBufferedReader(tmpPath)) {
             Gson gson = new GsonBuilder()
                     .serializeNulls()
                     .create();
-            return  gson.fromJson(in, cls);
+            T  config = gson.fromJson(in, cls);
+            config.setFilePath(tmpPath.toString());
+            return config;
         } catch (IOException e) {
             throw new IOException("Unable to read configuration file: " + filePath, e);
         }

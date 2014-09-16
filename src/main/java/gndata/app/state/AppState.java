@@ -1,4 +1,4 @@
-package gndata;
+package gndata.app.state;
 
 import com.google.inject.Singleton;
 import javafx.beans.property.SimpleBooleanProperty;

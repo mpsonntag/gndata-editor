@@ -8,8 +8,9 @@
 
 package gndata.lib.config;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,10 @@ import java.util.List;
 /**
  * Global application configuration.
  */
-public class AppConfig extends AbstractConfig {
+public class GlobalConfig extends AbstractConfig {
 
     private List<ProjectItem> projects = new ArrayList<>();
+
 
     public List<ProjectItem> getProjects() {
         return projects;
@@ -43,14 +45,18 @@ public class AppConfig extends AbstractConfig {
      *
      * @throws java.io.IOException If the loading fails.
      */
-    public static AppConfig load(String filePath) throws IOException {
-        File file = new File(filePath);
-        if (file.exists()) {
-            return AbstractConfig.load(filePath, AppConfig.class);
+    public static GlobalConfig load(String filePath) throws IOException {
+        Path tmpPath = Paths.get(filePath)
+                .toAbsolutePath()
+                .normalize();
+
+        if (Files.exists(tmpPath)) {
+            return AbstractConfig.load(tmpPath.toString(), GlobalConfig.class);
         } else {
-            AppConfig config = new AppConfig();
+            GlobalConfig config = new GlobalConfig();
             // set defaults here if necessary
-            config.store(filePath);
+            config.setFilePath(tmpPath.toString());
+            config.store();
             return config;
         }
     }
@@ -63,7 +69,9 @@ public class AppConfig extends AbstractConfig {
      * @return The path to the configuration file.
      */
     public static String makeConfigPath() {
-        return Paths.get(System.getProperty("user.home"), ".gndata", "config.json").toString();
+        return Paths.get(System.getProperty("user.home"), ".gndata", "config.json")
+                .toAbsolutePath()
+                .toString();
     }
 
     /**
@@ -71,8 +79,6 @@ public class AppConfig extends AbstractConfig {
      */
     public static class ProjectItem {
         public String name, path;
-
-        public ProjectItem() {}
 
         public ProjectItem(String name, String path) {
             this.name = name;
