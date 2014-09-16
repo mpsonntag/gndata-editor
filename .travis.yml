@@ -6,6 +6,9 @@ branches:
 
 jdk:
   - oraclejdk8
+  
+after_success:
+  - mvn jacoco:report coveralls:jacoco
 
 notifications:
   irc: "chat.freenode.net#gnode"
