@@ -21,30 +21,34 @@ public class ProjectState {
     public ProjectState() {
         config = new SimpleObjectProperty<>();
         service = new SimpleObjectProperty<>();
+
+        config.addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) {
+                service.set(null);
+            } else if (oldVal != newVal) {
+                service.set(ProjectService.create(newVal));
+            }
+        });
     }
 
-    public boolean isConfigured() {
+    public synchronized boolean isConfigured() {
         return this.config.get() != null;
     }
 
-    public ProjectConfig getConfig() {
+    public synchronized ProjectConfig getConfig() {
         return config.get();
     }
 
-    public ObjectProperty<ProjectConfig> configProperty() {
+    public synchronized ObjectProperty<ProjectConfig> configProperty() {
         return config;
     }
 
-    public void setConfig(ProjectConfig config) {
+    public synchronized void setConfig(ProjectConfig config) {
         this.config.set(config);
-        this.service.set(null);
     }
 
-    public ProjectService getService() {
+    public synchronized ProjectService getService() {
         return service.get();
     }
 
-    public void setService(ProjectService service) {
-        this.service.set(service);
-    }
 }
