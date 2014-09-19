@@ -39,7 +39,7 @@ public class GlobalConfig extends AbstractConfig {
      * Loads the project settings from a json file.
      * If the file does not exist, a default configuration is created.
      *
-     * @param filePath      Path to the appliction config file.
+     * @param filePath      Path to the application config file.
      *
      * @return The loaded configuration.
      *

@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 @Singleton
 public class AppState {
 
-    private SimpleBooleanProperty running;
+    private final SimpleBooleanProperty running;
 
     public AppState() {
         running = new SimpleBooleanProperty(true);
