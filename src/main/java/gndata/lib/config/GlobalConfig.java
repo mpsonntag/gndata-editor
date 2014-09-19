@@ -64,7 +64,7 @@ public class GlobalConfig extends AbstractConfig {
     /**
      * Returns a path to the default configuration file location.
      *
-     * TODO Use <user>\AppData\Roaming\gndata\config.json on windows.
+     * TODO Use user\AppData\Roaming\gndata\config.json on windows.
      *
      * @return The path to the configuration file.
      */
