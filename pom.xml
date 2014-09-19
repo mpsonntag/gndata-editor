@@ -155,6 +155,16 @@
                 </includes>
             </resource>
 
+            <resource>
+                <directory>src/test/resources</directory>
+                <targetPath>${project.build.directory}/classes/resources</targetPath>
+                <includes>
+                    <include>**/*.rdf</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.owl</include>
+                </includes>
+            </resource>
+
         </resources>
     </build>
 

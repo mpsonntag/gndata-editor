@@ -6,7 +6,10 @@ import javafx.scene.control.TreeItem;
 import javafx.collections.ObservableList;
 
 
-public class RDFResourceTreeItem extends TreeItem<Resource> {
+/**
+ * A tree representation of the RDF model graph.
+ */
+public class RDFTreeItem extends TreeItem<Resource> {
 
     private Model model;
     private Resource resource;
@@ -14,7 +17,15 @@ public class RDFResourceTreeItem extends TreeItem<Resource> {
     private Property subClassOf;
     private Property isType;
 
-    public RDFResourceTreeItem(Model mod, Resource res) {
+    /**
+     * Builds a new TreeItem based on a given RDF Resource
+     *
+     * @param mod   RDF model
+     * @param res   an actual RDF Resource that a current TreeItem represents
+     */
+    public RDFTreeItem(Model mod, Resource res) {
+        super(res);
+
         model = mod;
         resource = res;
 
@@ -25,6 +36,14 @@ public class RDFResourceTreeItem extends TreeItem<Resource> {
         isType = model.getProperty(tURI);
     }
 
+    /**
+     * Builds children items of this TreeItem node. List of children contains
+     * - subclasses of an actual Resource if it is a Class
+     * - actual members of a class if it is a Class
+     * - actual resource properties, except parent (of course)
+     *
+     * @return  observable list of TreeItem nodes
+     */
     @Override public ObservableList<TreeItem<Resource>> getChildren() {
         ObservableList<TreeItem<Resource>> children = FXCollections.observableArrayList();
 
@@ -32,14 +51,14 @@ public class RDFResourceTreeItem extends TreeItem<Resource> {
         StmtIterator iterH = model.listStatements(null, subClassOf, resource);
         while (iterH.hasNext()) {
             Statement st = iterH.nextStatement();
-            children.add(new RDFResourceTreeItem(model, st.getSubject()));
+            children.add(new RDFTreeItem(model, st.getSubject()));
         }
 
         // actual members of a class
         StmtIterator iterM = model.listStatements(null, isType, resource);
         while (iterM.hasNext()) {
             Statement st = iterM.nextStatement();
-            children.add(new RDFResourceTreeItem(model, st.getSubject()));
+            children.add(new RDFTreeItem(model, st.getSubject()));
         }
 
         // properties of a current resource
@@ -49,8 +68,18 @@ public class RDFResourceTreeItem extends TreeItem<Resource> {
 
             Property predicate = st.getPredicate();
             RDFNode obj = st.getObject();
+
+            // exclude Literals and Class definitions
             if (obj.isResource() && !predicate.equals(isType)) {
-                children.add(new RDFResourceTreeItem(model, obj.asResource()));
+
+                // exclude Parent
+                TreeItem<Resource> parent = getParent();
+                if (parent != null && !parent
+                        .getValue()
+                        .toString()
+                        .equals(resource.toString())) {
+                    children.add(new RDFTreeItem(model, obj.asResource()));
+                }
             }
         }
 
