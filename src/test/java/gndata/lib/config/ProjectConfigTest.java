@@ -33,6 +33,16 @@ public class ProjectConfigTest {
         conf = ProjectConfig.load(tmpPath.toString());
         assert(conf.getName() == null);
         assert(conf.getDescription() == null);
+
+        Path absPath  = Paths.get(tmpPath.toString());
+
+        String oPath = absPath.resolve(ProjectConfig.ONTOLOGY_PATH).toString();
+        assert(conf.getDefaultOntologyPath().equals(oPath));
+        String cPath = absPath.resolve(ProjectConfig.CUSTOM_ONT_PATH).toString();
+        assert(conf.getCustomOntologyPath().equals(cPath));
+        String mPath = absPath.resolve(ProjectConfig.METADATA_PATH).toString();
+        assert(conf.getMetadataStoragePath().equals(mPath));
+
         conf.setName("myName");
         conf.setDescription("myDescription");
         conf.store();
