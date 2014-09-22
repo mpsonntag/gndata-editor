@@ -1,6 +1,8 @@
 package gndata.app.ui.util;
 
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TreeItem;
 import javafx.collections.ObservableList;
@@ -14,9 +16,6 @@ public class RDFTreeItem extends TreeItem<Resource> {
     private Model model;
     private Resource resource;
 
-    private Property subClassOf;
-    private Property isType;
-
     /**
      * Builds a new TreeItem based on a given RDF Resource
      *
@@ -28,12 +27,6 @@ public class RDFTreeItem extends TreeItem<Resource> {
 
         model = mod;
         resource = res;
-
-        String pURI = "http://www.w3.org/2000/01/rdf-schema#subClassOf";
-        subClassOf = model.getProperty(pURI);
-
-        String tURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-        isType = model.getProperty(tURI);
     }
 
     /**
@@ -48,14 +41,14 @@ public class RDFTreeItem extends TreeItem<Resource> {
         ObservableList<TreeItem<Resource>> children = FXCollections.observableArrayList();
 
         // OWL class hierarchy
-        StmtIterator iterH = model.listStatements(null, subClassOf, resource);
+        StmtIterator iterH = model.listStatements(null, RDFS.subClassOf, resource);
         while (iterH.hasNext()) {
             Statement st = iterH.nextStatement();
             children.add(new RDFTreeItem(model, st.getSubject()));
         }
 
         // actual members of a class
-        StmtIterator iterM = model.listStatements(null, isType, resource);
+        StmtIterator iterM = model.listStatements(null, RDF.type, resource);
         while (iterM.hasNext()) {
             Statement st = iterM.nextStatement();
             children.add(new RDFTreeItem(model, st.getSubject()));
@@ -70,7 +63,7 @@ public class RDFTreeItem extends TreeItem<Resource> {
             RDFNode obj = st.getObject();
 
             // exclude Literals and Class definitions
-            if (obj.isResource() && !predicate.equals(isType)) {
+            if (obj.isResource() && !predicate.equals(RDF.type)) {
 
                 // exclude Parent
                 TreeItem<Resource> parent = getParent();
