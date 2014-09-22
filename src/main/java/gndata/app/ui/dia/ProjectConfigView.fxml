@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gndata.app.ui.dia.ProjectConfigCtrl"
+            fx:id="view">
+
+    <prefHeight>300</prefHeight>
+    <prefWidth>500</prefWidth>
+
+    <!-- title -->
+    <top>
+        <VBox styleClass="dialog-header">
+            <Label>Project Settings</Label>
+        </VBox>
+    </top>
+
+    <!-- form -->
+    <center>
+        <GridPane styleClass="dialog-form">
+
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                Name:
+            </Label>
+
+            <TextField  fx:id="name" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" />
+
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                Description:
+            </Label>
+
+            <TextArea fx:id="description" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
+        </GridPane>
+    </center>
+
+    <!-- buttons -->
+    <bottom>
+        <HBox styleClass="dialog-footer">
+            <Button onAction="#cancel">
+                Cancel
+            </Button>
+            <Button onAction="#ok">
+                OK
+            </Button>
+        </HBox>
+    </bottom>
+
+</BorderPane>

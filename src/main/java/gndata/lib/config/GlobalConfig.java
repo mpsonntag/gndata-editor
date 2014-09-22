@@ -39,7 +39,7 @@ public class GlobalConfig extends AbstractConfig {
      * Loads the project settings from a json file.
      * If the file does not exist, a default configuration is created.
      *
-     * @param filePath      Path to the appliction config file.
+     * @param filePath      Path to the application config file.
      *
      * @return The loaded configuration.
      *
@@ -64,7 +64,7 @@ public class GlobalConfig extends AbstractConfig {
     /**
      * Returns a path to the default configuration file location.
      *
-     * TODO Use <user>\AppData\Roaming\gndata\config.json on windows.
+     * TODO Use user\AppData\Roaming\gndata\config.json on windows.
      *
      * @return The path to the configuration file.
      */

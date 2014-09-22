@@ -1,5 +1,8 @@
 package gndata.app.ui.main;
 
-import gndata.app.ui.util.View;
+import gndata.app.ui.util.DIView;
 
-public class MenuView  extends View {}
+/**
+ * The view for the main menu bar.
+ */
+public class MenuView  extends DIView {}

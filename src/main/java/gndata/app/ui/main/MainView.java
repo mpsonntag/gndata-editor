@@ -1,5 +1,8 @@
 package gndata.app.ui.main;
 
-import gndata.app.ui.util.View;
+import gndata.app.ui.util.DIView;
 
-public class MainView extends View {}
+/**
+ * The main view of the application.
+ */
+public class MainView extends DIView {}

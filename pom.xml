@@ -69,6 +69,7 @@
         <defaultGoal>clean package</defaultGoal>
 
         <plugins>
+            <!-- coverage and coveralls integration -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -89,6 +90,39 @@
                 <version>2.2.0</version>
             </plugin>
 
+            <!-- javadoc generation plugin -->
+            <!-- execute mvn clean javadoc:javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <show>public</show>
+                    <nohelp>true</nohelp>
+                    <header>GNData Editor, ${project.version}</header>
+                    <footer>GNData Editor, ${project.version}</footer>
+                    <doctitle>GNData Editor, ${project.version}</doctitle>
+                </configuration>
+            </plugin>
+
+            <!-- plugin for uploading javadoc to gh-pages -->
+            <!-- execute mvn clean javadoc:javadoc scm-publish:publish-scm -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <checkoutDirectory>${project.build.directory}/scmpublish</checkoutDirectory>
+                    <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
+                    <content>${project.reporting.outputDirectory}/apidocs</content>
+                    <skipDeletedFiles>true</skipDeletedFiles>
+                    <pubScmUrl>scm:git:git@github.com:G-Node/gndata-editor.git</pubScmUrl>
+                    <scmBranch>gh-pages</scmBranch> <!-- branch with static site -->
+                </configuration>
+            </plugin>
+
+            <!-- some standard maven plugins for compilation and jar creation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -15,8 +15,8 @@ import javax.inject.Singleton;
 @Singleton
 public class ProjectState {
 
-    private ObjectProperty<ProjectConfig> config;
-    private ObjectProperty<ProjectService> service;
+    private final ObjectProperty<ProjectConfig> config;
+    private final ObjectProperty<ProjectService> service;
 
     public ProjectState() {
         config = new SimpleObjectProperty<>();
