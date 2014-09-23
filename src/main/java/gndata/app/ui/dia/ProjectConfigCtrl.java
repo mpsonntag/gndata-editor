@@ -3,7 +3,6 @@ package gndata.app.ui.dia;
 import gndata.app.ui.util.DialogController;
 import gndata.lib.config.ProjectConfig;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
@@ -23,9 +22,9 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     @FXML private TextField nameInput;
     @FXML private TextArea  descriptionInput;
 
-    private final ProjectConfig config;
-    private final SimpleStringProperty name;
-    private final SimpleStringProperty description;
+    final ProjectConfig config;
+    final SimpleStringProperty name;
+    final SimpleStringProperty description;
 
     /**
      * Constructor.
@@ -52,10 +51,8 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     /**
      * Cancel the editing.
      * Sets {@link #cancelled} to true and hides the window.
-     *
-     * @param actionEvent The event that triggered the method call.
      */
-    public void cancel(ActionEvent actionEvent) {
+    public void cancel() {
         setCancelled(true);
         hide();
     }
@@ -63,10 +60,8 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     /**
      * Submit the editing result.
      * Sets {@link #cancelled} to false and hides the window.
-     *
-     * @param actionEvent The event that triggered the method call.
      */
-    public void ok(ActionEvent actionEvent) {
+    public void ok() {
         setCancelled(false);
         hide();
     }
@@ -96,4 +91,5 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
 
         return config;
     }
+
 }
