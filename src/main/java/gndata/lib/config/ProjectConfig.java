@@ -18,12 +18,17 @@ import java.nio.file.Paths;
  */
 public class ProjectConfig extends AbstractConfig {
 
+    // project configuration
     public static final Path IN_PROJECT_PATH = Paths.get(".gnode", "settings.json");
+
+    // metadata configuration - TODO read many OWL files
+    public static final Path ONTOLOGY_PATH = Paths.get("metadata", "ontologies", "default.owl");
+    public static final Path CUSTOM_ONT_PATH = Paths.get("metadata", "ontologies", "custom.owl");
+    public static final Path METADATA_PATH = Paths.get("metadata", "annotations", "metadata.rdf");
 
     private String projectPath;
     private String name;
     private String description;
-
 
     public String getProjectPath() {
         return projectPath;
@@ -72,6 +77,9 @@ public class ProjectConfig extends AbstractConfig {
             // set defaults here if necessary
             config.setFilePath(filePath.toString());
             config.setProjectPath(absPath.toString());
+
+            // TODO implement metadata file(s) initialization
+
             config.store();
             return config;
         }

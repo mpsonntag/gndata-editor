@@ -33,6 +33,7 @@ public class ProjectConfigTest {
         conf = ProjectConfig.load(tmpPath.toString());
         assert(conf.getName() == null);
         assert(conf.getDescription() == null);
+
         conf.setName("myName");
         conf.setDescription("myDescription");
         conf.store();
