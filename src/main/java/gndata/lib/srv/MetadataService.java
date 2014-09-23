@@ -1,19 +1,21 @@
 package gndata.lib.srv;
 
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.reasoner.Reasoner;
+import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import gndata.lib.config.ProjectConfig;
 import org.apache.jena.riot.RDFDataMgr;
+
 
 /**
  * Class implementing main functions working with project metadata
  */
 public class MetadataService {
 
-    private ProjectConfig config;
-    private Model model;
+    private InfModel model;
 
-    public MetadataService(ProjectConfig config) {
-        this.config = config;
+    public MetadataService(InfModel m) {
+        model = m;
     }
 
     /**
@@ -23,29 +25,28 @@ public class MetadataService {
      * @return  RDF Model
      */
     public Model getModel() {
-        if (model == null) {
-            Model customOWL = RDFDataMgr.loadModel(ProjectConfig.CUSTOM_ONT_PATH.toString());
-            Model defaultOWL = RDFDataMgr.loadModel(ProjectConfig.ONTOLOGY_PATH.toString());
-            Model primaryRDF = RDFDataMgr.loadModel(ProjectConfig.METADATA_PATH.toString());
-
-            // TODO investigate a way to manage models separately
-
-            model = defaultOWL.union(customOWL).union(primaryRDF);
-        }
-
         return model;
     }
 
-    public void addCustomProperty(String name) {
-        // TODO implement
-    }
-
-    public void addCustomTerm(Resource s, Property p, RDFNode o) {
-        // TODO implement
-    }
-
+    /**
+     * Creates a new Metadata Service from a given project configuration
+     * by combining existing project ontology(ies) and RDF metadata
+     *
+     * @param config    an actual Project configuration
+     * @return          MetadataService
+     */
     public static MetadataService create(ProjectConfig config) {
-        return new MetadataService(config);
+        Model schemaC = RDFDataMgr.loadModel(config.getCustomSchemaPath());
+        Model schemaD = RDFDataMgr.loadModel(config.getDefaultSchemaPath());
+        Model data = RDFDataMgr.loadModel(config.getMetadataPath());
+
+        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        reasoner = reasoner.bindSchema(schemaD);
+        reasoner = reasoner.bindSchema(schemaC);
+
+        InfModel model = ModelFactory.createInfModel(reasoner, data);
+
+        return new MetadataService(model);
     }
 
 }
