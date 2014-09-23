@@ -24,9 +24,9 @@ public class MetadataService {
      */
     public Model getModel() {
         if (model == null) {
-            Model customOWL = RDFDataMgr.loadModel(config.getCustomOntologyPath());
-            Model defaultOWL = RDFDataMgr.loadModel(config.getDefaultOntologyPath());
-            Model primaryRDF = RDFDataMgr.loadModel(config.getMetadataStoragePath());
+            Model customOWL = RDFDataMgr.loadModel(ProjectConfig.CUSTOM_ONT_PATH.toString());
+            Model defaultOWL = RDFDataMgr.loadModel(ProjectConfig.ONTOLOGY_PATH.toString());
+            Model primaryRDF = RDFDataMgr.loadModel(ProjectConfig.METADATA_PATH.toString());
 
             // TODO investigate a way to manage models separately
 
