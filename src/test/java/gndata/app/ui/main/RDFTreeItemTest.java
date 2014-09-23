@@ -1,24 +1,20 @@
 package gndata.app.ui.main;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.ui.util.RDFTreeItem;
-import javafx.collections.ObservableList;
+import gndata.lib.util.FakeModel;
 import javafx.scene.control.TreeItem;
-import org.apache.jena.riot.RDFDataMgr;
 
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.net.URL;
 import java.util.Optional;
 
 
 public class RDFTreeItemTest {
 
-    private Model model;
-    private Resource person;
     private RDFTreeItem root;
 
     private static String tbl = "http://www.w3.org/People/Berners-Lee/card#i";
@@ -43,10 +39,9 @@ public class RDFTreeItemTest {
 
     @Before
     public void setUp() throws Exception {
-        URL name = getClass().getResource("/resources/foaf.rdf");
-        model = RDFDataMgr.loadModel(name.toString());
+        InfModel model = FakeModel.getFakeModel();
+        Resource person = model.getResource("http://xmlns.com/foaf/0.1/Person");
 
-        person = model.getResource("http://xmlns.com/foaf/0.1/Person");
         root = new RDFTreeItem(model, person);
     }
 

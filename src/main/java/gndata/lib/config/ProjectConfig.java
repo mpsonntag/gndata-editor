@@ -22,9 +22,9 @@ public class ProjectConfig extends AbstractConfig {
     public static final Path IN_PROJECT_PATH = Paths.get(".gnode", "settings.json");
 
     // metadata configuration - TODO read many OWL files
-    public static final Path ONTOLOGY_PATH = Paths.get("metadata", "ontologies", "default.owl");
-    public static final Path CUSTOM_ONT_PATH = Paths.get("metadata", "ontologies", "custom.owl");
     public static final Path METADATA_PATH = Paths.get("metadata", "annotations", "metadata.rdf");
+    public static final Path DEFAULT_SCHEMA_PATH = Paths.get("metadata", "ontologies", "default.owl");
+    public static final Path CUSTOM_SCHEMA_PATH = Paths.get("metadata", "ontologies", "custom.owl");
 
     private String projectPath;
     private String name;
@@ -52,6 +52,26 @@ public class ProjectConfig extends AbstractConfig {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getMetadataPath() {
+        return getAbsolute(METADATA_PATH).toString();
+    }
+
+    public String getDefaultSchemaPath() {
+        return getAbsolute(DEFAULT_SCHEMA_PATH).toString();
+    }
+
+    public String getCustomSchemaPath() {
+        return getAbsolute(CUSTOM_SCHEMA_PATH).toString();
+    }
+
+    private Path getAbsolute(Path p) {
+        Path absPath  = Paths.get(getProjectPath())
+                .toAbsolutePath()
+                .normalize();
+
+        return absPath.resolve(p);
     }
 
     /**

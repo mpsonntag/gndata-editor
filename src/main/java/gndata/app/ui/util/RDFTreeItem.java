@@ -13,7 +13,7 @@ import javafx.collections.ObservableList;
  */
 public class RDFTreeItem extends TreeItem<Resource> {
 
-    private Model model;
+    private InfModel model;
     private Resource resource;
 
     /**
@@ -22,7 +22,7 @@ public class RDFTreeItem extends TreeItem<Resource> {
      * @param mod   RDF model
      * @param res   an actual RDF Resource that a current TreeItem represents
      */
-    public RDFTreeItem(Model mod, Resource res) {
+    public RDFTreeItem(InfModel mod, Resource res) {
         super(res);
 
         model = mod;
