@@ -11,14 +11,11 @@ public class ProjectService {
 
     private String basePath;
 
-
     public ProjectService(String basePath) {
         this.basePath = basePath;
     }
 
     public static ProjectService create(ProjectConfig config) {
-        ProjectService srv = new ProjectService(config.getProjectPath());
-        return srv;
+        return new ProjectService(config.getProjectPath());
     }
-
 }

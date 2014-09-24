@@ -1,10 +1,15 @@
 package gndata.lib.srv;
 
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
-import gndata.lib.config.ProjectConfig;
 import org.apache.jena.riot.RDFDataMgr;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 
 /**
@@ -29,24 +34,22 @@ public class MetadataService {
     }
 
     /**
-     * Creates a new Metadata Service from a given project configuration
-     * by combining existing project ontology(ies) and RDF metadata
+     * Creates a new Metadata Service using a given path. Combines existing
+     * project RDF schemas and metadata storage into a common Model. Creates
+     * default schemas if some do not exist.
      *
-     * @param config    an actual Project configuration
      * @return          MetadataService
      */
-    public static MetadataService create(ProjectConfig config) {
-        Model schemaC = RDFDataMgr.loadModel(config.getCustomSchemaPath());
-        Model schemaD = RDFDataMgr.loadModel(config.getDefaultSchemaPath());
-        Model data = RDFDataMgr.loadModel(config.getMetadataPath());
+    public static MetadataService create(String projectPath) throws IOException {
+        MetadataFilesManager metaFiles = new MetadataFilesManager(projectPath);
+
+        Model data = RDFDataMgr.loadModel(metaFiles.annotationsPath().toString());
 
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-        reasoner = reasoner.bindSchema(schemaD);
-        reasoner = reasoner.bindSchema(schemaC);
+        for (Path p : metaFiles.schemaPaths()) {
+            reasoner = reasoner.bindSchema(RDFDataMgr.loadModel(p.toString()));
+        }
 
-        InfModel model = ModelFactory.createInfModel(reasoner, data);
-
-        return new MetadataService(model);
+        return new MetadataService(ModelFactory.createInfModel(reasoner, data));
     }
-
 }

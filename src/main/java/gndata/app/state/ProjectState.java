@@ -1,11 +1,13 @@
 package gndata.app.state;
 
 import gndata.lib.config.ProjectConfig;
+import gndata.lib.srv.MetadataService;
 import gndata.lib.srv.ProjectService;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import javax.inject.Singleton;
+import java.io.IOException;
 
 
 /**
@@ -17,16 +19,21 @@ public class ProjectState {
 
     private final ObjectProperty<ProjectConfig> config;
     private final ObjectProperty<ProjectService> service;
+    private final ObjectProperty<MetadataService> metadata;
 
-    public ProjectState() {
+    public ProjectState() throws IOException {
         config = new SimpleObjectProperty<>();
         service = new SimpleObjectProperty<>();
+        metadata = new SimpleObjectProperty<>();
 
         config.addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
                 service.set(null);
+                metadata.set(null);
             } else if (oldVal != newVal) {
                 service.set(ProjectService.create(newVal));
+                // TODO add metadata service
+                //metadata.set(MetadataService.create(config.get().getProjectPath()));
             }
         });
     }
@@ -51,4 +58,7 @@ public class ProjectState {
         return service.get();
     }
 
+    public synchronized MetadataService getMetadata() {
+        return metadata.get();
+    }
 }

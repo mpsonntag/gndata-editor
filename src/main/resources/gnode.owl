@@ -1,0 +1,613 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://g-node.org/thomas#"
+     xml:base="http://g-node.org/thomas"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://g-node.org/thomas">
+        <owl:versionIRI rdf:resource="http://g-node.org/thomas"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://g-node.org/thomas#hasAmplifier -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasAmplifier">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Amplifier"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Setup"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasAnalogSignal -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasAnalogSignal">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#AnalogSignal"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasChannel -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasChannel">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Channel"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Electrode"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasElectrode -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasElectrode">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Electrode"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#ElectrodeArray"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasElectrodeArray -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasElectrodeArray">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#ElectrodeArray"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Setup"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasLfpChannel -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasLfpChannel">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#AnalogSignal"/>
+        <rdfs:range rdf:resource="http://g-node.org/thomas#LfpChannel"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasPreparation -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasPreparation">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Preparation"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasRecordingSession -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasRecordingSession">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Experiment"/>
+        <rdfs:range rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasSetup -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasSetup">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Setup"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasSpikeTrain -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasSpikeTrain">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#SpikeTrain"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasStimulus -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasStimulus">
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Stimulus"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasSuaChannel -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasSuaChannel">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#SpikeTrain"/>
+        <rdfs:range rdf:resource="http://g-node.org/thomas#SuaChannel"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasSubject -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasSubject">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Subject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasTrial -->
+
+    <owl:ObjectProperty rdf:about="http://g-node.org/thomas#hasTrial">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+        <rdfs:range rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://g-node.org/thomas#hasAge -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasAge">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Subject"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasAuthor -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasAuthor">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasBackgroundLuminance -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasBackgroundLuminance">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Stimulus"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasBehavioralCondition -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasBehavioralCondition">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Stimulus"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasBehavioralState -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasBehavioralState">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Preparation"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasBrainRegion -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasBrainRegion">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Preparation"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasBroadbandDataAcquisition -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasBroadbandDataAcquisition">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Amplifier"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasBroadbandSamplingRate -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasBroadbandSamplingRate">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Amplifier"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasChannelNo -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasChannelNo">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Channel"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasCorrespondingAuthor -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasCorrespondingAuthor">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasDataFile -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasDataFile">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Data"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasDataUnit -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasDataUnit">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Data"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasElectrodeArrayGeometry -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasElectrodeArrayGeometry">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#ElectrodeArray"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasElectrodeNo -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasElectrodeNo">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Electrode"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasElectrodeSpacing -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasElectrodeSpacing">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#ElectrodeArray"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasLfpBandpassHighCutoff -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasLfpBandpassHighCutoff"/>
+    
+
+
+    <!-- http://g-node.org/thomas#hasLfpBandpassLowCutoff -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasLfpBandpassLowCutoff">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Amplifier"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasLfpDataAcquisition -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasLfpDataAcquisition">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Amplifier"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasName -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasName"/>
+    
+
+
+    <!-- http://g-node.org/thomas#hasNoOfElectrodes -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasNoOfElectrodes">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#ElectrodeArray"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasNoOfStimulusConditions -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasNoOfStimulusConditions">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasRecordingDate -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasRecordingDate">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#RecordingSession"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasRecordingEnd -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasRecordingEnd">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasRecordingStart -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasRecordingStart">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasSamplingInterval -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasSamplingInterval">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#AnalogSignal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasSpecies -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasSpecies">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Subject"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasStimulusColor -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasStimulusColor">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Stimulus"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasStimulusOrientation -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasStimulusOrientation">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Stimulus"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasStimulusSize -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasStimulusSize">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Stimulus"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasStimulusType -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasStimulusType">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Stimulus"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasTimeAlignmentEventFixation -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasTimeAlignmentEventFixation">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://g-node.org/thomas#hasTimeAlignmentEventSaccade -->
+
+    <owl:DatatypeProperty rdf:about="http://g-node.org/thomas#hasTimeAlignmentEventSaccade">
+        <rdfs:domain rdf:resource="http://g-node.org/thomas#Trial"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://g-node.org/thomas#Amplifier -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Amplifier">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Hardware"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#AnalogSignal -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#AnalogSignal">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Data"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Channel -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Channel">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Data -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Data">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Electrode -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Electrode">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Hardware"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#ElectrodeArray -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#ElectrodeArray">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Hardware"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Experiment -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Experiment">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Hardware -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Hardware">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#LfpChannel -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#LfpChannel">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Channel"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Preparation -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Preparation">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#RecordingSession -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#RecordingSession">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Setup -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Setup">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#SpikeTrain -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#SpikeTrain">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Data"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Stimulus -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Stimulus">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#SuaChannel -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#SuaChannel">
+        <rdfs:subClassOf rdf:resource="http://g-node.org/thomas#Channel"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Subject -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Subject">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://g-node.org/thomas#Trial -->
+
+    <owl:Class rdf:about="http://g-node.org/thomas#Trial">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="&owl;AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://g-node.org/thomas#Amplifier"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Electrode"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#ElectrodeArray"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="&owl;AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://g-node.org/thomas#Channel"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Data"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Experiment"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Hardware"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Preparation"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#RecordingSession"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Setup"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Stimulus"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Subject"/>
+            <rdf:Description rdf:about="http://g-node.org/thomas#Trial"/>
+        </owl:members>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.0) http://owlapi.sourceforge.net -->
+
