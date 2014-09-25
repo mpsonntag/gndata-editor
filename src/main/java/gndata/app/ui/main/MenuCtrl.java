@@ -31,23 +31,16 @@ public class MenuCtrl {
 
     /**
      * Open a new project or create one.
-     *
-     * @param event The event causing the call of the method.
      */
-    public void createProject(ActionEvent event) {
-        DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Select the project directory");
-        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-
-        File selected = dirChooser.showDialog(menu.getScene().getWindow());
+    public void createProject() {
+        File selected = showDirectoryChooser();
 
         if (selected == null)
             return;
 
         try {
             ProjectConfig config = ProjectConfig.load(selected.getAbsolutePath());
-            ProjectConfigView configDialog = new ProjectConfigView(config);
-            config = configDialog.showDialog(menu.getScene().getWindow());
+            config = showConfigDialog(config);
 
             if (config != null) {
                 config.store();
@@ -61,20 +54,40 @@ public class MenuCtrl {
     }
 
     /**
-     * Open a previously opened project.
+     * Shows a directory chooser dialog.
      *
-     * @param event The event causing the call of the method.
+     * @return The selected dialog or null if the selection was canceled.
      */
-    public void openProject(ActionEvent event) {
+    public File showDirectoryChooser() {
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Select the project directory");
+        dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        return dirChooser.showDialog(menu.getScene().getWindow());
+    }
+
+    /**
+     * Shows a project config dialog.
+     *
+     * @param config    The configuration to edit in the dialog.
+     *
+     * @return The edited
+     */
+    public ProjectConfig showConfigDialog(ProjectConfig config) {
+        ProjectConfigView configDialog = new ProjectConfigView(config);
+        return configDialog.showDialog(menu.getScene().getWindow());
+    }
+
+    /**
+     * Open a previously opened project.
+     */
+    public void openProject() {
         System.out.println("openProject");
     }
 
     /**
      * Set the project state to not running.
-     *
-     * @param event The event causing the call of the method.
      */
-    public void exit(ActionEvent event) {
+    public void exit() {
         appState.setRunning(false);
     }
 }
