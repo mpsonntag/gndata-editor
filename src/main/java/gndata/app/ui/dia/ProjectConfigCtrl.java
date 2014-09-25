@@ -2,7 +2,7 @@ package gndata.app.ui.dia;
 
 import gndata.app.ui.util.DialogController;
 import gndata.lib.config.ProjectConfig;
-import javafx.event.ActionEvent;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
@@ -17,13 +17,14 @@ import java.util.ResourceBundle;
  */
 public class ProjectConfigCtrl extends DialogController<ProjectConfig> implements Initializable {
 
-
     @FXML private BorderPane view;
 
-    @FXML private TextField name;
-    @FXML private TextArea  description;
+    @FXML private TextField nameInput;
+    @FXML private TextArea  descriptionInput;
 
-    private final ProjectConfig config;
+    final ProjectConfig config;
+    final SimpleStringProperty name;
+    final SimpleStringProperty description;
 
     /**
      * Constructor.
@@ -32,34 +33,46 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      */
     public ProjectConfigCtrl(ProjectConfig config) {
         this.config = config;
+        this.name   = new SimpleStringProperty(config.getName());
+        this.description = new SimpleStringProperty(config.getDescription());
     }
 
+    /**
+     * Initializes the controller. This method will only work if
+     * the controller was created by an fxml loader and is correctly bound to
+     * a view.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        name.setText(config.getName());
-        description.setText(config.getDescription());
+        nameInput.textProperty().bindBidirectional(name);
+        descriptionInput.textProperty().bindBidirectional(description);
     }
 
     /**
      * Cancel the editing.
      * Sets {@link #cancelled} to true and hides the window.
-     *
-     * @param actionEvent The event that triggered the method call.
      */
-    public void cancel(ActionEvent actionEvent) {
+    public void cancel() {
         setCancelled(true);
-        view.getScene().getWindow().hide();
+        hide();
     }
 
     /**
      * Submit the editing result.
      * Sets {@link #cancelled} to false and hides the window.
-     *
-     * @param actionEvent The event that triggered the method call.
      */
-    public void ok(ActionEvent actionEvent) {
+    public void ok() {
         setCancelled(false);
-        view.getScene().getWindow().hide();
+        hide();
+    }
+
+    /**
+     * Hides the window if it is currently showing.
+     */
+    public void hide() {
+        if (view != null && view.getScene().getWindow().isShowing()) {
+            view.getScene().getWindow().hide();
+        }
     }
 
     /**
@@ -72,10 +85,11 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     @Override
     public ProjectConfig getResult() {
         if (! isCancelled()) {
-            config.setName(name.getText());
-            config.setDescription(description.getText());
+            config.setName(name.get());
+            config.setDescription(description.get());
         }
 
         return config;
     }
+
 }

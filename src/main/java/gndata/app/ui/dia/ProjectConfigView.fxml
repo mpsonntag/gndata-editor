@@ -25,13 +25,13 @@
                 Name:
             </Label>
 
-            <TextField  fx:id="name" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" />
+            <TextField  fx:id="nameInput" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" />
 
             <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
                 Description:
             </Label>
 
-            <TextArea fx:id="description" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
+            <TextArea fx:id="descriptionInput" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
         </GridPane>
     </center>
 

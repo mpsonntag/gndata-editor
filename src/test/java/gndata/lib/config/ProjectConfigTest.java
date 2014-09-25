@@ -13,12 +13,12 @@ import static org.junit.Assert.*;
 
 public class ProjectConfigTest {
 
+    private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
+
     ProjectConfig conf;
-    Path tmpPath;
 
     @Before
     public void setUp() throws Exception {
-        tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
     }
 
     @After
