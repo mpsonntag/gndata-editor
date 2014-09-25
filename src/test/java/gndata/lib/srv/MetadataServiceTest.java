@@ -18,7 +18,6 @@ import static org.junit.Assert.assertNotNull;
 public class MetadataServiceTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
-
     MetadataService service;
 
     @Before
