@@ -29,7 +29,7 @@ public class MetadataService {
      *
      * @return  RDF Model
      */
-    public Model getModel() {
+    public InfModel getModel() {
         return model;
     }
 
@@ -45,10 +45,13 @@ public class MetadataService {
 
         Model data = RDFDataMgr.loadModel(metaFiles.annotationsPath().toString());
 
-        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        Model schema = ModelFactory.createDefaultModel();
         for (Path p : metaFiles.schemaPaths()) {
-            reasoner = reasoner.bindSchema(RDFDataMgr.loadModel(p.toString()));
+            schema = schema.union(RDFDataMgr.loadModel(p.toString()));
         }
+
+        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        reasoner = reasoner.bindSchema(schema);
 
         return new MetadataService(ModelFactory.createInfModel(reasoner, data));
     }

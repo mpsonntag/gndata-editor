@@ -1,5 +1,6 @@
 package gndata.lib.srv;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,10 +8,7 @@ import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 
 public class MetadataFilesManagerTest {
@@ -26,10 +24,9 @@ public class MetadataFilesManagerTest {
 
     @After
     public void tearDown() throws Exception {
-        Stream<Path> s = Files.walk(tmpPath);
-        s.forEach(a -> a.toFile().delete());
-
-        Files.deleteIfExists(tmpPath);
+        if (Files.exists(tmpPath)) {
+            FileUtils.deleteDirectory(tmpPath.toFile());
+        }
     }
 
     @Test
