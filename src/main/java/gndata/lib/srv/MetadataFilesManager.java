@@ -41,9 +41,9 @@ public class MetadataFilesManager {
     public List<Path> schemaPaths() throws IOException {
         Path schemasFolderPath = getSchemasFolderPath();
 
-        initIfNotExist(schemasFolderPath, SCHEMAS_GNODE_FILE.toString());
-        initIfNotExist(schemasFolderPath, SCHEMAS_PROV_FILE.toString());
-        initIfNotExist(schemasFolderPath, SCHEMAS_CUSTOM_FILE.toString());
+        copyIfNotExist(schemasFolderPath, SCHEMAS_GNODE_FILE.toString());
+        copyIfNotExist(schemasFolderPath, SCHEMAS_PROV_FILE.toString());
+        copyIfNotExist(schemasFolderPath, SCHEMAS_CUSTOM_FILE.toString());
 
         File schemasFolder = schemasFolderPath.toFile();
 
@@ -65,7 +65,7 @@ public class MetadataFilesManager {
     public Path annotationsPath() throws IOException {
         Path annotationsPath = getAnnotationsFolderPath();
 
-        initIfNotExist(annotationsPath, ANNOTATIONS_FILE.toString());
+        copyIfNotExist(annotationsPath, ANNOTATIONS_FILE.toString());
 
         return annotationsPath.resolve(ANNOTATIONS_FILE);
     }
@@ -86,11 +86,11 @@ public class MetadataFilesManager {
         return absPath;
     }
 
-    private void initIfNotExist(Path where, String fileName) throws IOException {
+    private void copyIfNotExist(Path where, String fileName) throws IOException {
         Path absPath = where.resolve(Paths.get(fileName));
 
         if (!Files.exists(absPath)) {
-            String pathLocal = "/resources/" + fileName;
+            String pathLocal = "/resources/templates/" + fileName;
             InputStream schema = getClass().getResourceAsStream(pathLocal);
 
             Files.copy(schema, absPath);
