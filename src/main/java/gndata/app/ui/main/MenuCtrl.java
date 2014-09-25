@@ -4,7 +4,6 @@ import gndata.app.state.AppState;
 import gndata.app.state.ProjectState;
 import gndata.app.ui.dia.ProjectConfigView;
 import gndata.lib.config.GlobalConfig;
-import gndata.lib.config.GlobalConfig.ProjectItem;
 import gndata.lib.config.ProjectConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
@@ -48,14 +47,8 @@ public class MenuCtrl {
                 config.store();
                 projectState.setConfig(config);
 
-                GlobalConfig globalConfig = appState.getConfig();
-                Optional<ProjectItem> item = globalConfig.getProject(config.getProjectPath());
-                if (item.isPresent()) {
-                    item.get().name = config.getName();
-                } else {
-                    globalConfig.appendProject(config.getProjectPath(), config.getName());
-                }
-                globalConfig.store();
+                appState.getConfig().setProject(config.getProjectPath(), config.getName());
+                appState.getConfig().store();
             }
         } catch (IOException e) {
             // TODO nice exception dialog here

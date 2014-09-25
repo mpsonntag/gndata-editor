@@ -12,38 +12,47 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Global application configuration.
  */
 public class GlobalConfig extends AbstractConfig {
 
-    private List<ProjectItem> projects = new ArrayList<>();
+    private Map<String, String> projects;
 
 
-    public List<ProjectItem> getProjects() {
+    public GlobalConfig() {
+        projects = new TreeMap<>();
+    }
+
+
+    public Map<String, String> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<ProjectItem> projects) {
-        this.projects = projects;
+    public void setProject(String path, String name) {
+        path = Paths.get(path)
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+        projects.put(path, name);
     }
 
-    public void appendProject(String path, String name) {
-        this.projects.add(new ProjectItem(path, name));
+    public boolean hasProject(String path) {
+        path = Paths.get(path)
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+        return projects.containsKey(path);
     }
 
-    public Optional<ProjectItem> getProject(String path) {
-        Path tmp = Paths.get(path).toAbsolutePath().normalize();
-        return projects.stream()
-                .filter(item -> {
-                    Path other = Paths.get(item.path).toAbsolutePath().normalize();
-                    return tmp.equals(other);
-                })
-                .findAny();
+    public String getProjectName(String path) {
+        path = Paths.get(path)
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+        return projects.get(path);
     }
 
     /**
@@ -85,15 +94,4 @@ public class GlobalConfig extends AbstractConfig {
                 .toString();
     }
 
-    /**
-     * Just a small container for known projects and their location.
-     */
-    public static class ProjectItem {
-        public String path, name;
-
-        public ProjectItem(String path, String name) {
-            this.path = path;
-            this.name = name;
-        }
-    }
 }
