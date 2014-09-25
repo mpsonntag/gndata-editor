@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Global application configuration.
@@ -31,8 +32,18 @@ public class GlobalConfig extends AbstractConfig {
         this.projects = projects;
     }
 
-    public void appendProject(String name, String path) {
-        this.projects.add(new ProjectItem(name, path));
+    public void appendProject(String path, String name) {
+        this.projects.add(new ProjectItem(path, name));
+    }
+
+    public Optional<ProjectItem> getProject(String path) {
+        Path tmp = Paths.get(path).toAbsolutePath().normalize();
+        return projects.stream()
+                .filter(item -> {
+                    Path other = Paths.get(item.path).toAbsolutePath().normalize();
+                    return tmp.equals(other);
+                })
+                .findAny();
     }
 
     /**
@@ -78,11 +89,11 @@ public class GlobalConfig extends AbstractConfig {
      * Just a small container for known projects and their location.
      */
     public static class ProjectItem {
-        public String name, path;
+        public String path, name;
 
-        public ProjectItem(String name, String path) {
-            this.name = name;
+        public ProjectItem(String path, String name) {
             this.path = path;
+            this.name = name;
         }
     }
 }

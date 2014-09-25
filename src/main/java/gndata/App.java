@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import gndata.app.state.AppState;
 import gndata.app.ui.main.MainView;
+import gndata.lib.config.GlobalConfig;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ public class App extends Application {
         Scene scene = new Scene(main.getScene());
 
         AppState state = injector.getInstance(AppState.class);
+        state.setConfig(GlobalConfig.load(GlobalConfig.makeConfigPath()));
         state.runningProperty().addListener((observable, oldVal, newVal) -> {
             if (!newVal) {
                 stage.close();

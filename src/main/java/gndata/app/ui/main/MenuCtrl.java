@@ -3,8 +3,9 @@ package gndata.app.ui.main;
 import gndata.app.state.AppState;
 import gndata.app.state.ProjectState;
 import gndata.app.ui.dia.ProjectConfigView;
+import gndata.lib.config.GlobalConfig;
+import gndata.lib.config.GlobalConfig.ProjectItem;
 import gndata.lib.config.ProjectConfig;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.stage.DirectoryChooser;
@@ -12,6 +13,7 @@ import javafx.stage.DirectoryChooser;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Controller for the main menu view.
@@ -45,6 +47,15 @@ public class MenuCtrl {
             if (config != null) {
                 config.store();
                 projectState.setConfig(config);
+
+                GlobalConfig globalConfig = appState.getConfig();
+                Optional<ProjectItem> item = globalConfig.getProject(config.getProjectPath());
+                if (item.isPresent()) {
+                    item.get().name = config.getName();
+                } else {
+                    globalConfig.appendProject(config.getProjectPath(), config.getName());
+                }
+                globalConfig.store();
             }
         } catch (IOException e) {
             // TODO nice exception dialog here
