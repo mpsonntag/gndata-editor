@@ -2,6 +2,7 @@ package gndata.app.ui.main;
 
 import gndata.app.state.AppState;
 import gndata.app.state.ProjectState;
+import gndata.lib.config.GlobalConfig;
 import gndata.lib.config.ProjectConfig;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
 
 public class MenuCtrlTest {
 
+    private static final Path tmpConf = Paths.get(System.getProperty("java.io.tmpdir"), "test.json");
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
     TestableMenuCtrl ctrl;
@@ -26,6 +28,7 @@ public class MenuCtrlTest {
     @Before
     public void setUp() throws Exception {
         appState = new AppState();
+        appState.setConfig(GlobalConfig.load(tmpConf.toString()));
         projectState = new ProjectState();
         ctrl = new TestableMenuCtrl(appState, projectState);
     }
@@ -34,6 +37,9 @@ public class MenuCtrlTest {
     public void tearDown() throws Exception {
         if (Files.exists(tmpPath)) {
             FileUtils.deleteDirectory(tmpPath.toFile());
+        }
+        if (Files.exists(tmpConf)) {
+            Files.delete(tmpConf);
         }
     }
 
