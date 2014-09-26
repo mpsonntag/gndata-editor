@@ -41,6 +41,10 @@ public class MetadataService {
      * @return          MetadataService
      */
     public static MetadataService create(String projectPath) throws IOException {
+        if (projectPath == null) {
+            throw new IOException("Cannot create metadata service at non-existing path");
+        }
+
         MetadataFilesManager metaFiles = new MetadataFilesManager(projectPath);
 
         Model data = RDFDataMgr.loadModel(metaFiles.annotationsPath().toString());
