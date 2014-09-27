@@ -186,6 +186,7 @@
                     <include>**/*.json</include>
                     <include>**/*.xml</include>
                     <include>**/*.owl</include>
+                    <include>**/*.rdf</include>
                 </includes>
             </resource>
 

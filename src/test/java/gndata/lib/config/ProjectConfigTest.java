@@ -34,15 +34,6 @@ public class ProjectConfigTest {
         assert(conf.getName() == null);
         assert(conf.getDescription() == null);
 
-        Path absPath  = Paths.get(tmpPath.toString());
-
-        String oPath = absPath.resolve(ProjectConfig.METADATA_PATH).toString();
-        assert(conf.getMetadataPath().equals(oPath));
-        String cPath = absPath.resolve(ProjectConfig.DEFAULT_SCHEMA_PATH).toString();
-        assert(conf.getDefaultSchemaPath().equals(cPath));
-        String mPath = absPath.resolve(ProjectConfig.CUSTOM_SCHEMA_PATH).toString();
-        assert(conf.getCustomSchemaPath().equals(mPath));
-
         conf.setName("myName");
         conf.setDescription("myDescription");
         conf.store();
@@ -50,5 +41,4 @@ public class ProjectConfigTest {
         assertEquals(conf.getName(), "myName");
         assertEquals(conf.getDescription(), "myDescription");
     }
-
 }

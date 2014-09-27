@@ -1,11 +1,14 @@
 package gndata.app.state;
 
 import gndata.lib.config.ProjectConfig;
+import gndata.lib.srv.MetadataService;
 import gndata.lib.srv.ProjectService;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 
 import javax.inject.Singleton;
+import java.io.IOException;
 
 
 /**
@@ -16,19 +19,20 @@ import javax.inject.Singleton;
 public class ProjectState {
 
     private final ObjectProperty<ProjectConfig> config;
-    private final ObjectProperty<ProjectService> service;
+
+    private ProjectService service;
+    private MetadataService metadata;
 
     public ProjectState() {
         config = new SimpleObjectProperty<>();
-        service = new SimpleObjectProperty<>();
+    }
 
-        config.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null) {
-                service.set(null);
-            } else if (oldVal != newVal) {
-                service.set(ProjectService.create(newVal));
-            }
-        });
+    public void addListener(ChangeListener<? super ProjectConfig> listener) {
+        config.addListener(listener);
+    }
+
+    public void removeListener(ChangeListener<? super ProjectConfig> listener) {
+        config.removeListener(listener);
     }
 
     public synchronized boolean isConfigured() {
@@ -43,12 +47,22 @@ public class ProjectState {
         return config;
     }
 
-    public synchronized void setConfig(ProjectConfig config) {
+    public synchronized void setConfig(ProjectConfig config) throws IOException {
+        if (config == null) {
+            service = null;
+            metadata = null;
+        } else if (config != this.config.get()) {
+            service = ProjectService.create(config);
+            metadata = MetadataService.create(config.getProjectPath());
+        }
         this.config.set(config);
     }
 
     public synchronized ProjectService getService() {
-        return service.get();
+        return service;
     }
 
+    public synchronized MetadataService getMetadata() {
+        return metadata;
+    }
 }

@@ -18,13 +18,7 @@ import java.nio.file.Paths;
  */
 public class ProjectConfig extends AbstractConfig {
 
-    // project configuration
     public static final Path IN_PROJECT_PATH = Paths.get(".gnode", "settings.json");
-
-    // metadata configuration - TODO read many OWL files
-    public static final Path METADATA_PATH = Paths.get("metadata", "annotations", "metadata.rdf");
-    public static final Path DEFAULT_SCHEMA_PATH = Paths.get("metadata", "ontologies", "default.owl");
-    public static final Path CUSTOM_SCHEMA_PATH = Paths.get("metadata", "ontologies", "custom.owl");
 
     private String projectPath;
     private String name;
@@ -54,26 +48,6 @@ public class ProjectConfig extends AbstractConfig {
         this.description = description;
     }
 
-    public String getMetadataPath() {
-        return getAbsolute(METADATA_PATH).toString();
-    }
-
-    public String getDefaultSchemaPath() {
-        return getAbsolute(DEFAULT_SCHEMA_PATH).toString();
-    }
-
-    public String getCustomSchemaPath() {
-        return getAbsolute(CUSTOM_SCHEMA_PATH).toString();
-    }
-
-    private Path getAbsolute(Path p) {
-        Path absPath  = Paths.get(getProjectPath())
-                .toAbsolutePath()
-                .normalize();
-
-        return absPath.resolve(p);
-    }
-
     /**
      * Loads the project settings from a json file.
      * If the file does not exist, a default configuration is created.
@@ -97,8 +71,6 @@ public class ProjectConfig extends AbstractConfig {
             // set defaults here if necessary
             config.setFilePath(filePath.toString());
             config.setProjectPath(absPath.toString());
-
-            // TODO implement metadata file(s) initialization
 
             config.store();
             return config;

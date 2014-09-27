@@ -1,7 +1,7 @@
 package gndata.lib.srv;
 
 import com.hp.hpl.jena.rdf.model.InfModel;
-import gndata.lib.config.ProjectConfig;
+import com.hp.hpl.jena.reasoner.ValidityReport;
 import gndata.lib.util.FakeModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -12,21 +12,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+
 
 public class MetadataServiceTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
-
     MetadataService service;
-    ProjectConfig config;
 
     @Before
     public void setUp() throws Exception {
         InfModel model = FakeModel.getFakeModel();
 
         service = new MetadataService(model);
-        config  = ProjectConfig.load(tmpPath.toString());
     }
 
     @After
@@ -43,8 +41,11 @@ public class MetadataServiceTest {
 
     @Test
     public void testCreate() throws Exception {
-        // TODO implement test
-        //service = MetadataService.create(config);
-        assertNotNull(service);
+        MetadataService ms = MetadataService.create(tmpPath.toString());
+        InfModel model = ms.getModel();
+
+        ValidityReport validity = model.validate();
+        assert(validity.isValid());
+        assert(validity.isClean());
     }
 }
