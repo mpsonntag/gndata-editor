@@ -24,9 +24,11 @@ public abstract class DialogView<T> extends AbstractView {
      * @param controller The controller which should be passed to the view.
      */
     public DialogView(DialogController<T> controller) {
-        super();
         this.controller = controller;
         getLoader().setControllerFactory(cls -> this.controller);
+
+        String path = "/" + DialogView.class.getCanonicalName().replace('.', '/') + ".css";
+        getExtraStyles().add(getClass().getResource(path));
     }
 
     /**

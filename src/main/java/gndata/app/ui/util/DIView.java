@@ -13,7 +13,6 @@ public class DIView extends AbstractView {
 
     @Inject
     public DIView(Injector injector) {
-        super();
         this.injector = injector;
         getLoader().setControllerFactory(cls -> this.injector.getInstance(cls));
     }
