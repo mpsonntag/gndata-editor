@@ -5,23 +5,41 @@ import javafx.scene.Parent;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * Base class for views with convention over configuration pattern.
- * The view loads a fxml file with the same name as the view class (but .fxml extension) as the scene
- * and applies a css file also with the same name (but .css extension) if such a file is present.
+ *
+ * If not provided to the constructor, the view loads a fxml file with the same name as the
+ * view class (but .fxml extension) as the scene and applies a css file also with the same
+ * name (but .css extension) if such a file is present.
  * <br />
  * For example a FooView class would try to load FooView.fxml and FooView.css.
  */
 public abstract class AbstractView {
 
+    private final URL styleURL;
     private final FXMLLoader loader;
 
     /**
-     * Creates a new view and initializes the loader.
+     * Creates a new view and uses convention over configuration for the fxml and css files.
      */
     public AbstractView() {
-        loader = new FXMLLoader(generateViewURL());
+        this(Optional.empty(), Optional.empty());
+    }
+
+    /**
+     * Creates a new view and uses convention over configuration for the fxml and css file only
+     * when they are not provided.
+     *
+     * @param viewURL   The URL to the fxml file. If empty the URL will be inferred from the
+     *                  class name.
+     * @param styleURL  The URL to the css file. If empty the URL will be inferred from the
+     *                  class name.
+     */
+    public AbstractView(Optional<URL> viewURL, Optional<URL> styleURL) {
+        this.styleURL = styleURL.orElse(generateStyleURL());
+        loader = new FXMLLoader(viewURL.orElse(generateViewURL()));
     }
 
     /**
@@ -33,7 +51,6 @@ public abstract class AbstractView {
     public Parent getScene() throws IOException {
         Parent p = loader.load();
 
-        URL styleURL = generateStyleURL();
         if (styleURL != null) {
             p.getStylesheets().add(styleURL.toExternalForm());
         }
