@@ -19,26 +19,57 @@ import java.nio.file.Path;
  */
 public class MetadataService {
 
-    private InfModel model;
+    private OntModel schema;    // union model for all imported ontology files
+    private Model annotations;  // model for data annotations
 
-    public MetadataService(InfModel m) {
-        model = m;
+    public MetadataService(OntModel schema, Model annotations) {
+        this.schema = schema;
+        this.annotations = annotations;
     }
 
     /**
-     * Returns a common RDF Model instance to access all metadata triples
-     * and ontology terms.
+     * Returns a Ontology RDF Model instance to access default and
+     * custom ontology terms.
      *
-     * @return  RDF Model
+     * @return  Ontology Model
      */
-    public InfModel getModel() {
-        return model;
+    public OntModel getSchema() {
+        return schema;
+    }
+
+    /**
+     * Returns an RDF Model instance to access annotations as stored RDF triples.
+     *
+     * @return  Ontology Model
+     */
+    public Model getAnnotations() {
+        return annotations;
+    }
+
+    /**
+     * Creates a new model with inferred relations based on loaded ontology,
+     * annotations and reasoner.
+     *
+     * @return  Model with inferred relations
+     */
+    public InfModel getAnnotationsWithInference() {
+        return ModelFactory.createInfModel(getReasoner(), annotations);
+    }
+
+    /**
+     * Creates a new reasoner based on actual schema and annotations.
+     *
+     * @return  Reasoner
+     */
+    public Reasoner getReasoner() {
+        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        return reasoner.bindSchema(schema);
     }
 
     /**
      * Creates a new Metadata Service using a given path. Combines existing
-     * project RDF schemas and metadata storage into a common Model. Creates
-     * default schemas if some do not exist.
+     * project RDF schemas (ontology files) and metadata storage (annotations)
+     * into a common Model. Creates default schemas if some do not exist.
      *
      * @return          MetadataService
      */
@@ -49,28 +80,15 @@ public class MetadataService {
 
         MetadataFilesManager metaFiles = new MetadataFilesManager(projectPath);
 
-        Model data = RDFDataMgr.loadModel(metaFiles.annotationsPath().toString());
+        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
 
-        OntModel sch = ModelFactory.createOntologyModel();
-
-
-        OntDocumentManager mgr = new OntDocumentManager();
-        OntModelSpec s = new OntModelSpec( OntModelSpec.RDFS_MEM );
-        s.setDocumentManager( mgr );
-        OntModel m = ModelFactory.createOntologyModel( s );
-
-        sch.addSubModel(m);
-
-
-
-        Model schema = ModelFactory.createDefaultModel();
+        // TODO figure out if using OntDocumentManager to read files makes sense
         for (Path p : metaFiles.schemaPaths()) {
-            schema = schema.union(RDFDataMgr.loadModel(p.toString()));
+            schema.addSubModel(RDFDataMgr.loadModel(p.toString()));
         }
 
-        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-        reasoner = reasoner.bindSchema(schema);
+        Model data = RDFDataMgr.loadModel(metaFiles.annotationsPath().toString());
 
-        return new MetadataService(ModelFactory.createInfModel(reasoner, data));
+        return new MetadataService(schema, data);
     }
 }

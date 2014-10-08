@@ -1,6 +1,7 @@
 package gndata.app.ui.tree;
 
 import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
 import gndata.app.state.ProjectState;
@@ -33,7 +34,7 @@ public class MetadataTreeCtrl {
 
     public void loadTree() {
         if (projectState.getMetadata() != null) {
-            InfModel model = projectState.getMetadata().getModel();
+            Model model = projectState.getMetadata().getAnnotations();
 
             TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("FakeRoot"));
             //TreeItem<Resource> fakeRoot = new TreeItem<>(OWL.Thing);

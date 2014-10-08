@@ -1,11 +1,9 @@
 package gndata.app.ui.util;
 
-import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TreeItem;
 import javafx.collections.ObservableList;
@@ -16,23 +14,23 @@ import javafx.collections.ObservableList;
  */
 public class RDFTreeItem extends TreeItem<Resource> {
 
-    private InfModel model;
+    private Model model;
     private Resource resource;
 
     /**
      * Builds a new TreeItem based on a given RDF Resource
      *
-     * @param mod   RDF model
+     * @param mod   RDF model to query for children
      * @param res   an actual RDF Resource that a current TreeItem represents
      */
-    public RDFTreeItem(InfModel mod, Resource res) {
+    public RDFTreeItem(Model mod, Resource res) {
         super(res);
 
         model = mod;
         resource = res;
     }
 
-    public static ObservableList<TreeItem<Resource>> getRootItems(InfModel model) {
+    public static ObservableList<TreeItem<Resource>> getRootItems(Model model) {
         ObservableList<TreeItem<Resource>> items = FXCollections.observableArrayList();
 
         StmtIterator iterH = model.listStatements(null, RDFS.subClassOf, OWL.Thing);
@@ -43,7 +41,6 @@ public class RDFTreeItem extends TreeItem<Resource> {
 
         return items;
     }
-
 
     /**
      * Builds children items of this TreeItem node. List of children contains
