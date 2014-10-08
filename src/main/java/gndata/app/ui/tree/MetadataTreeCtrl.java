@@ -38,7 +38,11 @@ public class MetadataTreeCtrl {
         loadTree();
     }
 
-    public void loadTree() {
+    public TreeView<Resource> getTree() {
+        return metadataTreeView;
+    }
+
+    private void loadTree() {
         if (projectState.getMetadata() != null) {
             OntModel model = projectState.getMetadata().getSchema();
 
