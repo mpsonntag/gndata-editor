@@ -1,9 +1,7 @@
 package gndata.app.ui.tree;
 
-import com.hp.hpl.jena.rdf.model.InfModel;
-import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.OWL;
 import gndata.app.state.ProjectState;
 import gndata.app.ui.util.RDFTreeItem;
 import javafx.fxml.FXML;
@@ -24,6 +22,14 @@ public class MetadataTreeCtrl {
     public MetadataTreeCtrl(ProjectState projectState) {
         this.projectState = projectState;
 
+        /*
+        // TODO listener for tree item selection
+        this.metadataTreeView.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldVal, newVal) ->
+                        System.out.println("Selected"));
+        */
+
         // listener to reload the tree if project changes
         this.projectState.addListener((observable, oldVal, newVal) -> loadTree());
     }
@@ -34,16 +40,12 @@ public class MetadataTreeCtrl {
 
     public void loadTree() {
         if (projectState.getMetadata() != null) {
-            Model model = projectState.getMetadata().getAnnotations();
+            OntModel model = projectState.getMetadata().getSchema();
 
-            TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("FakeRoot"));
-            //TreeItem<Resource> fakeRoot = new TreeItem<>(OWL.Thing);
-            fakeRoot.getChildren().addAll(RDFTreeItem.getRootItems(model));
-
-            //TreeItem<Resource> root = new RDFTreeItem(model, OWL.Thing);
+            TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("Ontology"));
+            fakeRoot.getChildren().addAll(RDFTreeItem.getRootClasses(model));
 
             metadataTreeView.setRoot(fakeRoot);
-            //metadataTreeView.setShowRoot(false);
         } else {
             metadataTreeView.setRoot(null);
         }

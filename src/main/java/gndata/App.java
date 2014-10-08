@@ -29,7 +29,7 @@ public class App extends Application {
             }
         });
 
-        stage.setTitle("Address Book");
+        stage.setTitle("GNData Editor");
         stage.setScene(scene);
         stage.show();
     }

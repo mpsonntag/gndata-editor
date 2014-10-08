@@ -1,5 +1,6 @@
 package gndata.app.ui.util;
 
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -28,6 +29,18 @@ public class RDFTreeItem extends TreeItem<Resource> {
 
         model = mod;
         resource = res;
+    }
+
+    public static ObservableList<TreeItem<Resource>> getRootClasses(OntModel schema) {
+        ObservableList<TreeItem<Resource>> items = FXCollections.observableArrayList();
+
+        StmtIterator iterH = schema.listStatements(null, RDFS.subClassOf, OWL.Thing);
+        while (iterH.hasNext()) {
+            Statement st = iterH.nextStatement();
+            items.add(new RDFTreeItem(schema, st.getSubject()));
+        }
+
+        return items;
     }
 
     public static ObservableList<TreeItem<Resource>> getRootItems(Model model) {
@@ -76,7 +89,7 @@ public class RDFTreeItem extends TreeItem<Resource> {
             RDFNode obj = st.getObject();
 
             // exclude Literals and Class definitions
-            if (obj.isResource() && !predicate.equals(RDF.type)) {
+            if (obj.isResource() && !obj.equals(OWL.Thing) && !predicate.equals(RDF.type)) {
 
                 // exclude Parent
                 TreeItem<Resource> parent = getParent();
