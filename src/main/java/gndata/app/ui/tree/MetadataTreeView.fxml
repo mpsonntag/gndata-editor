@@ -9,6 +9,6 @@
             styleClass="metadata-pane">
 
     <TreeView fx:id="metadataTreeView"
-              layoutX="0" layoutY="0" prefHeight="300.0" prefWidth="100.0"/>
+              layoutX="0" layoutY="0" prefHeight="600.0" prefWidth="500.0"/>
 
 </AnchorPane>

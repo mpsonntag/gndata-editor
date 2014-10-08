@@ -1,6 +1,8 @@
 package gndata.lib.srv;
 
+import com.hp.hpl.jena.ontology.OntDocumentManager;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -48,6 +50,18 @@ public class MetadataService {
         MetadataFilesManager metaFiles = new MetadataFilesManager(projectPath);
 
         Model data = RDFDataMgr.loadModel(metaFiles.annotationsPath().toString());
+
+        OntModel sch = ModelFactory.createOntologyModel();
+
+
+        OntDocumentManager mgr = new OntDocumentManager();
+        OntModelSpec s = new OntModelSpec( OntModelSpec.RDFS_MEM );
+        s.setDocumentManager( mgr );
+        OntModel m = ModelFactory.createOntologyModel( s );
+
+        sch.addSubModel(m);
+
+
 
         Model schema = ModelFactory.createDefaultModel();
         for (Path p : metaFiles.schemaPaths()) {

@@ -1,10 +1,12 @@
 package gndata.app.ui.tree;
 
+import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.OWL;
 import gndata.app.state.ProjectState;
-import gndata.lib.config.ProjectConfig;
+import gndata.app.ui.util.RDFTreeItem;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
 import javax.inject.Inject;
 
 
@@ -13,30 +15,36 @@ import javax.inject.Inject;
  */
 public class MetadataTreeCtrl {
 
-    @FXML private TreeView<String> metadataTreeView;
+    @FXML private TreeView<Resource> metadataTreeView;
+
+    private final ProjectState projectState;
 
     @Inject
     public MetadataTreeCtrl(ProjectState projectState) {
-        projectState.addListener((observable, oldVal, newVal) -> loadTree(newVal));
+        this.projectState = projectState;
+
+        // listener to reload the tree if project changes
+        this.projectState.addListener((observable, oldVal, newVal) -> loadTree());
     }
 
     public void initialize() {
-        loadTree("initial 1", "initial 2", "initial 3");
+        loadTree();
     }
 
-    public void loadTree(ProjectConfig config) {
-        // TODO load tree from metadata files
+    public void loadTree() {
+        if (projectState.getMetadata() != null) {
+            InfModel model = projectState.getMetadata().getModel();
 
-        System.out.println("refreshTree");
-    }
+            TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("FakeRoot"));
+            //TreeItem<Resource> fakeRoot = new TreeItem<>(OWL.Thing);
+            fakeRoot.getChildren().addAll(RDFTreeItem.getRootItems(model));
 
-    public void loadTree(String... rootItems) {
-        TreeItem<String> root = new TreeItem<String>("Root Node");
-        root.setExpanded(true);
-        for (String itemString: rootItems) {
-            root.getChildren().add(new TreeItem<String>(itemString));
+            //TreeItem<Resource> root = new RDFTreeItem(model, OWL.Thing);
+
+            metadataTreeView.setRoot(fakeRoot);
+            //metadataTreeView.setShowRoot(false);
+        } else {
+            metadataTreeView.setRoot(null);
         }
-
-        metadataTreeView.setRoot(root);
     }
 }
