@@ -13,7 +13,7 @@ import javafx.collections.ObservableList;
 /**
  * A tree representation of the RDF model graph.
  */
-public class RDFTreeItem extends TreeItem<Resource> {
+public class RDFTreeItem extends TreeItem<String> {
 
     private Model model;
     private Resource resource;
@@ -25,14 +25,14 @@ public class RDFTreeItem extends TreeItem<Resource> {
      * @param res   an actual RDF Resource that a current TreeItem represents
      */
     public RDFTreeItem(Model mod, Resource res) {
-        super(res);
+        super(res.toString());
 
         model = mod;
         resource = res;
     }
 
-    public static ObservableList<TreeItem<Resource>> getRootClasses(OntModel schema) {
-        ObservableList<TreeItem<Resource>> items = FXCollections.observableArrayList();
+    public static ObservableList<TreeItem<String>> getRootClasses(OntModel schema) {
+        ObservableList<TreeItem<String>> items = FXCollections.observableArrayList();
 
         StmtIterator iterH = schema.listStatements(null, RDFS.subClassOf, OWL.Thing);
         while (iterH.hasNext()) {
@@ -43,8 +43,8 @@ public class RDFTreeItem extends TreeItem<Resource> {
         return items;
     }
 
-    public static ObservableList<TreeItem<Resource>> getRootItems(Model model) {
-        ObservableList<TreeItem<Resource>> items = FXCollections.observableArrayList();
+    public static ObservableList<TreeItem<String>> getRootItems(Model model) {
+        ObservableList<TreeItem<String>> items = FXCollections.observableArrayList();
 
         StmtIterator iterH = model.listStatements(null, RDFS.subClassOf, OWL.Thing);
         while (iterH.hasNext()) {
@@ -63,8 +63,8 @@ public class RDFTreeItem extends TreeItem<Resource> {
      *
      * @return  observable list of TreeItem nodes
      */
-    @Override public ObservableList<TreeItem<Resource>> getChildren() {
-        ObservableList<TreeItem<Resource>> children = FXCollections.observableArrayList();
+    @Override public ObservableList<TreeItem<String>> getChildren() {
+        ObservableList<TreeItem<String>> children = FXCollections.observableArrayList();
 
         // OWL class hierarchy
         StmtIterator iterH = model.listStatements(null, RDFS.subClassOf, resource);
@@ -92,11 +92,8 @@ public class RDFTreeItem extends TreeItem<Resource> {
             if (obj.isResource() && !obj.equals(OWL.Thing) && !predicate.equals(RDF.type)) {
 
                 // exclude Parent
-                TreeItem<Resource> parent = getParent();
-                if (parent != null && !parent
-                        .getValue()
-                        .toString()
-                        .equals(resource.toString())) {
+                TreeItem<String> parent = getParent();
+                if (parent != null && !parent.toString().equals(resource.toString())) {
                     children.add(new RDFTreeItem(model, obj.asResource()));
                 }
             }

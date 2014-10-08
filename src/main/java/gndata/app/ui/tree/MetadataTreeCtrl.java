@@ -1,7 +1,6 @@
 package gndata.app.ui.tree;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.state.ProjectState;
 import gndata.app.ui.util.RDFTreeItem;
 import javafx.fxml.FXML;
@@ -14,7 +13,7 @@ import javax.inject.Inject;
  */
 public class MetadataTreeCtrl {
 
-    @FXML private TreeView<Resource> metadataTreeView;
+    @FXML private TreeView<String> metadataTreeView;
 
     private final ProjectState projectState;
 
@@ -42,10 +41,17 @@ public class MetadataTreeCtrl {
         if (projectState.getMetadata() != null) {
             OntModel model = projectState.getMetadata().getSchema();
 
-            TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("Ontology"));
-            fakeRoot.getChildren().addAll(RDFTreeItem.getRootClasses(model));
+            TreeItem<String> schemaRoot = new TreeItem<>("Ontology");
+            schemaRoot.getChildren().addAll(RDFTreeItem.getRootClasses(model));
 
+            TreeItem<String> annotationsRoot = new TreeItem<>("Annotations");
+            // TODO add annotations
+
+            TreeItem<String> fakeRoot = new TreeItem<>("Fake Root");
+
+            fakeRoot.getChildren().addAll(schemaRoot, annotationsRoot);
             metadataTreeView.setRoot(fakeRoot);
+            metadataTreeView.setShowRoot(false);
         } else {
             metadataTreeView.setRoot(null);
         }
