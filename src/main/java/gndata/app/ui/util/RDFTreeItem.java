@@ -45,10 +45,13 @@ public class RDFTreeItem extends TreeItem<Resource> {
      * @param schema    RDF Model with ontology terms
      * @return          list of TreeItem(s) representing top classes
      */
-    public static ObservableList<TreeItem<Resource>> getRootClasses(OntModel schema) {
+    public static ObservableList<TreeItem<Resource>> getRootClasses(OntModel schema, Model annotations) {
         ObservableList<TreeItem<Resource>> items = FXCollections.observableArrayList();
 
-        items.addAll(asList(schema, new SimpleSelector(null, RDFS.subClassOf, OWL.Thing)));
+        SimpleSelector s = new SimpleSelector(null, RDFS.subClassOf, OWL.Thing);
+        List<Resource> lst = listSubjects(schema, s);
+        items.addAll(listTreeItems(lst, annotations));
+
         return items;
     }
 
@@ -80,10 +83,8 @@ public class RDFTreeItem extends TreeItem<Resource> {
         ObservableList<TreeItem<Resource>> children = FXCollections.observableArrayList();
 
         // OWL class hierarchy
-        children.addAll(asList(model, new SimpleSelector(null, RDFS.subClassOf, resource)));
-
-        // actual members of a class
-        children.addAll(asList(model, new SimpleSelector(null, RDF.type, resource)));
+        SimpleSelector s = new SimpleSelector(null, RDFS.subClassOf, resource);
+        children.addAll(listTreeItems(listSubjects(model, s), model));
 
         // properties of a current resource
         StmtIterator iterP = resource.listProperties();
@@ -100,6 +101,10 @@ public class RDFTreeItem extends TreeItem<Resource> {
                 children.add(new RDFTreeItem(model, obj.asResource()));
             }
         }
+
+        // actual members of a class
+        s = new SimpleSelector(null, RDF.type, resource);
+        children.addAll(listTreeItems(listSubjects(model, s), model));
 
         return children;
     }
@@ -120,5 +125,39 @@ public class RDFTreeItem extends TreeItem<Resource> {
         }
 
         return lst;
+    }
+
+    /**
+     * A shortcut method to query subjects using a given model/selector.
+     *
+     * @param m     RDF model to query
+     * @param s     RDF selector to query
+     * @return      list of resulting RDF resources
+     */
+    private static List<Resource> listSubjects(Model m, SimpleSelector s) {
+        List<Resource> lst = new ArrayList<>();
+
+        StmtIterator iter = m.listStatements(s);
+        while (iter.hasNext()) {
+            Statement st = iter.nextStatement();
+            lst.add(st.getSubject());
+        }
+
+        return lst;
+    }
+
+    /**
+     * A shortcut method to build a list of TreeItem(s) from a list of resources
+     * and a given model.
+     *
+     * @param lst   list of initial RDF resources
+     * @param m     RDF model to use for new items
+     * @return      list of TreeItems
+     */
+    private static List<TreeItem<Resource>> listTreeItems(List<Resource> lst, Model m) {
+        List<TreeItem<Resource>> items = new ArrayList<>();
+
+        lst.forEach(r -> items.add(new RDFTreeItem(m, r)));
+        return items;
     }
 }

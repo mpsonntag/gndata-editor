@@ -1,6 +1,7 @@
 package gndata.app.ui.tree;
 
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.state.ProjectState;
 import gndata.app.ui.util.RDFTreeItem;
@@ -45,9 +46,10 @@ public class MetadataTreeCtrl {
     private void loadTree() {
         if (projectState.getMetadata() != null) {
             OntModel model = projectState.getMetadata().getSchema();
+            Model annotations = projectState.getMetadata().getAnnotations();
 
-            TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("Ontology"));
-            fakeRoot.getChildren().addAll(RDFTreeItem.getRootClasses(model));
+            TreeItem<Resource> fakeRoot = new TreeItem<>(model.getResource("Metadata"));
+            fakeRoot.getChildren().addAll(RDFTreeItem.getRootClasses(model, annotations));
 
             metadataTreeView.setRoot(fakeRoot);
         } else {
