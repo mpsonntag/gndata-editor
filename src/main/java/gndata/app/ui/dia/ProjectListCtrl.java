@@ -1,17 +1,14 @@
 package gndata.app.ui.dia;
 
-import gndata.app.ui.util.DialogController;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.BorderPane;
-
 import java.net.URL;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.Map.Entry;
+import javafx.fxml.*;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+import gndata.app.ui.util.DialogController;
 
 /**
  * Controller for the {@link ProjectListView}.
@@ -21,27 +18,50 @@ public class ProjectListCtrl extends DialogController<String> implements Initial
     @FXML
     private BorderPane view;
     @FXML
-    private ListView<String> list;
+    private ListView<Entry<String, String>> list;
 
-    private ObservableList<String> items;
+    private Map<String, String> projects;
 
     public ProjectListCtrl(Map<String, String> projects) {
-        this.items = new SimpleListProperty<>();
-        this.items.addAll(projects.keySet());
+        this.projects = projects;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        list.setItems(items);
+        list.setCellFactory(view -> new ProjectListCell());
+        list.getItems().addAll(projects.entrySet());
     }
 
     @Override
     public String getResult() {
-        return null;
+        SelectionModel<Entry<String, String>> sel = list.getSelectionModel();
+        if (!sel.isEmpty()) {
+            return sel.getSelectedItem().getKey();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Node getView() {
         return view;
+    }
+
+    private class ProjectListCell extends ListCell<Entry<String, String>> {
+
+        @Override
+        protected void updateItem(Entry<String, String> content, boolean empty) {
+            super.updateItem(content, empty);
+
+            if (!empty) {
+                Label head = new Label(content.getValue());
+                head.setStyle("-fx-font-size: 1.2em; -fx-font-weight: bold");
+
+                Label other = new Label(content.getKey());
+
+                setGraphic(new VBox(head, other));
+            }
+        }
+
     }
 }

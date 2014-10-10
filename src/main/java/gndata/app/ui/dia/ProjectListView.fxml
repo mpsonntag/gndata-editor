@@ -16,14 +16,17 @@
     <!-- title -->
     <top>
         <VBox styleClass="dialog-header">
-            <Label>Project Settings</Label>
+            <Label>Recent Projects</Label>
         </VBox>
     </top>
 
     <!-- form -->
     <center>
-        <ListView fx:id="list"/>
+        <VBox styleClass="dialog-form">
+            <ListView fx:id="list"/>
+        </VBox>
     </center>
+
 
     <!-- buttons -->
     <bottom>
