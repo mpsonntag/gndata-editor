@@ -1,8 +1,9 @@
 package gndata.lib.srv;
 
-import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.reasoner.ValidityReport;
-import gndata.lib.util.FakeModel;
+import gndata.lib.util.FakeRDFModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -22,9 +23,10 @@ public class MetadataServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        InfModel model = FakeModel.getFakeModel();
+        OntModel schema = FakeRDFModel.getFakeSchema();
+        Model annotations = FakeRDFModel.getFakeAnnotations();
 
-        service = new MetadataService(model);
+        service = new MetadataService(schema, annotations);
     }
 
     @After
@@ -36,16 +38,30 @@ public class MetadataServiceTest {
 
     @Test
     public void testGet() throws Exception {
-        assertNotNull(service.getModel());
+        OntModel schema = service.getSchema();
+        Model annotations = service.getAnnotations();
+
+        assertNotNull(schema);
+        assertNotNull(annotations);
+
+        assert(schema.listStatements().hasNext());
+        assert(annotations.listStatements().hasNext());
+    }
+
+    @Test
+    public void testValid() throws Exception {
+        ValidityReport validity = service.getAnnotationsWithInference().validate();
+        assert(validity.isValid());
+        assert(validity.isClean());
     }
 
     @Test
     public void testCreate() throws Exception {
         MetadataService ms = MetadataService.create(tmpPath.toString());
-        InfModel model = ms.getModel();
+        OntModel schema = ms.getSchema();
+        Model annotations = ms.getAnnotations();
 
-        ValidityReport validity = model.validate();
-        assert(validity.isValid());
-        assert(validity.isClean());
+        assertNotNull(schema);
+        assertNotNull(annotations);
     }
 }

@@ -1,9 +1,9 @@
 package gndata.app.ui.main;
 
-import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.ui.util.RDFTreeItem;
-import gndata.lib.util.FakeModel;
+import gndata.lib.util.FakeRDFModel;
 import javafx.scene.control.TreeItem;
 
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class RDFTreeItemTest {
 
     @Before
     public void setUp() throws Exception {
-        InfModel model = FakeModel.getFakeModel();
+        Model model = FakeRDFModel.getFakeAnnotations();
         Resource person = model.getResource("http://xmlns.com/foaf/0.1/Person");
 
         root = new RDFTreeItem(model, person);
