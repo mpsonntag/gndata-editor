@@ -1,6 +1,7 @@
 package gndata.app.ui.main;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.ui.util.RDFTreeItem;
 import gndata.lib.util.FakeRDFModel;
@@ -27,7 +28,7 @@ public class RDFTreeItemTest {
      * @param name      String of the child resource to search
      * @return          Optional TreeItem
      */
-    private static Optional<TreeItem<Resource>> getChild(TreeItem<Resource> where, String name) {
+    private static Optional<TreeItem<RDFNode>> getChild(TreeItem<RDFNode> where, String name) {
         return where.getChildren()
                 .stream()
                 .filter(a -> a.getValue()
@@ -41,7 +42,7 @@ public class RDFTreeItemTest {
         Model model = FakeRDFModel.getFakeAnnotations();
         Resource person = model.getResource("http://xmlns.com/foaf/0.1/Person");
 
-        root = new RDFTreeItem(model, person);
+        root = new RDFTreeItem(person);
     }
 
     @Test
@@ -57,10 +58,10 @@ public class RDFTreeItemTest {
     @Test
     public void testResource() throws Exception {
         // ensure Tim is in the list of persons
-        TreeItem<Resource> tbl_node = getChild(root, tbl).get();
+        TreeItem<RDFNode> tbl_node = getChild(root, tbl).get();
 
         // ensure Tim knows Robert
-        TreeItem<Resource> rhm_node = getChild(tbl_node, rhm).get();
+        TreeItem<RDFNode> rhm_node = getChild(tbl_node, rhm).get();
 
         // ensure Robert "parent" friend is Tim
         assertEquals(rhm_node.getParent(), tbl_node);
