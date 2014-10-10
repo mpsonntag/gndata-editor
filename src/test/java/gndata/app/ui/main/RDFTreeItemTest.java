@@ -27,10 +27,12 @@ public class RDFTreeItemTest {
      * @param name      String of the child resource to search
      * @return          Optional TreeItem
      */
-    private static Optional<TreeItem<String>> getChild(TreeItem<String> where, String name) {
+    private static Optional<TreeItem<Resource>> getChild(TreeItem<Resource> where, String name) {
         return where.getChildren()
                 .stream()
-                .filter(a -> a.getValue().equals(name))
+                .filter(a -> a.getValue()
+                        .toString()
+                        .equals(name))
                 .findFirst();
     }
 
@@ -55,10 +57,10 @@ public class RDFTreeItemTest {
     @Test
     public void testResource() throws Exception {
         // ensure Tim is in the list of persons
-        TreeItem<String> tbl_node = getChild(root, tbl).get();
+        TreeItem<Resource> tbl_node = getChild(root, tbl).get();
 
         // ensure Tim knows Robert
-        TreeItem<String> rhm_node = getChild(tbl_node, rhm).get();
+        TreeItem<Resource> rhm_node = getChild(tbl_node, rhm).get();
 
         // ensure Robert "parent" friend is Tim
         assertEquals(rhm_node.getParent(), tbl_node);

@@ -39,7 +39,7 @@ public class MetadataService {
     /**
      * Returns an RDF Model instance to access annotations as stored RDF triples.
      *
-     * @return  Ontology Model
+     * @return  RDF Model
      */
     public Model getAnnotations() {
         return annotations;
