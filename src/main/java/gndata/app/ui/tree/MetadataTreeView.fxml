@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gndata.app.ui.tree.MetadataTreeCtrl"
+            fx:id="metadataPane"
+            styleClass="metadata-pane">
+
+    <TreeView fx:id="metadataTreeView"
+              layoutX="0" layoutY="0" prefHeight="600.0" prefWidth="500.0"/>
+
+</AnchorPane>
