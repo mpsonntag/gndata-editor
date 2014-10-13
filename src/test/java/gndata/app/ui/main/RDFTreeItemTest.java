@@ -69,4 +69,11 @@ public class RDFTreeItemTest {
         // ensure Tim is not in the Robert's "children" friends list
         assertFalse(getChild(rhm_node, tbl).isPresent());
     }
+
+    @Test
+    public void testType() throws Exception {
+        TreeItem<RDFNode> tbl_node = getChild(root, tbl).get();
+
+        assert(!tbl_node.isLeaf());
+    }
 }
