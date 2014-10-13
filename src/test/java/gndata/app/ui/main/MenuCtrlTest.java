@@ -1,20 +1,14 @@
 package gndata.app.ui.main;
 
-import gndata.app.state.AppState;
-import gndata.app.state.ProjectState;
-import gndata.lib.config.GlobalConfig;
-import gndata.lib.config.ProjectConfig;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 import static org.junit.Assert.*;
+
+import gndata.app.state.*;
+import gndata.lib.config.*;
+import org.apache.commons.io.FileUtils;
+import org.junit.*;
 
 public class MenuCtrlTest {
 
@@ -62,7 +56,6 @@ public class MenuCtrlTest {
     @Test
     public void testOpenProject() throws Exception {
         // TODO write test
-        ctrl.openProject();
     }
 
     @Test
