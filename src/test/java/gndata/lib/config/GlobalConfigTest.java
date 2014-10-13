@@ -1,14 +1,12 @@
 package gndata.lib.config;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static gndata.lib.config.GlobalConfig.ProjectItem;
+import static org.junit.Assert.*;
 
 public class GlobalConfigTest {
 
@@ -27,30 +25,30 @@ public class GlobalConfigTest {
     }
 
     @Test
-    public void testAppendProject() throws Exception {
-        assert(conf.getProjects().isEmpty());
-        conf.appendProject("myName", "myPath");
-        assert(conf.getProjects().size() == 1);
-        ProjectItem item = conf.getProjects().get(0);
-        assert(item.name.equals("myName"));
-        assert(item.path.equals("myPath"));
+    public void testSetProject() throws Exception {
+        assertTrue(conf.getProjects().isEmpty());
+
+        conf.setProject("MyPath", "MyName");
+        assertEquals(1, conf.getProjects().size());
+        assertTrue(conf.hasProject("MyPath"));
+        assertEquals("MyName", conf.getProjectName("MyPath"));
     }
 
     @Test
     public void testLoadStore() throws Exception {
         conf = GlobalConfig.load(tmpPath.toString());
-        assert(conf.getProjects().isEmpty());
-        conf.getProjects().add(new ProjectItem("myName", "myPath"));
+        assertTrue(conf.getProjects().isEmpty());
+        conf.setProject("MyPath", "MyName");
         conf.store();
         conf = GlobalConfig.load(tmpPath.toString());
-        ProjectItem item = conf.getProjects().get(0);
-        assert(item.name.equals("myName"));
-        assert(item.path.equals("myPath"));
+        assertEquals(1, conf.getProjects().size());
+        assertTrue(conf.hasProject("MyPath"));
+        assertEquals("MyName", conf.getProjectName("MyPath"));
     }
 
     @Test
     public void testMakeConfigPath() throws Exception {
-        assert(GlobalConfig.makeConfigPath().contains(System.getProperty("user.home")));
+        assertTrue(GlobalConfig.makeConfigPath().contains(System.getProperty("user.home")));
     }
 
 }

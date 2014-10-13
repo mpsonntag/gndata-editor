@@ -12,27 +12,47 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Global application configuration.
  */
 public class GlobalConfig extends AbstractConfig {
 
-    private List<ProjectItem> projects = new ArrayList<>();
+    private Map<String, String> projects;
 
 
-    public List<ProjectItem> getProjects() {
+    public GlobalConfig() {
+        projects = new TreeMap<>();
+    }
+
+
+    public Map<String, String> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<ProjectItem> projects) {
-        this.projects = projects;
+    public void setProject(String path, String name) {
+        path = Paths.get(path)
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+        projects.put(path, name);
     }
 
-    public void appendProject(String name, String path) {
-        this.projects.add(new ProjectItem(name, path));
+    public boolean hasProject(String path) {
+        path = Paths.get(path)
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+        return projects.containsKey(path);
+    }
+
+    public String getProjectName(String path) {
+        path = Paths.get(path)
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+        return projects.get(path);
     }
 
     /**
@@ -74,15 +94,4 @@ public class GlobalConfig extends AbstractConfig {
                 .toString();
     }
 
-    /**
-     * Just a small container for known projects and their location.
-     */
-    public static class ProjectItem {
-        public String name, path;
-
-        public ProjectItem(String name, String path) {
-            this.name = name;
-            this.path = path;
-        }
-    }
 }

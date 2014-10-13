@@ -25,7 +25,6 @@ public class MainCtrl implements Initializable {
             view.setTop(menuView.getScene());
             view.setLeft(metadataView.getScene());
         } catch (IOException e) {
-            // TODO show error dialog and quit program
             e.printStackTrace();
         }
     }

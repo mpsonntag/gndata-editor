@@ -9,13 +9,12 @@ import javax.inject.Inject;
  */
 public class DIView extends AbstractView {
 
+    private final Injector injector;
+
     @Inject
-    private Injector injector;
-
-    public DIView() {
-        super();
-
-        getLoader().setControllerFactory(cls -> injector.getInstance(cls));
+    public DIView(Injector injector) {
+        this.injector = injector;
+        getLoader().setControllerFactory(cls -> this.injector.getInstance(cls));
     }
 
 }

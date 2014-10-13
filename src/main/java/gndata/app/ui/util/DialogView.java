@@ -4,9 +4,9 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Callback;
 
 import java.io.IOException;
+
 /**
  * A view class that helps to show a view as a modal dialog.
  * This class does not use dependency injection for controller instantiation. Instead the
@@ -24,9 +24,11 @@ public abstract class DialogView<T> extends AbstractView {
      * @param controller The controller which should be passed to the view.
      */
     public DialogView(DialogController<T> controller) {
-        super();
         this.controller = controller;
-        getLoader().setControllerFactory(new PseudoFactory(controller));
+        getLoader().setControllerFactory(cls -> this.controller);
+
+        String path = "/" + DialogView.class.getCanonicalName().replace('.', '/') + ".css";
+        getExtraStyles().add(getClass().getResource(path));
     }
 
     /**
@@ -55,24 +57,6 @@ public abstract class DialogView<T> extends AbstractView {
             return controller.getResult();
         else
             return null;
-    }
-
-    /**
-     * This is necessary because a lambda would lead to a security violation.
-     * TODO find a nice way to avoid this class
-     */
-    private static class PseudoFactory implements Callback<Class<?>, Object> {
-
-        final Object object;
-
-        PseudoFactory(Object object) {
-            this.object = object;
-        }
-
-        @Override
-        public Object call(Class<?> param) {
-            return object;
-        }
     }
 
 }

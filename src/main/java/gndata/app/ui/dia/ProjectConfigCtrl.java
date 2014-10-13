@@ -5,6 +5,7 @@ import gndata.lib.config.ProjectConfig;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -17,14 +18,15 @@ import java.util.ResourceBundle;
  */
 public class ProjectConfigCtrl extends DialogController<ProjectConfig> implements Initializable {
 
-    @FXML private BorderPane view;
-
-    @FXML private TextField nameInput;
-    @FXML private TextArea  descriptionInput;
-
     final ProjectConfig config;
     final SimpleStringProperty name;
     final SimpleStringProperty description;
+    @FXML
+    private BorderPane view;
+    @FXML
+    private TextField nameInput;
+    @FXML
+    private TextArea descriptionInput;
 
     /**
      * Constructor.
@@ -49,33 +51,6 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     }
 
     /**
-     * Cancel the editing.
-     * Sets {@link #cancelled} to true and hides the window.
-     */
-    public void cancel() {
-        setCancelled(true);
-        hide();
-    }
-
-    /**
-     * Submit the editing result.
-     * Sets {@link #cancelled} to false and hides the window.
-     */
-    public void ok() {
-        setCancelled(false);
-        hide();
-    }
-
-    /**
-     * Hides the window if it is currently showing.
-     */
-    public void hide() {
-        if (view != null && view.getScene().getWindow().isShowing()) {
-            view.getScene().getWindow().hide();
-        }
-    }
-
-    /**
      * Return the project configuration.
      * If {@link #cancelled} is false the configuration will be updated,
      * otherwise the unmodified configuration is returned.
@@ -90,6 +65,11 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
         }
 
         return config;
+    }
+
+    @Override
+    public Node getView() {
+        return view;
     }
 
 }

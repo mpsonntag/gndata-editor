@@ -3,8 +3,9 @@ package gndata.app.ui.main;
 import gndata.app.state.AppState;
 import gndata.app.state.ProjectState;
 import gndata.app.ui.dia.ProjectConfigView;
+import gndata.app.ui.dia.ProjectListView;
+import gndata.lib.config.GlobalConfig;
 import gndata.lib.config.ProjectConfig;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.stage.DirectoryChooser;
@@ -18,10 +19,10 @@ import java.io.IOException;
  */
 public class MenuCtrl {
 
-    @FXML private MenuBar menu;
-
     private final AppState appState;
     private final ProjectState projectState;
+    @FXML
+    private MenuBar menu;
 
     @Inject
     public MenuCtrl(AppState appState, ProjectState projectState) {
@@ -45,10 +46,11 @@ public class MenuCtrl {
             if (config != null) {
                 config.store();
                 projectState.setConfig(config);
+
+                appState.getConfig().setProject(config.getProjectPath(), config.getName());
+                appState.getConfig().store();
             }
         } catch (IOException e) {
-            // TODO nice exception dialog here
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -81,7 +83,23 @@ public class MenuCtrl {
      * Open a previously opened project.
      */
     public void openProject() {
-        System.out.println("openProject");
+        String configPath = showListDialog(this.appState.getConfig());
+
+        if (configPath != null) {
+            try {
+                ProjectConfig config = ProjectConfig.load(configPath);
+                projectState.setConfig(config);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(configPath);
+    }
+
+
+    public String showListDialog(GlobalConfig config) {
+        ProjectListView listView = new ProjectListView(config.getProjects());
+        return listView.showDialog(menu.getScene().getWindow());
     }
 
     /**
