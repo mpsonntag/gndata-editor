@@ -8,6 +8,7 @@ import gndata.lib.config.GlobalConfig;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.apache.jena.atlas.logging.LogCtl;
 
 
 public class App extends Application {

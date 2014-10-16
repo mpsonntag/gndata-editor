@@ -2,7 +2,12 @@ package gndata.lib.srv;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ValidityReport;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 import gndata.lib.util.FakeRDFModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -18,7 +23,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class MetadataServiceTest {
 
+    private static String tbl = "http://www.w3.org/People/Berners-Lee/card#i";
+    private static String rhm = "http://dig.csail.mit.edu/2007/wiki/people/RobertHoffmann#RMH";
+
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
+
     MetadataService service;
 
     @Before
@@ -63,5 +72,28 @@ public class MetadataServiceTest {
 
         assertNotNull(schema);
         assertNotNull(annotations);
+    }
+
+    @Test
+    public void testAnnotations() throws Exception {
+        Model annotations = service.getAnnotations("Tim");
+
+        assert(annotations.listStatements().hasNext());
+
+        Resource tbl_resource = annotations.getResource(tbl);
+        assert(annotations.contains(tbl_resource, RDF.type));
+
+        Resource rhm_resource = annotations.getResource(rhm);
+        assert(!annotations.contains(rhm_resource, RDF.type));
+    }
+
+    @Test
+    public void testReasoner() throws Exception {
+        Reasoner r = service.getReasoner();
+
+        assert(r.supportsProperty(RDFS.subClassOf));
+        assert(r.supportsProperty(OWL.disjointWith));
+
+        // TODO write more tests when Reasoner is used
     }
 }

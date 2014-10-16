@@ -1,15 +1,12 @@
 package gndata.app.ui.util;
 
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import javafx.collections.FXCollections;
-import javafx.scene.control.TreeItem;
 import javafx.collections.ObservableList;
-
-import java.util.ArrayList;
-import java.util.List;
+import javafx.scene.control.TreeItem;
 
 
 /**
@@ -40,8 +37,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
      * @param model     RDF Model with ontology terms
      * @return          list of TreeItem(s) representing top classes
      */
-    public static ObservableList<TreeItem<RDFNode>> getRootClasses(Model model) {
-        ObservableList<TreeItem<RDFNode>> items = FXCollections.observableArrayList();
+    public static ObservableList<RDFTreeItem> getRootClasses(Model model) {
+        ObservableList<RDFTreeItem> items = FXCollections.observableArrayList();
 
         NodeIterator iter = model.listObjectsOfProperty(RDF.type);
         while (iter.hasNext()) {
@@ -50,7 +47,7 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 Resource r = st.asResource();
 
                 // exclude OWL definitions from the root items
-                if (!r.getNameSpace().equals("http://www.w3.org/2002/07/owl#")) {
+                if (r.getNameSpace() != null && !r.getNameSpace().equals(OWL.getURI())) {
                     items.add(new RDFTreeItem(r));
                 }
             }
@@ -75,6 +72,15 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     }
 
     /**
+     * Defines whether this TreeItem represents a Resource or a Literal.
+     *
+     * @return  is actual node a Literal.
+     */
+    public boolean isLiteralNode() {
+        return node.isLiteral();
+    }
+
+    /**
      * Builds children items of this TreeItem node. List of children contains
      * - subclasses of an actual resource if it is a Class
      * - actual members of a class if it is a Class
@@ -82,14 +88,14 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
      *
      * @return  observable list of TreeItem nodes
      */
-    private ObservableList<TreeItem<RDFNode>> buildChildren() {
-        ObservableList<TreeItem<RDFNode>> children = FXCollections.observableArrayList();
+    private ObservableList<RDFTreeItem> buildChildren() {
+        ObservableList<RDFTreeItem> children = FXCollections.observableArrayList();
 
         if (node.isResource()) {
             Resource r = node.asResource();
             Model m = node.getModel();
 
-            // properties of a current resource
+            // properties and related objects of a current resource
             StmtIterator iter = r.listProperties();
             while (iter.hasNext()) {
                 Statement st = iter.nextStatement();
@@ -105,7 +111,12 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 }
             }
 
-            // actual members of a class
+            // sort that related object go first, literals after
+            children.sort((a, b) ->
+                    !a.isLiteralNode() && b.isLiteralNode() ? -1 :
+                     a.isLiteralNode() && b.isLiteralNode() ? 0 : 1);
+
+            // actual members of a class, for the top tree level
             iter = m.listStatements(null, RDF.type, r);
             while (iter.hasNext()) {
                 Statement st = iter.nextStatement();
