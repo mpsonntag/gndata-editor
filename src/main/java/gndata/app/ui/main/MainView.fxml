@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
@@ -10,22 +10,12 @@
             prefHeight="620.0" prefWidth="1000.0"
             fx:id="view">
 
-
-    <!--Main content-->
     <center>
-        <TabPane>
+        <SplitPane xmlns:fx="http://javafx.com/fxml/1"
+                   xmlns="http://javafx.com/javafx/8"
+                   fx:id="splitPane" orientation="HORIZONTAL">
 
-            <Tab text="foo">
-                <VBox prefWidth="Infinity" prefHeight="Infinity" styleClass="vbox">
-                    <Label text="Hello" />
-                </VBox>
-            </Tab>
-            <Tab text="bar">
-                <VBox prefWidth="Infinity" prefHeight="Infinity" styleClass="vbox">
-                    <Label text="Hello" />
-                </VBox>
-            </Tab>
-        </TabPane>
+        </SplitPane>
     </center>
 
 </BorderPane>

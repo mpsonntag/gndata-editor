@@ -2,12 +2,23 @@ package gndata.lib.srv;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.atlas.lib.StrUtils;
+import org.apache.jena.atlas.logging.LogCtl;
 import org.apache.jena.riot.RDFDataMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,6 +28,15 @@ import java.nio.file.Path;
  * Class implementing main functions working with project metadata
  */
 public class MetadataService {
+
+    static { LogCtl.setLog4j() ; }
+    static Logger log = LoggerFactory.getLogger("GNData");
+
+    private static final String stdPrefix = StrUtils.strjoinNL(
+        "PREFIX rdf: <" + RDF.getURI() + ">",
+        "PREFIX rdfs: <" + RDFS.getURI() + ">",
+        "PREFIX owl: <" + OWL.getURI() + ">"
+    );
 
     private OntModel schema;    // union model for all imported ontology files
     private Model annotations;  // model for data annotations
@@ -46,6 +66,34 @@ public class MetadataService {
     }
 
     /**
+     * Filters annotation literals by a given string.
+     *
+     * @return  RDF Model with Subjects with matched literals and their RDF:types.
+     */
+    public Model getAnnotations(String literalFilter) {
+        if (literalFilter.length() > 0) {
+            String qs = StrUtils.strjoinNL(
+                "CONSTRUCT { ",
+                    "?s rdf:type ?t .",
+                    "?s ?p ?o",
+                "}",
+                "WHERE { ",
+                    "?s rdf:type ?t .",
+                    "?s ?p ?o . ",
+                    "FILTER (",
+                        "(STR(?p) != rdf:type) && ",
+                        "isLiteral(?o) && ",
+                        "regex(?o, '" + literalFilter + "', 'i')",
+                ")}"
+            );
+
+            return executeSPARQL(stdPrefix + "\n" + qs);
+        } else {
+            return getAnnotations();
+        }
+    }
+
+    /**
      * Creates a new model with inferred relations based on loaded ontology,
      * annotations and reasoner.
      *
@@ -63,6 +111,16 @@ public class MetadataService {
     public Reasoner getReasoner() {
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
         return reasoner.bindSchema(schema);
+    }
+
+    private Model executeSPARQL(String queryString) {
+        Query query = QueryFactory.create(queryString);
+        QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());
+
+        Model resultModel = qexec.execConstruct();
+        qexec.close();
+
+        return resultModel;
     }
 
     /**

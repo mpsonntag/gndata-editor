@@ -3,12 +3,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.tree.MetadataTreeCtrl"
-            fx:id="metadataPane"
-            styleClass="metadata-pane">
+            fx:id="metadataPane">
+    <top>
+        <TextField  fx:id="searchInput"/>
+    </top>
 
-    <TreeView fx:id="metadataTreeView"
-              layoutX="0" layoutY="0" prefHeight="600.0" prefWidth="500.0"/>
+    <center>
+        <TreeView xmlns:fx="http://javafx.com/fxml"
+                  fx:id="metadataTreeView"
+                  layoutX="0" layoutY="0" prefHeight="600.0" prefWidth="500.0"/>
+    </center>
 
-</AnchorPane>
+</BorderPane>

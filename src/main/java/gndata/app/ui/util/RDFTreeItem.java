@@ -47,7 +47,7 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 Resource r = st.asResource();
 
                 // exclude OWL definitions from the root items
-                if (!r.getNameSpace().equals("http://www.w3.org/2002/07/owl#")) {
+                if (r.getNameSpace() != null && !r.getNameSpace().equals(OWL.getURI())) {
                     items.add(new RDFTreeItem(r));
                 }
             }
