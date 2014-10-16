@@ -1,6 +1,7 @@
 package gndata.app.ui.main;
 
 import gndata.app.ui.tree.MetadataTreeView;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +14,10 @@ import java.util.ResourceBundle;
 
 public class MainCtrl implements Initializable {
 
+    @FXML
+    private SplitPane splitPane;
+
+    @FXML
     public BorderPane view;
 
     @Inject
@@ -28,11 +33,8 @@ public class MainCtrl implements Initializable {
             view.setTop(menuView.getScene());
 
             // split pane with metadata tree
-            SplitPane s = (SplitPane) view.getCenter();
-            s.getItems().add(metadataView.getScene());
-
-            HBox rightArea = new HBox();  // dummy HBox
-            s.getItems().add(rightArea);
+            splitPane.getItems().add(metadataView.getScene());
+            splitPane.getItems().add(new HBox()); // dummy HBox
 
         } catch (IOException e) {
             e.printStackTrace();
