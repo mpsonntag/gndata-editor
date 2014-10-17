@@ -1,4 +1,4 @@
-package gndata.app.ui.tree;
+package gndata.app.ui.tree.metadata;
 
 import com.google.inject.*;
 import gndata.app.ui.util.DIView;

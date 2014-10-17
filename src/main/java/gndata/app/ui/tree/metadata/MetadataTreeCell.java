@@ -1,5 +1,6 @@
-package gndata.app.ui.tree;
+package gndata.app.ui.tree.metadata;
 
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -33,17 +34,29 @@ public final class MetadataTreeCell extends TreeCell<RDFNode> {
         }
     }
 
+    /**
+     * Building a "<predicate>: <literal> (<type>)" string
+      */
     private String renderLiteral(RDFNode item) {
         String text = "";
 
-        // building a "<predicate>: <literal>" string
+        // "<predicate>: "
         RDFNode r = getTreeItem().getParent().getValue();
         StmtIterator iter = item.getModel().listStatements(r.asResource(), null, item);
         if (iter.hasNext()) {
             text += iter.nextStatement().getPredicate().getLocalName() + ": ";
         }
 
-        return text + item.toString();
+        // "<predicate>: <literal>"
+        Literal l = item.asLiteral();
+        text += l.getValue().toString();
+
+        // "<predicate>: <literal> (<type>)"
+        if (l.getDatatype() != null) {
+            text += " (" + l.getDatatype().getJavaClass().getSimpleName() + ")";
+        }
+
+        return text;
     }
 
     private String renderResource(RDFNode item) {

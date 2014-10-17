@@ -1,12 +1,11 @@
 package gndata.app.ui.main;
 
-import gndata.app.ui.tree.MetadataTreeView;
+import gndata.app.ui.tree.metadata.MetadataTreeView;
 import gndata.app.ui.tree.files.FileTreeView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import java.io.IOException;

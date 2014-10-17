@@ -1,10 +1,8 @@
 package gndata.app.ui.tree;
 
-import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.state.ProjectState;
+import gndata.app.ui.tree.metadata.MetadataTreeCtrl;
 import gndata.lib.config.ProjectConfig;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TreeItem;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
