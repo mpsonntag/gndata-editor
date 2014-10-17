@@ -52,6 +52,10 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 }
             }
         }
+
+        // sorting in alphabetical order
+        items.sort((a, b) -> a.toString().compareTo(b.toString()));
+
         return items;
     }
 
@@ -111,7 +115,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 }
             }
 
-            // sort that related object go first, literals after
+            // sort alphabetically + separate related objects and literals
+            children.sort((a, b) -> a.toString().compareTo(b.toString()));
             children.sort((a, b) ->
                     !a.isLiteralNode() && b.isLiteralNode() ? -1 :
                      a.isLiteralNode() && b.isLiteralNode() ? 0 : 1);
