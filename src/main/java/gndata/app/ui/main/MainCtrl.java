@@ -1,6 +1,7 @@
 package gndata.app.ui.main;
 
 import gndata.app.ui.tree.MetadataTreeView;
+import gndata.app.ui.tree.files.FileTreeView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
@@ -26,6 +27,9 @@ public class MainCtrl implements Initializable {
     @Inject
     private MetadataTreeView metadataView;
 
+    @Inject
+    private FileTreeView fileView;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -34,7 +38,7 @@ public class MainCtrl implements Initializable {
 
             // split pane with metadata tree
             splitPane.getItems().add(metadataView.getScene());
-            splitPane.getItems().add(new HBox()); // dummy HBox
+            splitPane.getItems().add(fileView.getScene());
 
         } catch (IOException e) {
             e.printStackTrace();
