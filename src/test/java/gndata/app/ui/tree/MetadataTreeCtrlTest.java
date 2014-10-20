@@ -1,7 +1,6 @@
 package gndata.app.ui.tree;
 
 import gndata.app.state.ProjectState;
-import gndata.app.ui.tree.metadata.MetadataTreeCtrl;
 import gndata.lib.config.ProjectConfig;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
