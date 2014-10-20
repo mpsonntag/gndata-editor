@@ -70,7 +70,6 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     @Override public boolean isLeaf() {
         if (isFirstTimeLeaf) {
             isFirstTimeLeaf = false;
-            //isLeaf = getChildren().size() == 0;
             isLeaf = isLiteralNode();
         }
         return isLeaf;

@@ -1,4 +1,4 @@
-package gndata.app.ui.tree;
+package gndata.app.ui.metadata;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -17,7 +17,7 @@ import javax.inject.Inject;
 /**
  * Controller for the metadata tree view.
  */
-public class MetadataTreeCtrl {
+public class TreeCtrl {
 
     private final ProjectState projectState;
 
@@ -31,7 +31,7 @@ public class MetadataTreeCtrl {
     private BorderPane metadataPane;
 
     @Inject
-    public MetadataTreeCtrl(ProjectState projectState) {
+    public TreeCtrl(ProjectState projectState) {
         this.projectState = projectState;
     }
 
@@ -48,7 +48,7 @@ public class MetadataTreeCtrl {
         searchInput.setText("type search text here and press Enter");
 
         // facade for the metadata tree items
-        metadataTreeView.setCellFactory((p) -> new MetadataTreeCell());
+        metadataTreeView.setCellFactory((p) -> new TreeDisplay());
 
         /*
         // TODO listener for tree item selection

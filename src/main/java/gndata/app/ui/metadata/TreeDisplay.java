@@ -1,4 +1,4 @@
-package gndata.app.ui.tree;
+package gndata.app.ui.metadata;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -12,9 +12,9 @@ import javafx.scene.paint.Color;
 /**
  * Facade class for metadata tree items.
  */
-public final class MetadataTreeCell extends TreeCell<RDFNode> {
+public final class TreeDisplay extends TreeCell<RDFNode> {
 
-    public MetadataTreeCell() {}
+    public TreeDisplay() {}
 
     @Override
     public void updateItem(RDFNode item, boolean empty) {

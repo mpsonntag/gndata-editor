@@ -1,6 +1,6 @@
 package gndata.app.ui.main;
 
-import gndata.app.ui.tree.MetadataTreeView;
+import gndata.app.ui.metadata.TreeView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
@@ -24,7 +24,7 @@ public class MainCtrl implements Initializable {
     private MenuView menuView;
 
     @Inject
-    private MetadataTreeView metadataView;
+    private TreeView metadataView;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

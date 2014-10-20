@@ -1,4 +1,4 @@
-package gndata.app.ui.tree;
+package gndata.app.ui.metadata;
 
 import com.google.inject.*;
 import gndata.app.ui.util.DIView;
@@ -6,10 +6,10 @@ import gndata.app.ui.util.DIView;
 /**
  * Tree view for the project metadata.
  */
-public class MetadataTreeView extends DIView {
+public class TreeView extends DIView {
 
     @Inject
-    public MetadataTreeView(Injector injector) {
+    public TreeView(Injector injector) {
         super(injector);
     }
 
