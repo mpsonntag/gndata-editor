@@ -29,9 +29,6 @@ import java.nio.file.Path;
  */
 public class MetadataService {
 
-    static { LogCtl.setLog4j() ; }
-    static Logger log = LoggerFactory.getLogger("GNData");
-
     private static final String stdPrefix = StrUtils.strjoinNL(
         "PREFIX rdf: <" + RDF.getURI() + ">",
         "PREFIX rdfs: <" + RDFS.getURI() + ">",
