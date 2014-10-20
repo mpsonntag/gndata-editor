@@ -70,7 +70,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     @Override public boolean isLeaf() {
         if (isFirstTimeLeaf) {
             isFirstTimeLeaf = false;
-            isLeaf = getChildren().size() == 0;
+            //isLeaf = getChildren().size() == 0;
+            isLeaf = isLiteralNode();
         }
         return isLeaf;
     }
@@ -95,39 +96,62 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     private ObservableList<RDFTreeItem> buildChildren() {
         ObservableList<RDFTreeItem> children = FXCollections.observableArrayList();
 
-        if (node.isResource()) {
-            Resource r = node.asResource();
-            Model m = node.getModel();
+        if (!node.isResource()) return children;
 
-            // properties and related objects of a current resource
-            StmtIterator iter = r.listProperties();
-            while (iter.hasNext()) {
-                Statement st = iter.nextStatement();
+        Resource r = node.asResource();
+        Model m = node.getModel();
 
-                Property p = st.getPredicate();
-                RDFNode obj = st.getObject();
+        // properties and related objects of a current resource
+        StmtIterator iter = r.listProperties();
+        while (iter.hasNext()) {
+            Statement st = iter.nextStatement();
 
-                // exclude parent, type, subclass and Thing triples
-                if (!obj.equals(getParent().getValue()) && !obj.equals(OWL.Thing)
-                        && !p.equals(RDF.type) && !p.equals(RDFS.subClassOf)) {
+            Property p = st.getPredicate();
+            RDFNode obj = st.getObject();
 
-                    children.add(new RDFTreeItem(obj));
-                }
+            // exclude parent, type, subclass and Thing triples
+            if (!obj.equals(getParent().getValue()) && !obj.equals(OWL.Thing)
+                    && !p.equals(RDF.type) && !p.equals(RDFS.subClassOf)) {
+
+                children.add(new RDFTreeItem(obj));
             }
+        }
 
-            // sort alphabetically + separate related objects and literals
-            children.sort((a, b) -> a.toString().compareTo(b.toString()));
-            children.sort((a, b) ->
-                    !a.isLiteralNode() && b.isLiteralNode() ? -1 :
-                     a.isLiteralNode() && b.isLiteralNode() ? 0 : 1);
-
-            // actual members of a class, for the top tree level
-            iter = m.listStatements(null, RDF.type, r);
+        // actual members of a class, for the top tree level
+        iter = m.listStatements(null, RDF.type, r);
+        if (iter.hasNext()) {
             while (iter.hasNext()) {
                 Statement st = iter.nextStatement();
                 children.add(new RDFTreeItem(st.getSubject()));
             }
+        } else { // reverse relationships
+            iter = m.listStatements(null, null, r);
+            while (iter.hasNext()) {
+                Statement st = iter.nextStatement();
+
+                Resource subj = st.getSubject();
+                Property p = st.getPredicate();
+                RDFNode obj = st.getObject();
+
+                boolean is_equal_to_parent = getParent() != null &&
+                        getParent().getValue().isResource() &&
+                        subj.equals(getParent().getValue().asResource());
+
+                boolean is_ontology_related = obj.equals(OWL.Thing) ||
+                        p.equals(RDF.type) ||
+                        p.equals(RDFS.subClassOf);
+
+                if (!is_equal_to_parent && !is_ontology_related) {
+                    children.add(new RDFTreeItem(subj));
+                }
+            }
         }
+
+        // sort alphabetically + separate related objects and literals
+        children.sort((a, b) -> a.toString().compareTo(b.toString()));
+        children.sort((a, b) ->
+                !a.isLiteralNode() && b.isLiteralNode() ? -1 :
+                        a.isLiteralNode() && b.isLiteralNode() ? 0 : 1);
 
         return children;
     }

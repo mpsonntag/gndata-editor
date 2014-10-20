@@ -66,8 +66,9 @@ public class RDFTreeItemTest {
         // ensure Robert "parent" friend is Tim
         assertEquals(rhm_node.getParent(), tbl_node);
 
+        // (!) test is no longer valid as we enable infinite tree traversal
         // ensure Tim is not in the Robert's "children" friends list
-        assertFalse(getChild(rhm_node, tbl).isPresent());
+        //assertFalse(getChild(rhm_node, tbl).isPresent());
     }
 
     @Test
