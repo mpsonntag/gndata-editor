@@ -1,11 +1,13 @@
 package gndata.app.ui.main;
 
+import gndata.app.ui.metadata.TreeCtrl;
 import gndata.app.ui.metadata.TreeView;
+import gndata.app.ui.metadata.table.TableCtrl;
+import gndata.app.ui.metadata.table.TableView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -26,6 +28,9 @@ public class MainCtrl implements Initializable {
     @Inject
     private TreeView metadataView;
 
+    @Inject
+    private TableView tableView;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -34,7 +39,13 @@ public class MainCtrl implements Initializable {
 
             // split pane with metadata tree
             splitPane.getItems().add(metadataView.getScene());
-            splitPane.getItems().add(new HBox());
+            splitPane.getItems().add(tableView.getScene());
+
+            TreeCtrl treeCtrl = metadataView.getLoader().getController();
+            TableCtrl tableCtrl = tableView.getLoader().getController();
+
+            // listener to update the table after metadata item selection
+            tableCtrl.bindTo(treeCtrl.getTree());
 
         } catch (IOException e) {
             e.printStackTrace();

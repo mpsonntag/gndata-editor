@@ -50,14 +50,6 @@ public class TreeCtrl {
         // facade for the metadata tree items
         metadataTreeView.setCellFactory((p) -> new TreeDisplay());
 
-        /*
-        // TODO listener for tree item selection
-        this.metadataTreeView.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((observable, oldVal, newVal) ->
-                        System.out.println("Selected"));
-        */
-
         loadTree("");
     }
 
