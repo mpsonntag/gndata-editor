@@ -12,8 +12,8 @@ import org.apache.jena.riot.RDFDataMgr;
  */
 public class FakeRDFModel {
 
-    private static final String schemaPath = "resources/foaf_schema.rdf";
-    private static final String dataPath = "resources/foaf_example.rdf";
+    private static final String schemaPath = "testfiles/foaf_schema.rdf";
+    private static final String dataPath = "testfiles/foaf_example.rdf";
 
     private static Model loadModelFromResources(String path) {
         ClassLoader cl = FakeRDFModel.class.getClassLoader();
@@ -21,14 +21,14 @@ public class FakeRDFModel {
         return RDFDataMgr.loadModel(cl.getResource(path).toString());
     }
 
-    public static OntModel getFakeSchema () {
+    public static OntModel getFakeSchema() {
         OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
 
         schema.addSubModel(loadModelFromResources(schemaPath));
         return schema;
     }
 
-    public static Model getFakeAnnotations () {
+    public static Model getFakeAnnotations() {
         return loadModelFromResources(dataPath);
     }
 }

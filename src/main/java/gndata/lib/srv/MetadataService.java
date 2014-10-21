@@ -1,27 +1,16 @@
 package gndata.lib.srv;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.rdf.model.InfModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.reasoner.ReasonerRegistry;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import java.io.IOException;
+import java.nio.file.Path;
+
+import com.hp.hpl.jena.ontology.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.reasoner.*;
+import com.hp.hpl.jena.vocabulary.*;
 import org.apache.jena.atlas.lib.StrUtils;
 import org.apache.jena.atlas.logging.LogCtl;
 import org.apache.jena.riot.RDFDataMgr;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 
 /**
@@ -29,13 +18,14 @@ import java.nio.file.Path;
  */
 public class MetadataService {
 
-    static { LogCtl.setLog4j() ; }
-    static Logger log = LoggerFactory.getLogger("GNData");
+    static {
+        LogCtl.setLog4j();
+    }
 
     private static final String stdPrefix = StrUtils.strjoinNL(
-        "PREFIX rdf: <" + RDF.getURI() + ">",
-        "PREFIX rdfs: <" + RDFS.getURI() + ">",
-        "PREFIX owl: <" + OWL.getURI() + ">"
+            "PREFIX rdf: <" + RDF.getURI() + ">",
+            "PREFIX rdfs: <" + RDFS.getURI() + ">",
+            "PREFIX owl: <" + OWL.getURI() + ">"
     );
 
     private OntModel schema;    // union model for all imported ontology files
@@ -50,7 +40,7 @@ public class MetadataService {
      * Returns a Ontology RDF Model instance to access default and
      * custom ontology terms.
      *
-     * @return  Ontology Model
+     * @return Ontology Model
      */
     public OntModel getSchema() {
         return schema;
@@ -59,7 +49,7 @@ public class MetadataService {
     /**
      * Returns an RDF Model instance to access annotations as stored RDF triples.
      *
-     * @return  RDF Model
+     * @return RDF Model
      */
     public Model getAnnotations() {
         return annotations;
@@ -68,23 +58,23 @@ public class MetadataService {
     /**
      * Filters annotation literals by a given string.
      *
-     * @return  RDF Model with Subjects with matched literals and their RDF:types.
+     * @return RDF Model with Subjects with matched literals and their RDF:types.
      */
     public Model getAnnotations(String literalFilter) {
         if (literalFilter.length() > 0) {
             String qs = StrUtils.strjoinNL(
-                "CONSTRUCT { ",
+                    "CONSTRUCT { ",
                     "?s rdf:type ?t .",
                     "?s ?p ?o",
-                "}",
-                "WHERE { ",
+                    "}",
+                    "WHERE { ",
                     "?s rdf:type ?t .",
                     "?s ?p ?o . ",
                     "FILTER (",
-                        "(STR(?p) != rdf:type) && ",
-                        "isLiteral(?o) && ",
-                        "regex(?o, '" + literalFilter + "', 'i')",
-                ")}"
+                    "(STR(?p) != rdf:type) && ",
+                    "isLiteral(?o) && ",
+                    "regex(?o, '" + literalFilter + "', 'i')",
+                    ")}"
             );
 
             return executeSPARQL(stdPrefix + "\n" + qs);
@@ -97,7 +87,7 @@ public class MetadataService {
      * Creates a new model with inferred relations based on loaded ontology,
      * annotations and reasoner.
      *
-     * @return  Model with inferred relations
+     * @return Model with inferred relations
      */
     public InfModel getAnnotationsWithInference() {
         return ModelFactory.createInfModel(getReasoner(), annotations);
@@ -106,7 +96,7 @@ public class MetadataService {
     /**
      * Creates a new reasoner based on actual schema and annotations.
      *
-     * @return  Reasoner
+     * @return Reasoner
      */
     public Reasoner getReasoner() {
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
@@ -128,7 +118,7 @@ public class MetadataService {
      * project RDF schemas (ontology files) and metadata storage (annotations)
      * into a common Model. Creates default schemas if some do not exist.
      *
-     * @return          MetadataService
+     * @return MetadataService
      */
     public static MetadataService create(String projectPath) throws IOException {
         if (projectPath == null) {

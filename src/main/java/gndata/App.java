@@ -1,21 +1,19 @@
 package gndata;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import gndata.app.state.AppState;
-import gndata.app.ui.main.MainView;
-import gndata.lib.config.GlobalConfig;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.jena.atlas.logging.LogCtl;
+
+import com.google.inject.*;
+import gndata.app.state.AppState;
+import gndata.app.ui.main.MainView;
+import gndata.lib.config.GlobalConfig;
 
 
 public class App extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception
-    {
+    public void start(Stage stage) throws Exception {
         //AquaFx.style();
         setUserAgentStylesheet(STYLESHEET_MODENA);
 
@@ -37,7 +35,7 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
         launch(args);
     }
 
