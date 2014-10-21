@@ -60,6 +60,9 @@ public final class TreeDisplay extends TreeCell<RDFNode> {
     }
 
     private String renderResource(RDFNode item) {
+
+        if (!item.isResource()) { return item.toString(); }
+
         Resource node = item.asResource();
         String name = node.getLocalName();
 

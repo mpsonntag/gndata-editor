@@ -41,6 +41,7 @@ public class MainCtrl implements Initializable {
             splitPane.getItems().add(metadataView.getScene());
             splitPane.getItems().add(tableView.getScene());
 
+            /*
             TreeCtrl treeCtrl = metadataView.getLoader().getController();
             TableCtrl tableCtrl = tableView.getLoader().getController();
 
@@ -50,7 +51,7 @@ public class MainCtrl implements Initializable {
                         .addListener((observable, oldVal, selectedItem) -> {
                             tableCtrl.fillItems(selectedItem.getValue());
                         });
-
+            */
             // TODO add listener for tree destruction - items clean up
 
         } catch (IOException e) {

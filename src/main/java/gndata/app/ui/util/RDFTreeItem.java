@@ -70,7 +70,7 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     @Override public boolean isLeaf() {
         if (isFirstTimeLeaf) {
             isFirstTimeLeaf = false;
-            isLeaf = isLiteralNode();
+            isLeaf = getChildren().size() == 0;
         }
         return isLeaf;
     }
@@ -109,8 +109,10 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
             RDFNode obj = st.getObject();
 
             // exclude parent, type, subclass and Thing triples
+            // exclude Literals
             if (!obj.equals(getParent().getValue()) && !obj.equals(OWL.Thing)
-                    && !p.equals(RDF.type) && !p.equals(RDFS.subClassOf)) {
+                    && !p.equals(RDF.type) && !p.equals(RDFS.subClassOf) &&
+                    !obj.isLiteral()) {
 
                 children.add(new RDFTreeItem(obj));
             }
