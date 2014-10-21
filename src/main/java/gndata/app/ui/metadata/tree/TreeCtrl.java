@@ -1,16 +1,16 @@
 package gndata.app.ui.metadata.tree;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import gndata.app.state.ProjectState;
+import javax.inject.Inject;
+import javafx.collections.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 
-import javax.inject.Inject;
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.*;
+import gndata.app.state.ProjectState;
 
 
 /**
@@ -36,7 +36,7 @@ public class TreeCtrl {
 
     public void initialize() {
         // listener to reload the tree if project changes
-        projectState.addListener((observable, oldVal, newVal) -> loadTree(""));
+        projectState.addListener((observable, oldVal, newVal) -> loadTree(null));
 
         // listener to reload tree if search text is entered
         searchInput.setOnKeyPressed(e -> {
@@ -49,7 +49,7 @@ public class TreeCtrl {
         // facade for the metadata tree items
         metadataTreeView.setCellFactory((p) -> new TreeDisplay());
 
-        loadTree("");
+        loadTree(null);
     }
 
     public TreeView<RDFNode> getTree() {
@@ -58,15 +58,64 @@ public class TreeCtrl {
 
     private void loadTree(String filter) {
         if (projectState.getMetadata() != null) {
-            Model annotations = projectState.getMetadata().getAnnotations(filter);
-
+            Model annotations = projectState.getMetadata().getAnnotations();
             TreeItem<RDFNode> fakeRoot = new TreeItem<>(annotations.getResource("Metadata"));
-            fakeRoot.getChildren().addAll(RDFTreeItem.getRootClasses(annotations));
+
+            ObservableList<RDFTreeItem> items = filter == null ? getRootClasses() : getRootClasses(filter);
+
+            // sorting in alphabetical order
+            items.sort((a, b) -> a.toString().compareTo(b.toString()));
+
+            fakeRoot.getChildren().addAll(items);
 
             metadataTreeView.setRoot(fakeRoot);
             metadataTreeView.setShowRoot(false);
         } else {
             metadataTreeView.setRoot(null);
         }
+    }
+
+    /**
+     * Returns a list of available types (triple used with RDF.type) from
+     * the metadata of the current project.
+     *
+     * @return          list of TreeItem(s) representing top classes
+     */
+    public ObservableList<RDFTreeItem> getRootClasses() {
+        Model annotations = projectState.getMetadata().getAnnotations();
+        ObservableList<RDFTreeItem> items = FXCollections.observableArrayList();
+
+        NodeIterator iter = annotations.listObjectsOfProperty(RDF.type);
+        while (iter.hasNext()) {
+            RDFNode st = iter.next();
+            if (st.isResource()) {
+                Resource r = st.asResource();
+
+                // exclude OWL definitions from the root items
+                if (r.getNameSpace() != null && !r.getNameSpace().equals(OWL.getURI())) {
+                    items.add(new RDFTreeItem(r));
+                }
+            }
+        }
+
+        return items;
+    }
+
+    /**
+     * Returns a list of RDF Tree items filtered by literal in the
+     * the metadata of the current project.
+     *
+     * @return          list of TreeItem(s) representing top classes
+     */
+    private ObservableList<RDFTreeItem> getRootClasses(String filter) {
+        Model annotations = projectState.getMetadata().getAnnotations();
+        Model selection = projectState.getMetadata().getAnnotations(filter);
+
+        ObservableList<RDFTreeItem> items = FXCollections.observableArrayList();
+        selection.listSubjects()
+                .toList()
+                .forEach(a -> items.add(new RDFTreeItem(annotations.getResource(a.getURI()))));
+
+        return items;
     }
 }

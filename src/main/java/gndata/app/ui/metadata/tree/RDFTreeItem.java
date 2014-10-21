@@ -30,35 +30,6 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
         node = res;
     }
 
-    /**
-     * Returns a list of top classes (direct subclass from OWL.Thing) from
-     * a given ontology model.
-     *
-     * @param model     RDF Model with ontology terms
-     * @return          list of TreeItem(s) representing top classes
-     */
-    public static ObservableList<RDFTreeItem> getRootClasses(Model model) {
-        ObservableList<RDFTreeItem> items = FXCollections.observableArrayList();
-
-        NodeIterator iter = model.listObjectsOfProperty(RDF.type);
-        while (iter.hasNext()) {
-            RDFNode st = iter.next();
-            if (st.isResource()) {
-                Resource r = st.asResource();
-
-                // exclude OWL definitions from the root items
-                if (r.getNameSpace() != null && !r.getNameSpace().equals(OWL.getURI())) {
-                    items.add(new RDFTreeItem(r));
-                }
-            }
-        }
-
-        // sorting in alphabetical order
-        items.sort((a, b) -> a.toString().compareTo(b.toString()));
-
-        return items;
-    }
-
     @Override public ObservableList<TreeItem<RDFNode>> getChildren() {
         if (isFirstTimeChildren) {
             isFirstTimeChildren = false;

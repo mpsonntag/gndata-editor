@@ -1,11 +1,11 @@
 package gndata.app.ui.metadata.table;
 
-import com.hp.hpl.jena.rdf.model.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
+
+import com.hp.hpl.jena.rdf.model.*;
 
 
 /**
