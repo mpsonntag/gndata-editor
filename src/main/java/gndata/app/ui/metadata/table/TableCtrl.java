@@ -34,13 +34,10 @@ public class TableCtrl {
                 Statement st = iter.nextStatement();
 
                 if (st.getObject().isLiteral()) {
+                    Property p = st.getPredicate();
                     Literal l = st.getObject().asLiteral();
 
-                    String predicate = st.getPredicate().getLocalName();
-                    String literal = l.getValue().toString();
-                    String type = l.getDatatype() != null ? l.getDatatype().getJavaClass().getSimpleName() : "";
-
-                    items.add(new TableItem(predicate, literal, type));
+                    items.add(new TableItem(p, l));
                 }
             }
         }

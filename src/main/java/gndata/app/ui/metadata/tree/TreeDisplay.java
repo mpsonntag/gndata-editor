@@ -1,13 +1,9 @@
 package gndata.app.ui.metadata.tree;
 
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
 import javafx.scene.control.TreeCell;
-import javafx.scene.paint.Color;
+
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.*;
 
 /**
  * Facade class for metadata tree items.
@@ -22,44 +18,14 @@ public final class TreeDisplay extends TreeCell<RDFNode> {
 
         if (empty) {
             setText(null);
-        } else if (item != null) {
-
-            if (item.isLiteral()) {
-                setText(renderLiteral(item));
-                setTextFill(Color.GREEN);
-            } else {
-                setText(renderResource(item));
-                setTextFill(Color.BLACK);
-            }
+        } else {
+            setText(renderResource(item));
         }
-    }
-
-    /**
-     * Building a "<predicate>: <literal> (<type>)" string
-      */
-    private String renderLiteral(RDFNode item) {
-        String text = "";
-
-        // "<predicate>: "
-        RDFNode r = getTreeItem().getParent().getValue();
-        StmtIterator iter = item.getModel().listStatements(r.asResource(), null, item);
-        if (iter.hasNext()) {
-            text += iter.nextStatement().getPredicate().getLocalName() + ": ";
-        }
-
-        // "<predicate>: <literal>"
-        Literal l = item.asLiteral();
-        text += l.getValue().toString();
-
-        // "<predicate>: <literal> (<type>)"
-        if (l.getDatatype() != null) {
-            text += " (" + l.getDatatype().getJavaClass().getSimpleName() + ")";
-        }
-
-        return text;
     }
 
     private String renderResource(RDFNode item) {
+
+        if (item == null) { return ""; }
 
         if (!item.isResource()) { return item.toString(); }
 
