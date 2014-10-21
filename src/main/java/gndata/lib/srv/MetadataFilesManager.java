@@ -90,7 +90,7 @@ public class MetadataFilesManager {
         Path absPath = where.resolve(Paths.get(fileName));
 
         if (!Files.exists(absPath)) {
-            String pathLocal = "/resources/templates/" + fileName;
+            String pathLocal = "/templates/" + fileName;
             InputStream schema = getClass().getResourceAsStream(pathLocal);
 
             Files.copy(schema, absPath);

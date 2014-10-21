@@ -181,22 +181,25 @@
 
             <resource>
                 <directory>src/main/resources</directory>
-                <targetPath>${project.build.directory}/classes/resources</targetPath>
+                <targetPath>${project.build.directory}/classes</targetPath>
                 <includes>
                     <include>**/*.json</include>
                     <include>**/*.xml</include>
                     <include>**/*.owl</include>
                     <include>**/*.rdf</include>
+                    <include>**/*.properties</include>
                 </includes>
             </resource>
 
             <resource>
                 <directory>src/test/resources</directory>
-                <targetPath>${project.build.directory}/classes/resources</targetPath>
+                <targetPath>${project.build.directory}/classes</targetPath>
                 <includes>
-                    <include>**/*.rdf</include>
+                    <include>**/*.json</include>
                     <include>**/*.xml</include>
                     <include>**/*.owl</include>
+                    <include>**/*.rdf</include>
+                    <include>**/*.properties</include>
                 </includes>
             </resource>
 
