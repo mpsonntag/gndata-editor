@@ -15,6 +15,9 @@ public class FakeRDFModel {
     private static final String schemaPath = "testfiles/foaf_schema.rdf";
     private static final String dataPath = "testfiles/foaf_example.rdf";
 
+    public static String tbl = "http://www.w3.org/People/Berners-Lee/card#i";
+    public static String rhm = "http://dig.csail.mit.edu/2007/wiki/people/RobertHoffmann#RMH";
+
     private static Model loadModelFromResources(String path) {
         ClassLoader cl = FakeRDFModel.class.getClassLoader();
 

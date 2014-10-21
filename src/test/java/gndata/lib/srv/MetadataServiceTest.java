@@ -1,30 +1,19 @@
 package gndata.lib.srv;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.reasoner.ValidityReport;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-import gndata.lib.util.FakeRDFModel;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 import static org.junit.Assert.assertNotNull;
 
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.reasoner.*;
+import com.hp.hpl.jena.vocabulary.*;
+import gndata.lib.util.FakeRDFModel;
+import org.apache.commons.io.FileUtils;
+import org.junit.*;
+
 
 public class MetadataServiceTest {
-
-    private static String tbl = "http://www.w3.org/People/Berners-Lee/card#i";
-    private static String rhm = "http://dig.csail.mit.edu/2007/wiki/people/RobertHoffmann#RMH";
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
@@ -80,10 +69,10 @@ public class MetadataServiceTest {
 
         assert(annotations.listStatements().hasNext());
 
-        Resource tbl_resource = annotations.getResource(tbl);
+        Resource tbl_resource = annotations.getResource(FakeRDFModel.tbl);
         assert(annotations.contains(tbl_resource, RDF.type));
 
-        Resource rhm_resource = annotations.getResource(rhm);
+        Resource rhm_resource = annotations.getResource(FakeRDFModel.rhm);
         assert(!annotations.contains(rhm_resource, RDF.type));
     }
 

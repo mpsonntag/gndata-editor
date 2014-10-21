@@ -1,26 +1,21 @@
 package gndata.app.ui.metadata;
 
-import com.hp.hpl.jena.rdf.model.*;
-import gndata.app.state.ProjectState;
-import gndata.app.ui.metadata.tree.*;
-import gndata.lib.config.ProjectConfig;
-import org.apache.commons.io.FileUtils;
-import org.apache.jena.riot.RDFDataMgr;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.nio.file.*;
 
-import javafx.collections.ObservableList;
+import static org.junit.Assert.assertNull;
 
-import static org.junit.Assert.*;
+import com.hp.hpl.jena.rdf.model.*;
+import gndata.app.state.ProjectState;
+import gndata.app.ui.metadata.tree.TreeCtrl;
+import gndata.lib.config.ProjectConfig;
+import gndata.lib.util.FakeRDFModel;
+import org.apache.commons.io.FileUtils;
+import org.junit.*;
 
 
 public class TreeCtrlTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
-    private static String tbl = "http://www.w3.org/People/Berners-Lee/card#i";
 
     ProjectState ps = new ProjectState();
 
@@ -74,7 +69,7 @@ public class TreeCtrlTest {
         Resource person = annotations.getResource("http://xmlns.com/foaf/0.1/Person");
         assert(ctrl.getRootClasses().stream().anyMatch(a -> a.getValue().equals(person)));
 
-        Resource tbl_node = annotations.getResource(tbl);
+        Resource tbl_node = annotations.getResource(FakeRDFModel.tbl);
         assert(ctrl.getRootClasses("tim").stream().anyMatch(a -> a.getValue().equals(tbl_node)));
     }
 }
