@@ -93,7 +93,6 @@ public class MenuCtrl {
                 e.printStackTrace();
             }
         }
-        System.out.println(configPath);
     }
 
 

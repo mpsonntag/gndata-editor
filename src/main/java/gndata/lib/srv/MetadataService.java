@@ -9,18 +9,12 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;
 import com.hp.hpl.jena.vocabulary.*;
 import org.apache.jena.atlas.lib.StrUtils;
-import org.apache.jena.atlas.logging.LogCtl;
 import org.apache.jena.riot.RDFDataMgr;
-
 
 /**
  * Class implementing main functions working with project metadata
  */
 public class MetadataService {
-
-    static {
-        LogCtl.setLog4j();
-    }
 
     private static final String stdPrefix = StrUtils.strjoinNL(
             "PREFIX rdf: <" + RDF.getURI() + ">",

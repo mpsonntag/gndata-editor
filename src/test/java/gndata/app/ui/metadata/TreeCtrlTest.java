@@ -1,10 +1,8 @@
-package gndata.app.ui.tree;
+package gndata.app.ui.metadata;
 
-import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.state.ProjectState;
+import gndata.app.ui.metadata.tree.TreeCtrl;
 import gndata.lib.config.ProjectConfig;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TreeItem;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +15,7 @@ import java.nio.file.Paths;
 import static org.junit.Assert.*;
 
 
-public class MetadataTreeCtrlTest {
+public class TreeCtrlTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
@@ -41,7 +39,7 @@ public class MetadataTreeCtrlTest {
 
     @Test
     public void testListen() throws Exception {
-        MetadataTreeCtrl ctrl = new MetadataTreeCtrl(ps);
+        TreeCtrl ctrl = new TreeCtrl(ps);
         assertNull(ctrl.getTree());
 
         /* TODO find the way to inject FXML
