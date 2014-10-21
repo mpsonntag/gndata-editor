@@ -2,16 +2,12 @@ package gndata;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import gndata.app.state.AppState;
 import gndata.app.ui.main.MainView;
-import gndata.app.ui.metadata.TreeCtrl;
 import gndata.lib.config.GlobalConfig;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
-import org.apache.jena.atlas.logging.LogCtl;
 
 
 public class App extends Application {

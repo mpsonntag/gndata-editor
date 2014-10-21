@@ -1,8 +1,8 @@
 package gndata.app.ui.main;
 
-import gndata.app.ui.metadata.TreeCtrl;
-import gndata.app.ui.metadata.TreeView;
 import gndata.app.ui.metadata.table.TableCtrl;
+import gndata.app.ui.metadata.tree.TreeCtrl;
+import gndata.app.ui.metadata.tree.TreeView;
 import gndata.app.ui.metadata.table.TableView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -41,17 +41,17 @@ public class MainCtrl implements Initializable {
             splitPane.getItems().add(metadataView.getScene());
             splitPane.getItems().add(tableView.getScene());
 
-            /*
             TreeCtrl treeCtrl = metadataView.getLoader().getController();
             TableCtrl tableCtrl = tableView.getLoader().getController();
 
             // listener to update the table after metadata item selection
             treeCtrl.getTree().getSelectionModel()
-                        .selectedItemProperty()
-                        .addListener((observable, oldVal, selectedItem) -> {
-                            tableCtrl.fillItems(selectedItem.getValue());
-                        });
-            */
+                .selectedItemProperty()
+                .addListener((observable, oldVal, selectedItem) ->
+                    tableCtrl.fillItems(
+                        selectedItem == null ? null : selectedItem.getValue()
+                ));
+
             // TODO add listener for tree destruction - items clean up
 
         } catch (IOException e) {

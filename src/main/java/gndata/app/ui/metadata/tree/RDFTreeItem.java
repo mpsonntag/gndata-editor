@@ -1,4 +1,4 @@
-package gndata.app.ui.util;
+package gndata.app.ui.metadata.tree;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.OWL;

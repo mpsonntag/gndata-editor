@@ -3,7 +3,7 @@ package gndata.app.ui.main;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-import gndata.app.ui.util.RDFTreeItem;
+import gndata.app.ui.metadata.tree.RDFTreeItem;
 import gndata.lib.util.FakeRDFModel;
 import javafx.scene.control.TreeItem;
 

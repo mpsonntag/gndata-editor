@@ -1,9 +1,8 @@
-package gndata.app.ui.metadata;
+package gndata.app.ui.metadata.tree;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import gndata.app.state.ProjectState;
-import gndata.app.ui.util.RDFTreeItem;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;

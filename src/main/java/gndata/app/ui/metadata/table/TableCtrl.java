@@ -23,11 +23,11 @@ public class TableCtrl {
 
     public void initialize() {}
 
-    public void fillItems(RDFNode selectedItem) {
+    public void fillItems(RDFNode node) {
         ObservableList<TableItem> items = FXCollections.observableArrayList();
 
-        if (selectedItem != null && selectedItem.isResource()) {
-            Resource r = selectedItem.asResource();
+        if (node != null && node.isResource()) {
+            Resource r = node.asResource();
 
             StmtIterator iter = r.listProperties();
             while (iter.hasNext()) {
