@@ -45,7 +45,13 @@ public class MainCtrl implements Initializable {
             TableCtrl tableCtrl = tableView.getLoader().getController();
 
             // listener to update the table after metadata item selection
-            tableCtrl.bindTo(treeCtrl.getTree());
+            treeCtrl.getTree().getSelectionModel()
+                        .selectedItemProperty()
+                        .addListener((observable, oldVal, selectedItem) -> {
+                            tableCtrl.fillItems(selectedItem.getValue());
+                        });
+
+            // TODO add listener for tree destruction - items clean up
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 
 
@@ -24,7 +23,7 @@ public class TableCtrl {
 
     public void initialize() {}
 
-    private void fillItems(RDFNode selectedItem) {
+    public void fillItems(RDFNode selectedItem) {
         ObservableList<TableItem> items = FXCollections.observableArrayList();
 
         if (selectedItem != null && selectedItem.isResource()) {
@@ -47,15 +46,5 @@ public class TableCtrl {
         }
 
         tableView.setItems(items);
-    }
-
-    public void bindTo(TreeView<RDFNode> treeView) {
-        treeView.getSelectionModel()
-            .selectedItemProperty()
-            .addListener((observable, oldVal, selectedItem) -> {
-                this.fillItems(selectedItem.getValue());
-            });
-
-        // TODO add listener for tree destruction - items clean up
     }
 }
