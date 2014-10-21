@@ -41,7 +41,8 @@ public class TreeCtrl {
         // listener to reload tree if search text is entered
         searchInput.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ENTER)) {
-                loadTree(searchInput.getText());
+                String input = searchInput.getText();
+                loadTree(input.equals("") ? null : input);
             }
         });
         searchInput.setText("type search text here and press Enter");
