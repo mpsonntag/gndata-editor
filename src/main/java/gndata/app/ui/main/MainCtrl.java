@@ -52,7 +52,9 @@ public class MainCtrl implements Initializable {
                         selectedItem == null ? null : selectedItem.getValue()
                 ));
 
-            // TODO add listener for tree destruction - items clean up
+            // TODO find a nicer way to couple tree and table
+
+            // TODO add listener for tree destruction - items clean up?
 
         } catch (IOException e) {
             e.printStackTrace();

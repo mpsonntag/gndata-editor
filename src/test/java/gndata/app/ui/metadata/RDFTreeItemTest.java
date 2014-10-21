@@ -1,4 +1,4 @@
-package gndata.app.ui.main;
+package gndata.app.ui.metadata;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;

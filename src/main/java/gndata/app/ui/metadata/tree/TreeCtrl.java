@@ -107,7 +107,7 @@ public class TreeCtrl {
      *
      * @return          list of TreeItem(s) representing top classes
      */
-    private ObservableList<RDFTreeItem> getRootClasses(String filter) {
+    public ObservableList<RDFTreeItem> getRootClasses(String filter) {
         Model annotations = projectState.getMetadata().getAnnotations();
         Model selection = projectState.getMetadata().getAnnotations(filter);
 

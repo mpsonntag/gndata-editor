@@ -47,15 +47,6 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     }
 
     /**
-     * Defines whether this TreeItem represents a Resource or a Literal.
-     *
-     * @return  is actual node a Literal.
-     */
-    public boolean isLiteralNode() {
-        return node.isLiteral();
-    }
-
-    /**
      * Builds children items of this TreeItem node. List of children contains
      * - subclasses of an actual resource if it is a Class
      * - actual members of a class if it is a Class
@@ -119,11 +110,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
             }
         }
 
-        // sort alphabetically + separate related objects and literals
+        // sort alphabetically
         children.sort((a, b) -> a.toString().compareTo(b.toString()));
-        children.sort((a, b) ->
-                !a.isLiteralNode() && b.isLiteralNode() ? -1 :
-                        a.isLiteralNode() && b.isLiteralNode() ? 0 : 1);
 
         return children;
     }
