@@ -1,25 +1,19 @@
-package gndata.app.ui.main;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import gndata.app.ui.util.RDFTreeItem;
-import gndata.lib.util.FakeRDFModel;
-import javafx.scene.control.TreeItem;
-
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+package gndata.app.ui.metadata;
 
 import java.util.Optional;
+import javafx.scene.control.TreeItem;
+
+import static org.junit.Assert.*;
+
+import com.hp.hpl.jena.rdf.model.*;
+import gndata.app.ui.metadata.tree.RDFTreeItem;
+import gndata.lib.util.FakeRDFModel;
+import org.junit.*;
 
 
 public class RDFTreeItemTest {
 
     private RDFTreeItem root;
-
-    private static String tbl = "http://www.w3.org/People/Berners-Lee/card#i";
-    private static String rhm = "http://dig.csail.mit.edu/2007/wiki/people/RobertHoffmann#RMH";
 
     /**
      * Returns a child TreeItem within the children of a given TreeItem.
@@ -52,27 +46,28 @@ public class RDFTreeItemTest {
 
     @Test
     public void testParent() throws Exception {
-        assertEquals(getChild(root, tbl).get().getParent(), root);
+        assertEquals(getChild(root, FakeRDFModel.tbl).get().getParent(), root);
     }
 
     @Test
     public void testResource() throws Exception {
         // ensure Tim is in the list of persons
-        TreeItem<RDFNode> tbl_node = getChild(root, tbl).get();
+        TreeItem<RDFNode> tbl_node = getChild(root, FakeRDFModel.tbl).get();
 
         // ensure Tim knows Robert
-        TreeItem<RDFNode> rhm_node = getChild(tbl_node, rhm).get();
+        TreeItem<RDFNode> rhm_node = getChild(tbl_node, FakeRDFModel.rhm).get();
 
         // ensure Robert "parent" friend is Tim
         assertEquals(rhm_node.getParent(), tbl_node);
 
+        // (!) test is no longer valid as we enable infinite tree traversal
         // ensure Tim is not in the Robert's "children" friends list
-        assertFalse(getChild(rhm_node, tbl).isPresent());
+        //assertFalse(getChild(rhm_node, FakeRDFModel.tbl).isPresent());
     }
 
     @Test
     public void testType() throws Exception {
-        TreeItem<RDFNode> tbl_node = getChild(root, tbl).get();
+        TreeItem<RDFNode> tbl_node = getChild(root, FakeRDFModel.tbl).get();
 
         assert(!tbl_node.isLeaf());
     }
