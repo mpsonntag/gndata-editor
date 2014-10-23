@@ -3,16 +3,18 @@
 <?import javafx.scene.control.*?>
 
 <MenuBar xmlns:fx="http://javafx.com/fxml"
-      fx:controller="gndata.app.ui.main.MenuCtrl"
-      fx:id="menu">
+         fx:controller="gndata.app.ui.main.MenuCtrl"
+         fx:id="menu">
 
-        <Menu text="File">
+    <Menu text="File">
+        <MenuItem text="Create or Open Project" onAction="#createProject"/>
+        <MenuItem text="Open Recent Projects" onAction="#openProject"/>
+        <SeparatorMenuItem/>
+        <MenuItem text="Exit" onAction="#exit"/>
+    </Menu>
 
-            <MenuItem text="Create or Open Project" onAction="#createProject"/>
-            <MenuItem text="Open Recent Projects" onAction="#openProject"/>
-            <SeparatorMenuItem/>
-            <MenuItem text="Exit" onAction="#exit"/>
-        </Menu>
-
+    <Menu text="Project" fx:id="projectMenu" visible="false">
+        <MenuItem text="Project Settings" onAction="#projectSettings"/>
+    </Menu>
 
 </MenuBar>

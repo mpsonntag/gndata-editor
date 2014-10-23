@@ -40,14 +40,10 @@ public class MenuCtrlTest {
     @Test
     public void testCreateProject() throws Exception {
         assertFalse(projectState.isConfigured());
-        assertFalse(ctrl.calledShowChooser);
-        assertFalse(ctrl.calledShowConfig);
 
         ctrl.createProject();
 
         assertTrue(projectState.isConfigured());
-        assertTrue(ctrl.calledShowChooser);
-        assertTrue(ctrl.calledShowConfig);
 
         assertEquals("OtherName", projectState.getConfig().getName());
         assertEquals("OtherDescription", projectState.getConfig().getDescription());
@@ -55,7 +51,25 @@ public class MenuCtrlTest {
 
     @Test
     public void testOpenProject() throws Exception {
-        // TODO write test
+        assertFalse(projectState.isConfigured());
+
+        ctrl.openProject();
+
+        assertTrue(projectState.isConfigured());
+    }
+
+    @Test
+    public void testProjectSettings() throws Exception {
+        ProjectConfig config = ProjectConfig.load(tmpPath.toString());
+        projectState.setConfig(config);
+
+        assertNull(config.getName());
+        assertNull(config.getDescription());
+
+        ctrl.projectSettings();
+
+        assertEquals("OtherName", projectState.getConfig().getName());
+        assertEquals("OtherDescription", projectState.getConfig().getDescription());
     }
 
     @Test
@@ -70,25 +84,25 @@ public class MenuCtrlTest {
      */
     private static class TestableMenuCtrl extends MenuCtrl {
 
-        public boolean calledShowChooser, calledShowConfig;
-
         public TestableMenuCtrl(AppState appState, ProjectState projectState) {
             super(appState, projectState);
-            calledShowChooser = calledShowConfig = false;
         }
 
         @Override
         public File showDirectoryChooser() {
-            calledShowChooser = true;
             return tmpPath.toFile();
         }
 
         @Override
         public ProjectConfig showConfigDialog(ProjectConfig config) {
-            calledShowConfig = true;
             config.setName("OtherName");
             config.setDescription("OtherDescription");
             return config;
+        }
+
+        @Override
+        public String showListDialog(GlobalConfig config) {
+            return tmpPath.toString();
         }
     }
 }

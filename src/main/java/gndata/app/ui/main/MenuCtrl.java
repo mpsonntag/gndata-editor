@@ -1,33 +1,40 @@
 package gndata.app.ui.main;
 
-import gndata.app.state.AppState;
-import gndata.app.state.ProjectState;
-import gndata.app.ui.dia.ProjectConfigView;
-import gndata.app.ui.dia.ProjectListView;
-import gndata.lib.config.GlobalConfig;
-import gndata.lib.config.ProjectConfig;
-import javafx.fxml.FXML;
-import javafx.scene.control.MenuBar;
+import java.io.*;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javax.inject.Inject;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
+import gndata.app.state.*;
+import gndata.app.ui.dia.*;
+import gndata.lib.config.*;
 
 /**
  * Controller for the main menu view.
  */
-public class MenuCtrl {
+public class MenuCtrl implements Initializable {
 
     private final AppState appState;
     private final ProjectState projectState;
+
     @FXML
     private MenuBar menu;
+    @FXML
+    private Menu projectMenu;
 
     @Inject
     public MenuCtrl(AppState appState, ProjectState projectState) {
         this.appState = appState;
         this.projectState = projectState;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // set a listener that hides or shows the project menu depending on the state
+        this.projectState.addListener((obs, o, n) -> projectMenu.setVisible(n != null));
     }
 
     /**
@@ -80,6 +87,23 @@ public class MenuCtrl {
     }
 
     /**
+     * Show the project settings dialog and save the project settings
+     * if they have changed.
+     */
+    public void projectSettings() {
+        try {
+            ProjectConfig config = showConfigDialog(projectState.getConfig());
+
+            if (config != null) {
+                config.store();
+                projectState.setConfig(config);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Open a previously opened project.
      */
     public void openProject() {
@@ -107,4 +131,5 @@ public class MenuCtrl {
     public void exit() {
         appState.setRunning(false);
     }
+
 }
