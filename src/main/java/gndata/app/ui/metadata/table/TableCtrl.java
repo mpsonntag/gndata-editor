@@ -24,24 +24,27 @@ public class TableCtrl {
     public void initialize() {}
 
     public void fillItems(RDFNode node) {
+        tableView.setItems(buildTableItems(node));
+    }
+
+    public static ObservableList<TableItem> buildTableItems(RDFNode node) {
         ObservableList<TableItem> items = FXCollections.observableArrayList();
 
-        if (node != null && node.isResource()) {
-            Resource r = node.asResource();
+        if (node == null || !node.isResource()) { return items; }
 
-            StmtIterator iter = r.listProperties();
-            while (iter.hasNext()) {
-                Statement st = iter.nextStatement();
+        Resource r = node.asResource();
+        StmtIterator iter = r.listProperties();
+        while (iter.hasNext()) {
+            Statement st = iter.nextStatement();
 
-                if (st.getObject().isLiteral()) {
-                    Property p = st.getPredicate();
-                    Literal l = st.getObject().asLiteral();
+            if (st.getObject().isLiteral()) {
+                Property p = st.getPredicate();
+                Literal l = st.getObject().asLiteral();
 
-                    items.add(new TableItem(p, l));
-                }
+                items.add(new TableItem(p, l));
             }
         }
 
-        tableView.setItems(items);
+        return items;
     }
 }
