@@ -4,6 +4,8 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+import gndata.app.ui.metadata.VisualItem;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -96,6 +98,10 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 Property p = st.getPredicate();
                 RDFNode obj = st.getObject();
 
+                //boolean is_equal_to_parent = false;
+                // include this to the if statement below to
+                // exclude parent of the actual object from its
+                // children list (as it might be confusing)
                 boolean is_equal_to_parent = getParent() != null &&
                         getParent().getValue().isResource() &&
                         subj.equals(getParent().getValue().asResource());
@@ -111,7 +117,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
         }
 
         // sort alphabetically
-        children.sort((a, b) -> a.toString().compareTo(b.toString()));
+        children.sort((a, b) -> VisualItem.renderResource(a.getValue()).compareTo(
+                                VisualItem.renderResource(b.getValue())));
 
         return children;
     }
