@@ -21,6 +21,10 @@ public class TableTest {
         Optional<TableItem> t = l.stream().filter(a -> a.getPredicate().equals("name")).findFirst();
         assert(t.isPresent());
         assert(t.get().getLiteral().equals("Tim Berners-Lee"));
+
+        // node=null should result in empty list
+        List<TableItem> empty = TableCtrl.buildTableItems(null);
+        assert(empty.size() == 0);
     }
 
     @Test

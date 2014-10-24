@@ -25,16 +25,21 @@ public class TableCtrl {
 
     public void fillItems(RDFNode node) {
         List<TableItem> items = buildTableItems(node);
-        items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
 
-        ObservableList<TableItem> observableData = FXCollections.observableArrayList(items);
-        SortedList<TableItem> sortedData = new SortedList<>(observableData);
+        if (items.size() > 0) {
+            items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
 
-        // sort items by predicate value
-        sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
-        sortedData.comparatorProperty().bind(tableView.comparatorProperty());
+            ObservableList<TableItem> observableData = FXCollections.observableArrayList(items);
+            SortedList<TableItem> sortedData = new SortedList<>(observableData);
 
-        tableView.setItems(sortedData);
+            // sort items by predicate value
+            sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
+            sortedData.comparatorProperty().bind(tableView.comparatorProperty());
+
+            tableView.setItems(sortedData);
+        } else {
+            tableView.setItems(null);
+        }
     }
 
     public static List<TableItem> buildTableItems(RDFNode node) {

@@ -1,14 +1,12 @@
 package gndata.app.ui.metadata.tree;
 
-import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-import gndata.app.ui.metadata.VisualItem;
-
-import javafx.collections.FXCollections;
+import java.util.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.*;
+import gndata.app.ui.metadata.VisualItem;
 
 
 /**
@@ -43,9 +41,23 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     @Override public boolean isLeaf() {
         if (isFirstTimeLeaf) {
             isFirstTimeLeaf = false;
-            isLeaf = getChildren().size() == 0;
+            isLeaf = buildChildren().size() == 0;
         }
         return isLeaf;
+    }
+
+    private boolean isOntologyRelated(Statement st) {
+        Property p = st.getPredicate();
+        RDFNode obj = st.getObject();
+
+        return obj.equals(OWL.Thing) || p.equals(RDF.type) || p.equals(RDFS.subClassOf);
+    }
+
+    private boolean isEqualToParent(RDFNode node) {
+        if (getParent() == null) return false;
+
+        RDFNode pNode = getParent().getValue();
+        return pNode.isResource() && node.equals(pNode.asResource());
     }
 
     /**
@@ -56,15 +68,15 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
      *
      * @return  observable list of TreeItem nodes
      */
-    private ObservableList<RDFTreeItem> buildChildren() {
-        ObservableList<RDFTreeItem> children = FXCollections.observableArrayList();
+    private List<RDFTreeItem> buildChildren() {
+        List<RDFTreeItem> children = new ArrayList<>();
 
         if (!node.isResource()) return children;
 
         Resource r = node.asResource();
         Model m = node.getModel();
 
-        // properties and related objects of a current resource
+        // properties and directly related objects of a current resource
         StmtIterator iter = r.listProperties();
         while (iter.hasNext()) {
             Statement st = iter.nextStatement();
@@ -72,12 +84,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
             Property p = st.getPredicate();
             RDFNode obj = st.getObject();
 
-            // exclude parent, type, subclass and Thing triples
-            // exclude Literals
-            if (!obj.equals(getParent().getValue()) && !obj.equals(OWL.Thing)
-                    && !p.equals(RDF.type) && !p.equals(RDFS.subClassOf) &&
-                    !obj.isLiteral()) {
-
+            // exclude OWL triples and Literals
+            if (!isEqualToParent(obj) && !isOntologyRelated(st) && !obj.isLiteral()) {
                 children.add(new RDFTreeItem(obj));
             }
         }
@@ -89,28 +97,16 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
                 Statement st = iter.nextStatement();
                 children.add(new RDFTreeItem(st.getSubject()));
             }
-        } else { // reverse relationships
+        } else {
+
+            // reverse relationships
             iter = m.listStatements(null, null, r);
             while (iter.hasNext()) {
                 Statement st = iter.nextStatement();
 
                 Resource subj = st.getSubject();
-                Property p = st.getPredicate();
-                RDFNode obj = st.getObject();
 
-                //boolean is_equal_to_parent = false;
-                // include this to the if statement below to
-                // exclude parent of the actual object from its
-                // children list (as it might be confusing)
-                boolean is_equal_to_parent = getParent() != null &&
-                        getParent().getValue().isResource() &&
-                        subj.equals(getParent().getValue().asResource());
-
-                boolean is_ontology_related = obj.equals(OWL.Thing) ||
-                        p.equals(RDF.type) ||
-                        p.equals(RDFS.subClassOf);
-
-                if (!is_equal_to_parent && !is_ontology_related) {
+                if (!isEqualToParent(subj) && !isOntologyRelated(st)) {
                     children.add(new RDFTreeItem(subj));
                 }
             }
