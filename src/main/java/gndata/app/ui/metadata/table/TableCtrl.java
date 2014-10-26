@@ -1,6 +1,8 @@
 package gndata.app.ui.metadata.table;
 
+import java.util.*;
 import javafx.collections.*;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
@@ -21,14 +23,27 @@ public class TableCtrl {
 
     public TableCtrl() {}
 
-    public void initialize() {}
-
     public void fillItems(RDFNode node) {
-        tableView.setItems(buildTableItems(node));
+        List<TableItem> items = buildTableItems(node);
+
+        if (items.size() > 0) {
+            items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
+
+            ObservableList<TableItem> observableData = FXCollections.observableArrayList(items);
+            SortedList<TableItem> sortedData = new SortedList<>(observableData);
+
+            // sort items by predicate value
+            sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
+            sortedData.comparatorProperty().bind(tableView.comparatorProperty());
+
+            tableView.setItems(sortedData);
+        } else {
+            tableView.setItems(null);
+        }
     }
 
-    public static ObservableList<TableItem> buildTableItems(RDFNode node) {
-        ObservableList<TableItem> items = FXCollections.observableArrayList();
+    public static List<TableItem> buildTableItems(RDFNode node) {
+        List<TableItem> items = new ArrayList<>();
 
         if (node == null || !node.isResource()) { return items; }
 

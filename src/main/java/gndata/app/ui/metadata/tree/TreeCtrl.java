@@ -1,8 +1,10 @@
 package gndata.app.ui.metadata.tree;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javax.inject.Inject;
 import javafx.collections.*;
-import javafx.fxml.FXML;
+import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -16,7 +18,7 @@ import gndata.app.state.ProjectState;
 /**
  * Controller for the metadata tree view.
  */
-public class TreeCtrl {
+public class TreeCtrl implements Initializable {
 
     private final ProjectState projectState;
 
@@ -34,7 +36,7 @@ public class TreeCtrl {
         this.projectState = projectState;
     }
 
-    public void initialize() {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         // listener to reload the tree if project changes
         projectState.addListener((observable, oldVal, newVal) -> loadTree(null));
 
