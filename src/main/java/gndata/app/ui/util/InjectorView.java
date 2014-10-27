@@ -6,21 +6,23 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.main;
+package gndata.app.ui.util;
 
 import javax.inject.Inject;
 
 import com.google.inject.Injector;
-import gndata.app.ui.util.InjectorView;
 
 /**
- * The main view of the application.
+ * Base class for views that use dependency injection (Guice) for controller instantiation.
  */
-public class MainView extends InjectorView {
+public class InjectorView extends AbstractView {
+
+    private final Injector injector;
 
     @Inject
-    public MainView(Injector injector) {
-        super(injector);
+    public InjectorView(Injector injector) {
+        this.injector = injector;
+        getLoader().setControllerFactory(cls -> this.injector.getInstance(cls));
     }
 
 }

@@ -9,12 +9,12 @@
 package gndata.app.ui.metadata.table;
 
 import com.google.inject.*;
-import gndata.app.ui.util.DIView;
+import gndata.app.ui.util.InjectorView;
 
 /**
  * Table view for the selected metadata item.
  */
-public class TableView extends DIView {
+public class TableView extends InjectorView {
 
     @Inject
     public TableView(Injector injector) {

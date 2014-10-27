@@ -11,12 +11,12 @@ package gndata.app.ui.main;
 import javax.inject.Inject;
 
 import com.google.inject.Injector;
-import gndata.app.ui.util.DIView;
+import gndata.app.ui.util.InjectorView;
 
 /**
  * The view for the main menu bar.
  */
-public class MenuView extends DIView {
+public class MenuView extends InjectorView {
 
     @Inject
     public MenuView(Injector injector) {
