@@ -1,14 +1,20 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.state;
 
-import gndata.lib.config.ProjectConfig;
-import gndata.lib.srv.MetadataService;
-import gndata.lib.srv.ProjectService;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import java.io.IOException;
+import javax.inject.Singleton;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 
-import javax.inject.Singleton;
-import java.io.IOException;
+import gndata.lib.config.ProjectConfig;
+import gndata.lib.srv.*;
 
 
 /**
@@ -43,10 +49,6 @@ public class ProjectState {
         return config.get();
     }
 
-    public synchronized ObjectProperty<ProjectConfig> configProperty() {
-        return config;
-    }
-
     public synchronized void setConfig(ProjectConfig config) throws IOException {
         if (config == null) {
             service = null;
@@ -56,6 +58,10 @@ public class ProjectState {
             metadata = MetadataService.create(config.getProjectPath());
         }
         this.config.set(config);
+    }
+
+    public synchronized ObjectProperty<ProjectConfig> configProperty() {
+        return config;
     }
 
     public synchronized ProjectService getService() {
