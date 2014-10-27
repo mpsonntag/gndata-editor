@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.metadata.tree;
 
 import java.util.*;
@@ -8,17 +16,13 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
 import gndata.app.ui.metadata.VisualItem;
 
-
 /**
  * A tree representation of the RDF model graph.
  */
 public class RDFTreeItem extends TreeItem<RDFNode> {
 
     private RDFNode node;
-
-    private boolean isLeaf;
     private boolean isFirstTimeChildren = true;
-    private boolean isFirstTimeLeaf = true;
 
     /**
      * Builds a new TreeItem based on a given RDF Node
@@ -30,20 +34,18 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
         node = res;
     }
 
-    @Override public ObservableList<TreeItem<RDFNode>> getChildren() {
+    @Override
+    public ObservableList<TreeItem<RDFNode>> getChildren() {
         if (isFirstTimeChildren) {
-            isFirstTimeChildren = false;
             super.getChildren().setAll(buildChildren());
+            isFirstTimeChildren = false;
         }
         return super.getChildren();
     }
 
-    @Override public boolean isLeaf() {
-        if (isFirstTimeLeaf) {
-            isFirstTimeLeaf = false;
-            isLeaf = buildChildren().size() == 0;
-        }
-        return isLeaf;
+    @Override
+    public boolean isLeaf() {
+        return getChildren().size() == 0;
     }
 
     private boolean isOntologyRelated(Statement st) {
@@ -61,12 +63,11 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     }
 
     /**
-     * Builds children items of this TreeItem node. List of children contains
-     * - subclasses of an actual resource if it is a Class
-     * - actual members of a class if it is a Class
-     * - actual resource properties, except parent (of course)
+     * Builds children items of this TreeItem node. List of children contains subclasses of an actual resource
+     * if it is a class, actual members of a class if it is a Class, and actual resource properties (except parent
+     * of course).
      *
-     * @return  observable list of TreeItem nodes
+     * @return All children of the node as a list.
      */
     private List<RDFTreeItem> buildChildren() {
         List<RDFTreeItem> children = new ArrayList<>();
