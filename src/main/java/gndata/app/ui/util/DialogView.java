@@ -1,11 +1,16 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.util;
 
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-
 import java.io.IOException;
+import javafx.scene.Scene;
+import javafx.stage.*;
 
 /**
  * A view class that helps to show a view as a modal dialog.
