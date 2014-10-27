@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.main;
 
 import java.io.File;
@@ -89,19 +97,19 @@ public class MenuCtrlTest {
         }
 
         @Override
-        public File showDirectoryChooser() {
+        protected File showDirectoryChooser() {
             return tmpPath.toFile();
         }
 
         @Override
-        public ProjectConfig showConfigDialog(ProjectConfig config) {
+        protected ProjectConfig showConfigDialog(ProjectConfig config) {
             config.setName("OtherName");
             config.setDescription("OtherDescription");
             return config;
         }
 
         @Override
-        public String showListDialog(GlobalConfig config) {
+        protected String showListDialog(GlobalConfig config) {
             return tmpPath.toString();
         }
     }
