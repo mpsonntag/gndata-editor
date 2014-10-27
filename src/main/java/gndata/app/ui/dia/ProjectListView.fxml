@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<!--
+Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted under the terms of the BSD License. See
+LICENSE file in the root of the Project.
+-->
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="gndata.app.ui.dia.ProjectListCtrl"
             fx:id="view">
