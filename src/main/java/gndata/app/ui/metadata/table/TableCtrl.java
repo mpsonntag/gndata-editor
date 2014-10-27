@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.metadata.table;
 
 import java.util.*;
@@ -5,10 +13,8 @@ import javafx.collections.*;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
 
 import com.hp.hpl.jena.rdf.model.*;
-
 
 /**
  * Controller for the table to view metadata items.
@@ -16,12 +22,7 @@ import com.hp.hpl.jena.rdf.model.*;
 public class TableCtrl {
 
     @FXML
-    private BorderPane tablePane;
-
-    @FXML
     private TableView<TableItem> tableView;
-
-    public TableCtrl() {}
 
     public void fillItems(RDFNode node) {
         List<TableItem> items = buildTableItems(node);
