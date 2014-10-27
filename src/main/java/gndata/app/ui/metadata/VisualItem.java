@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.metadata;
 
 import com.hp.hpl.jena.rdf.model.*;
@@ -10,9 +18,11 @@ public class VisualItem {
 
     public static String renderResource(RDFNode item) {
 
-        if (item == null) { return ""; }
+        if (item == null)
+            return "";
 
-        if (!item.isResource()) { return item.toString(); }
+        if (!item.isResource())
+            return item.toString();
 
         Resource node = item.asResource();
         String name = "";
