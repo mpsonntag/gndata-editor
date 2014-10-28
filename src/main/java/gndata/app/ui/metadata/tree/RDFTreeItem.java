@@ -21,7 +21,6 @@ import gndata.app.ui.metadata.VisualItem;
  */
 public class RDFTreeItem extends TreeItem<RDFNode> {
 
-    private RDFNode node;
     private boolean isFirstTimeChildren = true;
 
     /**
@@ -31,7 +30,6 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
      */
     public RDFTreeItem(RDFNode res) {
         super(res);
-        node = res;
     }
 
     @Override
@@ -72,10 +70,10 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     private List<RDFTreeItem> buildChildren() {
         List<RDFTreeItem> children = new ArrayList<>();
 
-        if (!node.isResource()) return children;
+        if (!getValue().isResource()) return children;
 
-        Resource r = node.asResource();
-        Model m = node.getModel();
+        Resource r = getValue().asResource();
+        Model m = getValue().getModel();
 
         // properties and directly related objects of a current resource
         StmtIterator iter = r.listProperties();
