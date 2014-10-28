@@ -1,17 +1,23 @@
-package gndata.app.ui.dia;
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
-import gndata.app.ui.util.DialogController;
-import gndata.lib.config.ProjectConfig;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
+package gndata.app.ui.dia;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.*;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+
+import gndata.app.ui.util.DialogController;
+import gndata.lib.config.ProjectConfig;
 
 /**
  * Controller for the project configuration view.
@@ -21,6 +27,7 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     final ProjectConfig config;
     final SimpleStringProperty name;
     final SimpleStringProperty description;
+
     @FXML
     private BorderPane view;
     @FXML
@@ -35,7 +42,7 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      */
     public ProjectConfigCtrl(ProjectConfig config) {
         this.config = config;
-        this.name   = new SimpleStringProperty(config.getName());
+        this.name = new SimpleStringProperty(config.getName());
         this.description = new SimpleStringProperty(config.getDescription());
     }
 
@@ -59,7 +66,7 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      */
     @Override
     public ProjectConfig getResult() {
-        if (! isCancelled()) {
+        if (!isCancelled()) {
             config.setName(name.get());
             config.setDescription(description.get());
         }

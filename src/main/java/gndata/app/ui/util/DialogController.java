@@ -24,6 +24,11 @@ public abstract class DialogController<T> {
      */
     abstract public T getResult();
 
+    /**
+     * Get the top level scene graph node or view handled by the controller.
+     *
+     * @return A scene graph node.
+     */
     abstract public Node getView();
 
     /**

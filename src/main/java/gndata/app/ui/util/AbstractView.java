@@ -1,12 +1,18 @@
-package gndata.app.ui.util;
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+package gndata.app.ui.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 
 /**
  * Base class for views with convention over configuration pattern.

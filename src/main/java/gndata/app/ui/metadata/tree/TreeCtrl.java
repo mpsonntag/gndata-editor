@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.metadata.tree;
 
 import java.net.URL;
@@ -8,12 +16,10 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
 import gndata.app.state.ProjectState;
-
 
 /**
  * Controller for the metadata tree view.
@@ -24,12 +30,8 @@ public class TreeCtrl implements Initializable {
 
     @FXML
     private TreeView<RDFNode> metadataTreeView;
-
     @FXML
     private TextField searchInput;
-
-    @FXML
-    private BorderPane metadataPane;
 
     @Inject
     public TreeCtrl(ProjectState projectState) {
@@ -82,7 +84,7 @@ public class TreeCtrl implements Initializable {
      * Returns a list of available types (triple used with RDF.type) from
      * the metadata of the current project.
      *
-     * @return          list of TreeItem(s) representing top classes
+     * @return list of TreeItem(s) representing top classes
      */
     public ObservableList<RDFTreeItem> getRootClasses() {
         Model annotations = projectState.getMetadata().getAnnotations();
@@ -108,7 +110,7 @@ public class TreeCtrl implements Initializable {
      * Returns a list of RDF Tree items filtered by literal in the
      * the metadata of the current project.
      *
-     * @return          list of TreeItem(s) representing top classes
+     * @return list of TreeItem(s) representing top classes
      */
     public ObservableList<RDFTreeItem> getRootClasses(String filter) {
         Model annotations = projectState.getMetadata().getAnnotations();

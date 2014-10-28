@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.dia;
 
 import java.net.URL;
@@ -15,12 +23,12 @@ import gndata.app.ui.util.DialogController;
  */
 public class ProjectListCtrl extends DialogController<String> implements Initializable {
 
+    private Map<String, String> projects;
+
     @FXML
     private BorderPane view;
     @FXML
     private ListView<Entry<String, String>> list;
-
-    private Map<String, String> projects;
 
     public ProjectListCtrl(Map<String, String> projects) {
         this.projects = projects;

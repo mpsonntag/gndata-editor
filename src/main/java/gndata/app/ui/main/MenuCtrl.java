@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.main;
 
 import java.io.*;
@@ -67,7 +75,7 @@ public class MenuCtrl implements Initializable {
      *
      * @return The selected dialog or null if the selection was canceled.
      */
-    public File showDirectoryChooser() {
+    protected File showDirectoryChooser() {
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Select the project directory");
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -81,7 +89,7 @@ public class MenuCtrl implements Initializable {
      *
      * @return The edited
      */
-    public ProjectConfig showConfigDialog(ProjectConfig config) {
+    protected ProjectConfig showConfigDialog(ProjectConfig config) {
         ProjectConfigView configDialog = new ProjectConfigView(config);
         return configDialog.showDialog(menu.getScene().getWindow());
     }
@@ -119,8 +127,13 @@ public class MenuCtrl implements Initializable {
         }
     }
 
-
-    public String showListDialog(GlobalConfig config) {
+    /**
+     * Show a project list dialog.
+     *
+     * @param config The global configuration object.
+     * @return A string containing the path to the selected project or null.
+     */
+    protected String showListDialog(GlobalConfig config) {
         ProjectListView listView = new ProjectListView(config.getProjects());
         return listView.showDialog(menu.getScene().getWindow());
     }

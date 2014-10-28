@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata;
 
 import javafx.application.Application;
@@ -9,9 +17,21 @@ import gndata.app.state.AppState;
 import gndata.app.ui.main.MainView;
 import gndata.lib.config.GlobalConfig;
 
-
+/**
+ * Main application class containing the main method as program entry point.
+ */
 public class App extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    /**
+     * Starts the main application.
+     *
+     * @param stage The main stage of the application.
+     * @throws Exception Errors occurring during application runtime.
+     */
     @Override
     public void start(Stage stage) throws Exception {
         //AquaFx.style();
@@ -33,10 +53,6 @@ public class App extends Application {
         stage.setTitle("GNData Editor");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }

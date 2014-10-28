@@ -1,33 +1,38 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.main;
 
-import gndata.app.ui.metadata.table.TableCtrl;
-import gndata.app.ui.metadata.tree.TreeCtrl;
-import gndata.app.ui.metadata.tree.TreeView;
-import gndata.app.ui.metadata.table.TableView;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
-
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javax.inject.Inject;
+import javafx.fxml.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 
+import gndata.app.ui.metadata.table.*;
+import gndata.app.ui.metadata.tree.*;
+
+/**
+ * Controller for the main application window.
+ */
 public class MainCtrl implements Initializable {
 
     @FXML
-    private SplitPane splitPane;
-
-    @FXML
     public BorderPane view;
-
+    @FXML
+    private SplitPane splitPane;
     @Inject
     private MenuView menuView;
 
     @Inject
     private TreeView metadataView;
-
     @Inject
     private TableView tableView;
 
@@ -45,12 +50,10 @@ public class MainCtrl implements Initializable {
             TableCtrl tableCtrl = tableView.getLoader().getController();
 
             // listener to update the table after metadata item selection
-            treeCtrl.getTree().getSelectionModel()
-                .selectedItemProperty()
-                .addListener((observable, oldVal, selectedItem) ->
-                    tableCtrl.fillItems(
-                        selectedItem == null ? null : selectedItem.getValue()
-                ));
+            treeCtrl.getTree().getSelectionModel().selectedItemProperty()
+                    .addListener((observable, oldVal, selectedItem) ->
+                                    tableCtrl.fillItems(selectedItem == null ? null : selectedItem.getValue())
+                    );
 
             // TODO find a nicer way to couple tree and table
 
