@@ -43,7 +43,7 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
 
     @Override
     public boolean isLeaf() {
-        return getChildren().size() == 0;
+        return buildChildren().size() == 0;
     }
 
     private boolean isOntologyRelated(Statement st) {
