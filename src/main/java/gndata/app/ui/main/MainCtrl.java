@@ -16,8 +16,8 @@ import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.metadata.table.TableView;
-import gndata.app.ui.metadata.tree.TreeView;
+import gndata.app.ui.metadata.table.RDFTableView;
+import gndata.app.ui.metadata.tree.RDFTreeView;
 
 /**
  * Controller for the main application window.
@@ -32,9 +32,9 @@ public class MainCtrl implements Initializable {
     private MenuView menuView;
 
     @Inject
-    private TreeView metadataView;
+    private RDFTreeView metadataView;
     @Inject
-    private TableView tableView;
+    private RDFTableView tableView;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

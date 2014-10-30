@@ -24,7 +24,7 @@ import gndata.app.state.*;
 /**
  * Controller for the metadata tree view.
  */
-public class TreeCtrl implements Initializable {
+public class RDFTreeCtrl implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataState metadataState;
@@ -35,7 +35,7 @@ public class TreeCtrl implements Initializable {
     private TextField searchInput;
 
     @Inject
-    public TreeCtrl(ProjectState projectState, MetadataState metadataState) {
+    public RDFTreeCtrl(ProjectState projectState, MetadataState metadataState) {
         this.projectState = projectState;
         this.metadataState = metadataState;
     }
@@ -59,7 +59,7 @@ public class TreeCtrl implements Initializable {
         searchInput.setText("type search text here and press Enter");
 
         // facade for the metadata tree items
-        metadataTreeView.setCellFactory((p) -> new TreeDisplay());
+        metadataTreeView.setCellFactory((p) -> new RDFTreeCell());
 
         loadTree(null);
     }

@@ -6,20 +6,20 @@ import static org.junit.Assert.assertNull;
 
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.*;
-import gndata.app.ui.metadata.tree.TreeCtrl;
+import gndata.app.ui.metadata.tree.RDFTreeCtrl;
 import gndata.lib.config.ProjectConfig;
 import gndata.lib.util.FakeRDFModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
 
 
-public class TreeCtrlTest {
+public class RDFTreeCtrlTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
     ProjectState projectState;
     MetadataState metadataState;
-    TreeCtrl treeCtrl;
+    RDFTreeCtrl treeCtrl;
 
     @Before
     public void setUp() throws Exception {
@@ -32,7 +32,7 @@ public class TreeCtrlTest {
 
         projectState.setConfig(config); // creates initial project structure
 
-        ClassLoader cl = TreeCtrlTest.class.getClassLoader();
+        ClassLoader cl = RDFTreeCtrlTest.class.getClassLoader();
 
         Path foaf = Paths.get(cl.getResource("testfiles/foaf_example.rdf").getPath());
         Path meta = tmpPath.resolve("metadata/annotations/metadata.rdf");
@@ -40,7 +40,7 @@ public class TreeCtrlTest {
 
         projectState.setConfig(ProjectConfig.load(tmpPath.toString())); // to reload project state and metadata service
 
-        treeCtrl = new TreeCtrl(projectState, metadataState);
+        treeCtrl = new RDFTreeCtrl(projectState, metadataState);
     }
 
     @After
