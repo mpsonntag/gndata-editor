@@ -16,7 +16,7 @@ import gndata.app.ui.metadata.VisualItem;
 /**
  * Facade class for metadata tree items.
  */
-public final class TreeDisplay extends TreeCell<RDFNode> {
+public final class RDFTreeCell extends TreeCell<RDFNode> {
 
     @Override
     public void updateItem(RDFNode item, boolean empty) {

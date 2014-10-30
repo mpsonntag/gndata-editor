@@ -32,9 +32,9 @@ public class MainCtrl implements Initializable {
     private MenuView menuView;
 
     @Inject
-    private TreeView metadataView;
+    private RDFTreeView metadataView;
     @Inject
-    private TableView tableView;
+    private RDFTableView RDFTableView;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -44,10 +44,10 @@ public class MainCtrl implements Initializable {
 
             // split pane with metadata tree
             splitPane.getItems().add(metadataView.getScene());
-            splitPane.getItems().add(tableView.getScene());
+            splitPane.getItems().add(RDFTableView.getScene());
 
-            TreeCtrl treeCtrl = metadataView.getLoader().getController();
-            TableCtrl tableCtrl = tableView.getLoader().getController();
+            RDFTreeCtrl treeCtrl = metadataView.getLoader().getController();
+            RDFTableCtrl tableCtrl = RDFTableView.getLoader().getController();
 
             // listener to update the table after metadata item selection
             treeCtrl.getTree().getSelectionModel().selectedItemProperty()

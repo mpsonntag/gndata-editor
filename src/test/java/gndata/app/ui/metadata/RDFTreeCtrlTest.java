@@ -6,14 +6,14 @@ import static org.junit.Assert.assertNull;
 
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.ProjectState;
-import gndata.app.ui.metadata.tree.TreeCtrl;
+import gndata.app.ui.metadata.tree.RDFTreeCtrl;
 import gndata.lib.config.ProjectConfig;
 import gndata.lib.util.FakeRDFModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
 
 
-public class TreeCtrlTest {
+public class RDFTreeCtrlTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
@@ -27,7 +27,7 @@ public class TreeCtrlTest {
 
         ps.setConfig(config); // creates initial project structure
 
-        ClassLoader cl = TreeCtrlTest.class.getClassLoader();
+        ClassLoader cl = RDFTreeCtrlTest.class.getClassLoader();
 
         Path foaf = Paths.get(cl.getResource("testfiles/foaf_example.rdf").getPath());
         Path meta = tmpPath.resolve("metadata/annotations/metadata.rdf");
@@ -45,7 +45,7 @@ public class TreeCtrlTest {
 
     @Test
     public void testListen() throws Exception {
-        TreeCtrl ctrl = new TreeCtrl(ps);
+        RDFTreeCtrl ctrl = new RDFTreeCtrl(ps);
         assertNull(ctrl.getTree());
 
         /* TODO find the way to inject FXML
@@ -62,7 +62,7 @@ public class TreeCtrlTest {
 
     @Test
     public void testRootClasses() throws Exception {
-        TreeCtrl ctrl = new TreeCtrl(ps);
+        RDFTreeCtrl ctrl = new RDFTreeCtrl(ps);
 
         Model annotations = ps.getMetadata().getAnnotations();
 

@@ -14,12 +14,12 @@ import com.hp.hpl.jena.rdf.model.*;
 /**
  * Class that implements rendering of table items with RDF literals.
  */
-public class TableItem {
+public class RDFTableItem {
 
     private final Property predicate;
     private final Literal literal;
 
-    public TableItem(Property predicate, Literal literal) {
+    public RDFTableItem(Property predicate, Literal literal) {
         this.predicate = predicate;
         this.literal = literal;
     }

@@ -19,19 +19,19 @@ import com.hp.hpl.jena.rdf.model.*;
 /**
  * Controller for the table to view metadata items.
  */
-public class TableCtrl {
+public class RDFTableCtrl {
 
     @FXML
-    private TableView<TableItem> tableView;
+    private TableView<RDFTableItem> tableView;
 
     public void fillItems(RDFNode node) {
-        List<TableItem> items = buildTableItems(node);
+        List<RDFTableItem> items = buildTableItems(node);
 
         if (items.size() > 0) {
             items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
 
-            ObservableList<TableItem> observableData = FXCollections.observableArrayList(items);
-            SortedList<TableItem> sortedData = new SortedList<>(observableData);
+            ObservableList<RDFTableItem> observableData = FXCollections.observableArrayList(items);
+            SortedList<RDFTableItem> sortedData = new SortedList<>(observableData);
 
             // sort items by predicate value
             sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
@@ -43,8 +43,8 @@ public class TableCtrl {
         }
     }
 
-    public static List<TableItem> buildTableItems(RDFNode node) {
-        List<TableItem> items = new ArrayList<>();
+    public static List<RDFTableItem> buildTableItems(RDFNode node) {
+        List<RDFTableItem> items = new ArrayList<>();
 
         if (node == null || !node.isResource()) { return items; }
 
@@ -57,7 +57,7 @@ public class TableCtrl {
                 Property p = st.getPredicate();
                 Literal l = st.getObject().asLiteral();
 
-                items.add(new TableItem(p, l));
+                items.add(new RDFTableItem(p, l));
             }
         }
 
