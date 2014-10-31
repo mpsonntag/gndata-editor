@@ -24,7 +24,6 @@ public class MetadataState {
 
     public MetadataState() {
         selectedNode = new SimpleObjectProperty<>();
-        selectedNode.addListener((obs, o, n) -> System.out.println(n));
     }
 
     public RDFNode getSelectedNode() {
