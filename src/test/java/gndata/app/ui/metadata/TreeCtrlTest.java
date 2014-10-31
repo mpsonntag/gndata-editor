@@ -5,7 +5,7 @@ import java.nio.file.*;
 import static org.junit.Assert.assertNull;
 
 import com.hp.hpl.jena.rdf.model.*;
-import gndata.app.state.ProjectState;
+import gndata.app.state.*;
 import gndata.app.ui.metadata.tree.TreeCtrl;
 import gndata.lib.config.ProjectConfig;
 import gndata.lib.util.FakeRDFModel;
@@ -17,15 +17,20 @@ public class TreeCtrlTest {
 
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
-    ProjectState ps = new ProjectState();
+    ProjectState projectState;
+    MetadataState metadataState;
+    TreeCtrl treeCtrl;
 
     @Before
     public void setUp() throws Exception {
+        metadataState = new MetadataState();
+        projectState = new ProjectState();
+
         ProjectConfig config = ProjectConfig.load(tmpPath.toString());
         config.setName("MyName");
         config.setDescription("MyDescription");
 
-        ps.setConfig(config); // creates initial project structure
+        projectState.setConfig(config); // creates initial project structure
 
         ClassLoader cl = TreeCtrlTest.class.getClassLoader();
 
@@ -33,7 +38,9 @@ public class TreeCtrlTest {
         Path meta = tmpPath.resolve("metadata/annotations/metadata.rdf");
         Files.copy(foaf, meta, StandardCopyOption.REPLACE_EXISTING);
 
-        ps.setConfig(ProjectConfig.load(tmpPath.toString())); // to reload project state and metadata service
+        projectState.setConfig(ProjectConfig.load(tmpPath.toString())); // to reload project state and metadata service
+
+        treeCtrl = new TreeCtrl(projectState, metadataState);
     }
 
     @After
@@ -45,31 +52,28 @@ public class TreeCtrlTest {
 
     @Test
     public void testListen() throws Exception {
-        TreeCtrl ctrl = new TreeCtrl(ps);
-        assertNull(ctrl.getTree());
+        assertNull(treeCtrl.getTree());
 
         /* TODO find the way to inject FXML
-        ctrl.initialize();
-        TreeItem<Resource> root = ctrl.getTree().getRoot();
+        treeCtrl.initialize();
+        TreeItem<Resource> root = treeCtrl.getTree().getRoot();
         assertNotNull(root);
 
         ProjectConfig config = ProjectConfig.load(tmpPath.toString());
-        ps.setConfig(config);
+        projectState.setConfig(config);
 
-        assertNotEquals(ctrl.getTree().getRoot(), root);
+        assertNotEquals(treeCtrl.getTree().getRoot(), root);
         */
     }
 
     @Test
     public void testRootClasses() throws Exception {
-        TreeCtrl ctrl = new TreeCtrl(ps);
-
-        Model annotations = ps.getMetadata().getAnnotations();
+        Model annotations = projectState.getMetadata().getAnnotations();
 
         Resource person = annotations.getResource("http://xmlns.com/foaf/0.1/Person");
-        assert(ctrl.getRootClasses().stream().anyMatch(a -> a.getValue().equals(person)));
+        assert (treeCtrl.getRootClasses().stream().anyMatch(a -> a.getValue().equals(person)));
 
         Resource tbl_node = annotations.getResource(FakeRDFModel.tbl);
-        assert(ctrl.getRootClasses("tim").stream().anyMatch(a -> a.getValue().equals(tbl_node)));
+        assert (treeCtrl.getRootClasses("tim").stream().anyMatch(a -> a.getValue().equals(tbl_node)));
     }
 }
