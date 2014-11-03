@@ -6,18 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata.tree;
+package gndata.app.ui.metadata.table;
 
 import com.google.inject.*;
 import gndata.app.ui.util.InjectorView;
 
 /**
- * Tree view for the project metadata.
+ * Table view for the selected metadata item.
  */
-public class TreeView extends InjectorView {
+public class RDFTableView extends InjectorView {
 
     @Inject
-    public TreeView(Injector injector) {
+    public RDFTableView(Injector injector) {
         super(injector);
     }
 

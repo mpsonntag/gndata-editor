@@ -15,15 +15,15 @@ public class TableTest {
     @Test
     public void testTableCtrl() throws Exception {
         Resource tbl = model.getResource(FakeRDFModel.tbl);
-        List<TableItem> l = TableCtrl.buildTableItems(tbl);
+        List<RDFTableItem> l = RDFTableCtrl.buildTableItems(tbl);
 
         // list should only contain literals, one 'name' item in this case
-        Optional<TableItem> t = l.stream().filter(a -> a.getPredicate().equals("name")).findFirst();
+        Optional<RDFTableItem> t = l.stream().filter(a -> a.getPredicate().equals("name")).findFirst();
         assert(t.isPresent());
         assert(t.get().getLiteral().equals("Tim Berners-Lee"));
 
         // node=null should result in empty list
-        List<TableItem> empty = TableCtrl.buildTableItems(null);
+        List<RDFTableItem> empty = RDFTableCtrl.buildTableItems(null);
         assert(empty.size() == 0);
     }
 
@@ -33,7 +33,7 @@ public class TableTest {
         Property p = model.getProperty(model.getNsPrefixURI("foaf"), "name");
         Statement st = tbl.getProperty(p);
 
-        TableItem t = new TableItem(st.getPredicate(), st.getLiteral());
+        RDFTableItem t = new RDFTableItem(st.getPredicate(), st.getLiteral());
 
         assert(t.getPredicate().equals("name"));
         assert(t.getLiteral().equals("Tim Berners-Lee"));
