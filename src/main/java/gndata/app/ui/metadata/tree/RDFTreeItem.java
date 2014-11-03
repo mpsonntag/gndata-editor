@@ -22,6 +22,8 @@ import gndata.app.ui.metadata.VisualItem;
 public class RDFTreeItem extends TreeItem<RDFNode> {
 
     private boolean isFirstTimeChildren = true;
+    private boolean isFirstTimeLeaf = true;
+    private boolean isLeaf;
 
     /**
      * Builds a new TreeItem based on a given RDF Node
@@ -35,15 +37,19 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
     @Override
     public ObservableList<TreeItem<RDFNode>> getChildren() {
         if (isFirstTimeChildren) {
-            super.getChildren().setAll(buildChildren());
             isFirstTimeChildren = false;
+            super.getChildren().setAll(buildChildren());
         }
         return super.getChildren();
     }
 
     @Override
     public boolean isLeaf() {
-        return buildChildren().size() == 0;
+        if (isFirstTimeLeaf) {
+            isFirstTimeLeaf = false;
+            isLeaf = buildChildren().size() == 0;
+        }
+        return isLeaf;
     }
 
     private boolean isOntologyRelated(Statement st) {
