@@ -19,7 +19,7 @@ import javafx.scene.input.KeyCode;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
-import gndata.app.state.ProjectState;
+import gndata.app.state.*;
 
 /**
  * Controller for the metadata tree view.
@@ -27,6 +27,7 @@ import gndata.app.state.ProjectState;
 public class TreeCtrl implements Initializable {
 
     private final ProjectState projectState;
+    private final MetadataState metadataState;
 
     @FXML
     private TreeView<RDFNode> metadataTreeView;
@@ -34,13 +35,19 @@ public class TreeCtrl implements Initializable {
     private TextField searchInput;
 
     @Inject
-    public TreeCtrl(ProjectState projectState) {
+    public TreeCtrl(ProjectState projectState, MetadataState metadataState) {
         this.projectState = projectState;
+        this.metadataState = metadataState;
     }
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // listener to reload the tree if project changes
         projectState.addListener((observable, oldVal, newVal) -> loadTree(null));
+
+        // bind selection to metadata state
+        metadataTreeView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            metadataState.setSelectedNode(newVal != null ? newVal.getValue() : null);
+        });
 
         // listener to reload tree if search text is entered
         searchInput.setOnKeyPressed(e -> {

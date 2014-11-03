@@ -16,8 +16,8 @@ import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.metadata.table.*;
-import gndata.app.ui.metadata.tree.*;
+import gndata.app.ui.metadata.table.TableView;
+import gndata.app.ui.metadata.tree.TreeView;
 
 /**
  * Controller for the main application window.
@@ -45,22 +45,9 @@ public class MainCtrl implements Initializable {
             // split pane with metadata tree
             splitPane.getItems().add(metadataView.getScene());
             splitPane.getItems().add(tableView.getScene());
-
-            TreeCtrl treeCtrl = metadataView.getLoader().getController();
-            TableCtrl tableCtrl = tableView.getLoader().getController();
-
-            // listener to update the table after metadata item selection
-            treeCtrl.getTree().getSelectionModel().selectedItemProperty()
-                    .addListener((observable, oldVal, selectedItem) ->
-                                    tableCtrl.fillItems(selectedItem == null ? null : selectedItem.getValue())
-                    );
-
-            // TODO find a nicer way to couple tree and table
-
-            // TODO add listener for tree destruction - items clean up?
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
