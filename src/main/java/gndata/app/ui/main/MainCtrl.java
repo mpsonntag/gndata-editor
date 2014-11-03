@@ -16,8 +16,8 @@ import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.metadata.table.*;
-import gndata.app.ui.metadata.tree.*;
+import gndata.app.ui.metadata.table.RDFTableView;
+import gndata.app.ui.metadata.tree.RDFTreeView;
 
 /**
  * Controller for the main application window.
@@ -34,7 +34,7 @@ public class MainCtrl implements Initializable {
     @Inject
     private RDFTreeView metadataView;
     @Inject
-    private RDFTableView RDFTableView;
+    private RDFTableView tableView;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -44,23 +44,10 @@ public class MainCtrl implements Initializable {
 
             // split pane with metadata tree
             splitPane.getItems().add(metadataView.getScene());
-            splitPane.getItems().add(RDFTableView.getScene());
-
-            RDFTreeCtrl treeCtrl = metadataView.getLoader().getController();
-            RDFTableCtrl tableCtrl = RDFTableView.getLoader().getController();
-
-            // listener to update the table after metadata item selection
-            treeCtrl.getTree().getSelectionModel().selectedItemProperty()
-                    .addListener((observable, oldVal, selectedItem) ->
-                                    tableCtrl.fillItems(selectedItem == null ? null : selectedItem.getValue())
-                    );
-
-            // TODO find a nicer way to couple tree and table
-
-            // TODO add listener for tree destruction - items clean up?
-
+            splitPane.getItems().add(tableView.getScene());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }

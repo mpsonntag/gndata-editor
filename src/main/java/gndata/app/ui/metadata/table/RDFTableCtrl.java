@@ -8,21 +8,37 @@
 
 package gndata.app.ui.metadata.table;
 
+import java.net.URL;
 import java.util.*;
+import javax.inject.Inject;
 import javafx.collections.*;
 import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
+import javafx.fxml.*;
 import javafx.scene.control.TableView;
 
 import com.hp.hpl.jena.rdf.model.*;
+import gndata.app.state.MetadataState;
 
 /**
  * Controller for the table to view metadata items.
  */
-public class RDFTableCtrl {
+public class RDFTableCtrl implements Initializable {
+
+    private MetadataState metadataState;
 
     @FXML
     private TableView<RDFTableItem> tableView;
+
+    @Inject
+    public RDFTableCtrl(MetadataState metadataState) {
+        this.metadataState = metadataState;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // listen to changes in metadata state
+        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> fillItems(newVal));
+    }
 
     public void fillItems(RDFNode node) {
         List<RDFTableItem> items = buildTableItems(node);
