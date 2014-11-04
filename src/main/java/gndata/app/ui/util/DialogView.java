@@ -9,6 +9,8 @@
 package gndata.app.ui.util;
 
 import java.io.IOException;
+import java.util.Optional;
+
 import javafx.scene.Scene;
 import javafx.stage.*;
 
@@ -43,7 +45,7 @@ public abstract class DialogView<T> extends AbstractView {
      *
      * @return The result of the dialog or null if the dialog was cancelled.
      */
-    public T showDialog(Window window) {
+    public Optional<T> showDialog(Window window) {
         try {
             Stage stage = new Stage();
             stage.setScene(new Scene(getScene()));
@@ -54,14 +56,13 @@ public abstract class DialogView<T> extends AbstractView {
             stage.close();
         } catch (IOException e) {
             // TODO nice exception dialog here
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
 
-        if (!controller.isCancelled())
-            return controller.getResult();
+        if (! controller.isCancelled())
+            return Optional.of(controller.getValue());
         else
-            return null;
+            return Optional.empty();
     }
 
 }

@@ -65,7 +65,7 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      * @return The edited project configuration.
      */
     @Override
-    public ProjectConfig getResult() {
+    public ProjectConfig getValue() {
         if (!isCancelled()) {
             config.setName(name.get());
             config.setDescription(description.get());

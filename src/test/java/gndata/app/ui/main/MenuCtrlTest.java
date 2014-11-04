@@ -8,15 +8,22 @@
 
 package gndata.app.ui.main;
 
+import gndata.app.state.AppState;
+import gndata.app.state.ProjectState;
+import gndata.lib.config.GlobalConfig;
+import gndata.lib.config.ProjectConfig;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
-
-import gndata.app.state.*;
-import gndata.lib.config.*;
-import org.apache.commons.io.FileUtils;
-import org.junit.*;
 
 public class MenuCtrlTest {
 
@@ -97,20 +104,20 @@ public class MenuCtrlTest {
         }
 
         @Override
-        protected File showDirectoryChooser() {
-            return tmpPath.toFile();
+        protected Optional<File> showDirectoryChooser() {
+            return Optional.of(tmpPath.toFile());
         }
 
         @Override
-        protected ProjectConfig showConfigDialog(ProjectConfig config) {
+        protected Optional<ProjectConfig> showConfigDialog(ProjectConfig config) {
             config.setName("OtherName");
             config.setDescription("OtherDescription");
-            return config;
+            return Optional.of(config);
         }
 
         @Override
-        protected String showListDialog(GlobalConfig config) {
-            return tmpPath.toString();
+        protected Optional<String> showListDialog(GlobalConfig config) {
+            return Optional.of(tmpPath.toString());
         }
     }
 }

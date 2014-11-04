@@ -41,7 +41,7 @@ public class ProjectListCtrl extends DialogController<String> implements Initial
     }
 
     @Override
-    public String getResult() {
+    public String getValue() {
         SelectionModel<Entry<String, String>> sel = list.getSelectionModel();
         if (!sel.isEmpty()) {
             return sel.getSelectedItem().getKey();

@@ -17,12 +17,12 @@ public abstract class DialogController<T> {
     }
 
     /**
-     * Return the result of the dialog.
-     * If the dialog was cancelled the result should be null.
+     * Return the current value of the controller.
+     * In most cases this should be a non null value.
      *
-     * @return The dialog result.
+     * @return The controller value.
      */
-    abstract public T getResult();
+    abstract public T getValue();
 
     /**
      * Get the top level scene graph node or view handled by the controller.

@@ -35,7 +35,7 @@ public class ProjectConfigCtrlTest {
 
     @Test
     public void testGetResult() throws Exception {
-        ProjectConfig result = ctrl.getResult();
+        ProjectConfig result = ctrl.getValue();
         assertEquals("MyName", result.getName());
         assertEquals("MyDescription", result.getDescription());
 
@@ -44,13 +44,13 @@ public class ProjectConfigCtrlTest {
         ctrl.setCancelled(true);
 
         // should not change because it was cancelled
-        result = ctrl.getResult();
+        result = ctrl.getValue();
         assertEquals("MyName", result.getName());
         assertEquals("MyDescription", result.getDescription());
 
         // now it should change
         ctrl.setCancelled(false);
-        result = ctrl.getResult();
+        result = ctrl.getValue();
         assertEquals("NewName", result.getName());
         assertEquals("NewDescription", result.getDescription());
     }
