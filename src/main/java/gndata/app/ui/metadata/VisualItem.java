@@ -16,28 +16,9 @@ import com.hp.hpl.jena.vocabulary.*;
  */
 public class VisualItem {
 
-    public static String renderResource(RDFNode item) {
+    public static String getClassName(Resource node) {
+        String name = null;
 
-        if (item == null)
-            return "";
-
-        if (!item.isResource())
-            return item.toString();
-
-        Resource node = item.asResource();
-        String name = "";
-
-        // "<resource_name>" as label if exists, id otherwise
-        if (node.listProperties(RDFS.label).hasNext()) {
-            name += node.listProperties(RDFS.label)
-                    .nextStatement()
-                    .getObject()
-                    .toString();
-        } else {
-            name += node.getLocalName();
-        }
-
-        // builds "<class_name>: <resource_name>"
         if (node.listProperties(RDF.type).hasNext()) {
             Resource cls = node.listProperties(RDF.type)
                     .nextStatement()
@@ -45,9 +26,47 @@ public class VisualItem {
                     .asResource();
 
             if (!cls.equals(OWL.Class)) {
-                String prefix = cls.getLocalName() + ": ";
-                return name.length() < 15 ? prefix + name : prefix + name.substring(0, 14);
+                name = cls.getLocalName();
             }
+        }
+
+        return name;
+    }
+
+    public static String getLabel(Resource node) {
+        String name = null;
+
+        if (node.listProperties(RDFS.label).hasNext()) {
+            name = node.listProperties(RDFS.label)
+                    .nextStatement()
+                    .getObject()
+                    .toString();
+        }
+
+        return name;
+    }
+
+    public static String getID(Resource node) {
+        String name = node.getLocalName();
+        return name.length() < 15 ? name : name.substring(0, 14);
+    }
+
+    public static String renderForSorting(RDFNode item) {
+
+        if (!item.isResource())
+            return item.toString();
+
+        Resource node = item.asResource();
+
+        String classname = VisualItem.getClassName(node);
+        String name = "";
+
+        if (classname == null) { // root nodes
+            name = VisualItem.getID(node);
+        } else { // non-root nodes
+            String label = VisualItem.getLabel(node);
+
+            name = String.format("%s: %s", classname, label == null ? "" : label);
         }
 
         return name;

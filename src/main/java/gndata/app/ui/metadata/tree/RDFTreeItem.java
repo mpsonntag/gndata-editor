@@ -118,8 +118,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
         }
 
         // sort alphabetically
-        children.sort((a, b) -> VisualItem.renderResource(a.getValue()).compareTo(
-                                VisualItem.renderResource(b.getValue())));
+        children.sort((a, b) -> VisualItem.renderForSorting(a.getValue()).compareTo(
+                                VisualItem.renderForSorting(b.getValue())));
 
         return children;
     }
