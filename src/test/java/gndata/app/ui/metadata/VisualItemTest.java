@@ -13,9 +13,9 @@ public class VisualItemTest {
     @Test
     public void testRenderResource() throws Exception {
         Resource r = model.getResource(w3c);
-        assert(VisualItem.renderResource(r).contains("W3C"));  // contains label
+        assert(VisualItem.renderForSorting(r).contains("W3C"));  // contains label
 
         Resource t = model.getResource(FakeRDFModel.tbl);
-        assert(VisualItem.renderResource(t).contains("Person"));  // contains type name
+        assert(VisualItem.renderForSorting(t).contains("Person"));  // contains type name
     }
 }

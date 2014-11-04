@@ -8,9 +8,12 @@
 
 package gndata.app.ui.metadata.tree;
 
-import javafx.scene.control.TreeCell;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.TextAlignment;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.ui.metadata.VisualItem;
 
 /**
@@ -22,10 +25,33 @@ public final class RDFTreeCell extends TreeCell<RDFNode> {
     public void updateItem(RDFNode item, boolean empty) {
         super.updateItem(item, empty);
 
-        if (empty) {
-            setText(null);
+        if (empty || !item.isResource()) {
+            setGraphic(new HBox());
         } else {
-            setText(VisualItem.renderResource(item));
+            Resource node = item.asResource();
+
+            String classname = VisualItem.getClassName(node);
+            String titletext, subtitletext = "";
+
+            if (classname == null) { // root node
+                titletext = VisualItem.getID(node);
+            } else { // non-root node
+                String label = VisualItem.getLabel(node);
+
+                titletext = String.format("%s: %s", classname, label == null ? "" : label);
+                subtitletext = VisualItem.getID(node);
+            }
+
+            Label title = new Label(titletext);
+            title.setStyle("-fx-font-weight: bold;");
+
+            Label subtitle = new Label(subtitletext);
+            subtitle.setStyle("-fx-font-size: 0.7em; -fx-text-fill: grey;");
+
+            HBox box = new HBox(title, subtitle);
+            box.setAlignment(Pos.CENTER_LEFT);
+
+            setGraphic(box);
         }
     }
 }
