@@ -47,8 +47,7 @@ public class VisualItem {
     }
 
     public static String getID(Resource node) {
-        String name = node.getLocalName();
-        return name.length() < 15 ? name : name.substring(0, 14);
+        return node.getLocalName();
     }
 
     public static String renderForSorting(RDFNode item) {

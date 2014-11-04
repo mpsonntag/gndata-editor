@@ -37,9 +37,10 @@ public final class RDFTreeCell extends TreeCell<RDFNode> {
                 titletext = VisualItem.getID(node);
             } else { // non-root node
                 String label = VisualItem.getLabel(node);
-
                 titletext = String.format("%s: %s", classname, label == null ? "" : label);
-                subtitletext = VisualItem.getID(node);
+
+                String id = VisualItem.getID(node);
+                subtitletext = id.length() < 15 ? id : id.substring(0, 14);
             }
 
             Label title = new Label(titletext);
