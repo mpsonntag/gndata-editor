@@ -8,12 +8,18 @@
 
 package gndata.lib.config;
 
-import java.io.*;
-import java.nio.file.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import static java.nio.file.StandardOpenOption.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import com.google.gson.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**
  * Base class for configurations.
@@ -23,6 +29,20 @@ import com.google.gson.*;
 public abstract class AbstractConfig {
 
     private String filePath;
+
+    /**
+     * Default constructor.
+     */
+    public AbstractConfig() {}
+
+    /**
+     * Copy constructor.
+     *
+     * @param other The config to copy.
+     */
+    public AbstractConfig(AbstractConfig other) {
+        filePath = other.filePath;
+    }
 
     /**
      * Getter for the path to the configuration file from which the configuration was loaded.

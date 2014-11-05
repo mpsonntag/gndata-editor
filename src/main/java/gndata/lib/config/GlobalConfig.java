@@ -9,19 +9,34 @@
 package gndata.lib.config;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Global application configuration.
  */
-public class GlobalConfig extends AbstractConfig {
+public final class GlobalConfig extends AbstractConfig {
 
     private Map<String, String> projects;
 
-
+    /**
+     * Default constructor.
+     */
     public GlobalConfig() {
         projects = new TreeMap<>();
+    }
+
+    /**
+     * Copy constructor.
+     *
+     * @param other The configuration to copy.
+     */
+    public GlobalConfig(GlobalConfig other) {
+        super(other);
+        projects = new TreeMap<>(other.projects);
     }
 
 

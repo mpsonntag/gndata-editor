@@ -9,7 +9,9 @@
 package gndata.lib.config;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Project configuration;
@@ -21,6 +23,23 @@ public class ProjectConfig extends AbstractConfig {
     private String projectPath;
     private String name;
     private String description;
+
+    /**
+     * Default constructor.
+     */
+    public ProjectConfig() {}
+
+    /**
+     * Copy constructor.
+     *
+     * @param other The config to copy.
+     */
+    public ProjectConfig(ProjectConfig other) {
+        super(other);
+        projectPath = other.projectPath;
+        name = other.name;
+        description = other.description;
+    }
 
     public String getProjectPath() {
         return projectPath;
