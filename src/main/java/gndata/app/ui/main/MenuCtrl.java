@@ -8,17 +8,24 @@
 
 package gndata.app.ui.main;
 
-import java.io.*;
-import java.net.URL;
-import java.util.ResourceBundle;
-import javax.inject.Inject;
-import javafx.fxml.*;
-import javafx.scene.control.*;
+import gndata.app.state.AppState;
+import gndata.app.state.ProjectState;
+import gndata.app.ui.dia.ProjectConfigView;
+import gndata.app.ui.dia.ProjectListView;
+import gndata.lib.config.GlobalConfig;
+import gndata.lib.config.ProjectConfig;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.stage.DirectoryChooser;
 
-import gndata.app.state.*;
-import gndata.app.ui.dia.*;
-import gndata.lib.config.*;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * Controller for the main menu view.
@@ -49,16 +56,18 @@ public class MenuCtrl implements Initializable {
      * Open a new project or create one.
      */
     public void createProject() {
-        File selected = showDirectoryChooser();
-
-        if (selected == null)
-            return;
-
         try {
-            ProjectConfig config = ProjectConfig.load(selected.getAbsolutePath());
-            config = showConfigDialog(config);
+            Optional<File> optDir = showDirectoryChooser();
 
-            if (config != null) {
+            if (! optDir.isPresent())
+                return;
+
+            ProjectConfig config = ProjectConfig.load(optDir.get().getAbsolutePath());
+            Optional<ProjectConfig> optConfig = showConfigDialog(config);
+
+            if (optConfig.isPresent()) {
+                config = optConfig.get();
+
                 config.store();
                 projectState.setConfig(config);
 
@@ -75,11 +84,12 @@ public class MenuCtrl implements Initializable {
      *
      * @return The selected dialog or null if the selection was canceled.
      */
-    protected File showDirectoryChooser() {
+    protected Optional<File> showDirectoryChooser() {
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Select the project directory");
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        return dirChooser.showDialog(menu.getScene().getWindow());
+
+        return Optional.of(dirChooser.showDialog(menu.getScene().getWindow()));
     }
 
     /**
@@ -89,7 +99,7 @@ public class MenuCtrl implements Initializable {
      *
      * @return The edited
      */
-    protected ProjectConfig showConfigDialog(ProjectConfig config) {
+    protected Optional<ProjectConfig> showConfigDialog(ProjectConfig config) {
         ProjectConfigView configDialog = new ProjectConfigView(config);
         return configDialog.showDialog(menu.getScene().getWindow());
     }
@@ -99,15 +109,17 @@ public class MenuCtrl implements Initializable {
      * if they have changed.
      */
     public void projectSettings() {
-        try {
-            ProjectConfig config = showConfigDialog(projectState.getConfig());
+        Optional<ProjectConfig> optConfig = showConfigDialog(projectState.getConfig());
 
-            if (config != null) {
+        if (optConfig.isPresent()) {
+            try {
+                ProjectConfig config = optConfig.get();
+
                 config.store();
                 projectState.setConfig(config);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -115,11 +127,11 @@ public class MenuCtrl implements Initializable {
      * Open a previously opened project.
      */
     public void openProject() {
-        String configPath = showListDialog(this.appState.getConfig());
+        Optional<String> optPath = showListDialog(this.appState.getConfig());
 
-        if (configPath != null) {
+        if (optPath.isPresent()) {
             try {
-                ProjectConfig config = ProjectConfig.load(configPath);
+                ProjectConfig config = ProjectConfig.load(optPath.get());
                 projectState.setConfig(config);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -133,7 +145,7 @@ public class MenuCtrl implements Initializable {
      * @param config The global configuration object.
      * @return A string containing the path to the selected project or null.
      */
-    protected String showListDialog(GlobalConfig config) {
+    protected Optional<String> showListDialog(GlobalConfig config) {
         ProjectListView listView = new ProjectListView(config.getProjects());
         return listView.showDialog(menu.getScene().getWindow());
     }

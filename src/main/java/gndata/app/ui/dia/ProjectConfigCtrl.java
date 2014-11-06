@@ -10,7 +10,6 @@ package gndata.app.ui.dia;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -25,8 +24,6 @@ import gndata.lib.config.ProjectConfig;
 public class ProjectConfigCtrl extends DialogController<ProjectConfig> implements Initializable {
 
     final ProjectConfig config;
-    final SimpleStringProperty name;
-    final SimpleStringProperty description;
 
     @FXML
     private BorderPane view;
@@ -41,9 +38,7 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      * @param config The current project configuration.
      */
     public ProjectConfigCtrl(ProjectConfig config) {
-        this.config = config;
-        this.name = new SimpleStringProperty(config.getName());
-        this.description = new SimpleStringProperty(config.getDescription());
+        this.config = new ProjectConfig(config);
     }
 
     /**
@@ -53,8 +48,8 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        nameInput.textProperty().bindBidirectional(name);
-        descriptionInput.textProperty().bindBidirectional(description);
+        nameInput.textProperty().bindBidirectional(config.nameProperty());
+        descriptionInput.textProperty().bindBidirectional(config.descriptionProperty());
     }
 
     /**
@@ -65,12 +60,7 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      * @return The edited project configuration.
      */
     @Override
-    public ProjectConfig getResult() {
-        if (!isCancelled()) {
-            config.setName(name.get());
-            config.setDescription(description.get());
-        }
-
+    public ProjectConfig getValue() {
         return config;
     }
 

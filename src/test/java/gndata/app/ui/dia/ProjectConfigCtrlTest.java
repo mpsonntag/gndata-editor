@@ -1,10 +1,9 @@
 package gndata.app.ui.dia;
 
-import gndata.lib.config.ProjectConfig;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+
+import gndata.lib.config.ProjectConfig;
+import org.junit.*;
 
 public class ProjectConfigCtrlTest {
 
@@ -35,23 +34,9 @@ public class ProjectConfigCtrlTest {
 
     @Test
     public void testGetResult() throws Exception {
-        ProjectConfig result = ctrl.getResult();
+        ProjectConfig result = ctrl.getValue();
         assertEquals("MyName", result.getName());
         assertEquals("MyDescription", result.getDescription());
-
-        ctrl.name.set("NewName");
-        ctrl.description.set("NewDescription");
-        ctrl.setCancelled(true);
-
-        // should not change because it was cancelled
-        result = ctrl.getResult();
-        assertEquals("MyName", result.getName());
-        assertEquals("MyDescription", result.getDescription());
-
-        // now it should change
-        ctrl.setCancelled(false);
-        result = ctrl.getResult();
-        assertEquals("NewName", result.getName());
-        assertEquals("NewDescription", result.getDescription());
+        assertNotEquals(result, config);
     }
 }
