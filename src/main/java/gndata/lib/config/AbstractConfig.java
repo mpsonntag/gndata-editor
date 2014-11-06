@@ -8,18 +8,13 @@
 
 package gndata.lib.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static com.fasterxml.jackson.databind.DeserializationFeature.*;
+import static com.fasterxml.jackson.databind.SerializationFeature.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Base class for configurations.
@@ -72,13 +67,12 @@ public abstract class AbstractConfig {
         Path tmpPath = Paths.get(filePath);
         Files.createDirectories(tmpPath.getParent());
 
-        try (Writer out = Files.newBufferedWriter(tmpPath, TRUNCATE_EXISTING, CREATE)) {
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .serializeNulls()
-                    .create();
-            String json = gson.toJson(this);
-            out.write(json);
+        try {
+            ObjectMapper mapper = new ObjectMapper()
+                    .enable(INDENT_OUTPUT)
+                    .disable(FAIL_ON_EMPTY_BEANS);
+
+            mapper.writeValue(tmpPath.toFile(), this);
         } catch (IOException e) {
             throw new IOException("Unable to write configuration file: " + this.filePath, e);
         }
@@ -95,17 +89,14 @@ public abstract class AbstractConfig {
      * @throws IOException
      */
     protected static <T extends AbstractConfig> T load(String filePath, Class<T> cls) throws IOException {
-        Path tmpPath = Paths.get(filePath)
-                .toAbsolutePath()
-                .normalize();
+        Path tmpPath = Paths.get(filePath);
+        ObjectMapper mapper = new ObjectMapper()
+                .enable(ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+                .enable(ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                .disable(FAIL_ON_UNKNOWN_PROPERTIES);
 
-        try (Reader in = Files.newBufferedReader(tmpPath)) {
-            Gson gson = new GsonBuilder()
-                    .serializeNulls()
-                    .create();
-            T  config = gson.fromJson(in, cls);
-            config.setFilePath(tmpPath.toString());
-            return config;
+        try {
+            return mapper.readValue(tmpPath.toFile(), cls);
         } catch (IOException e) {
             throw new IOException("Unable to read configuration file: " + filePath, e);
         }
