@@ -9,9 +9,8 @@
 package gndata.lib.config;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import javafx.beans.property.SimpleStringProperty;
 
 /**
  * Project configuration;
@@ -20,14 +19,14 @@ public class ProjectConfig extends AbstractConfig {
 
     public static final Path IN_PROJECT_PATH = Paths.get(".gnode", "settings.json");
 
-    private String projectPath;
-    private String name;
-    private String description;
+    private SimpleStringProperty projectPath = new SimpleStringProperty();
+    private SimpleStringProperty name = new SimpleStringProperty();
+    private SimpleStringProperty description = new SimpleStringProperty();
 
     /**
      * Default constructor.
      */
-    public ProjectConfig() {}
+    public ProjectConfig() { }
 
     /**
      * Copy constructor.
@@ -36,33 +35,45 @@ public class ProjectConfig extends AbstractConfig {
      */
     public ProjectConfig(ProjectConfig other) {
         super(other);
-        projectPath = other.projectPath;
-        name = other.name;
-        description = other.description;
+        projectPath.set(other.getProjectPath());
+        name.set(other.getName());
+        description.set(other.getDescription());
     }
 
     public String getProjectPath() {
+        return projectPath.get();
+    }
+
+    public SimpleStringProperty projectPathProperty() {
         return projectPath;
     }
 
     public void setProjectPath(String projectPath) {
-        this.projectPath = projectPath;
+        this.projectPath.set(projectPath);
     }
 
     public String getName() {
+        return name.get();
+    }
+
+    public SimpleStringProperty nameProperty() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     public String getDescription() {
+        return description.get();
+    }
+
+    public SimpleStringProperty descriptionProperty() {
         return description;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description.set(description);
     }
 
     /**

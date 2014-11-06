@@ -46,7 +46,7 @@ public class ProjectListCtrl extends DialogController<String> implements Initial
         if (!sel.isEmpty()) {
             return sel.getSelectedItem().getKey();
         } else {
-            return null;
+            return list.getItems().get(0).getKey();
         }
     }
 
