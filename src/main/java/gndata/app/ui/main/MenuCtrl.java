@@ -50,6 +50,9 @@ public class MenuCtrl implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // set a listener that hides or shows the project menu depending on the state
         this.projectState.addListener((obs, o, n) -> projectMenu.setVisible(n != null));
+        
+        //use osx system menu
+        menu.setUseSystemMenuBar(true);
     }
 
     /**
