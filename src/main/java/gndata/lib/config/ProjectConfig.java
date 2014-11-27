@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.*;
 import javafx.beans.property.SimpleStringProperty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Project configuration;
  */
@@ -40,6 +42,7 @@ public class ProjectConfig extends AbstractConfig {
         description.set(other.getDescription());
     }
 
+    @JsonIgnore
     public String getProjectPath() {
         return projectPath.get();
     }
@@ -93,7 +96,10 @@ public class ProjectConfig extends AbstractConfig {
         Path filePath = absPath.resolve(IN_PROJECT_PATH);
 
         if (Files.exists(filePath)) {
-            return AbstractConfig.load(filePath.toString(), ProjectConfig.class);
+            ProjectConfig config = AbstractConfig.load(filePath.toString(), ProjectConfig.class);
+            config.setProjectPath(absPath.toString());
+
+            return config;
         } else {
             ProjectConfig config = new ProjectConfig();
             // set defaults here if necessary
