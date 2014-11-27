@@ -14,6 +14,7 @@ import java.nio.file.*;
 import static com.fasterxml.jackson.databind.DeserializationFeature.*;
 import static com.fasterxml.jackson.databind.SerializationFeature.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -44,6 +45,7 @@ public abstract class AbstractConfig {
      *
      * @return The path to the configuration file.
      */
+    @JsonIgnore
     public String getFilePath() {
         return filePath;
     }
@@ -96,7 +98,10 @@ public abstract class AbstractConfig {
                 .disable(FAIL_ON_UNKNOWN_PROPERTIES);
 
         try {
-            return mapper.readValue(tmpPath.toFile(), cls);
+            T config = mapper.readValue(tmpPath.toFile(), cls);
+            config.setFilePath(tmpPath.toString());
+
+            return config;
         } catch (IOException e) {
             throw new IOException("Unable to read configuration file: " + filePath, e);
         }
