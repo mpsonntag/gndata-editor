@@ -6,59 +6,46 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.main;
+package gndata.app.ui.metadata;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
 import javafx.fxml.*;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.metadata.MainMetadataView;
+import gndata.app.ui.main.MenuView;
 import gndata.app.ui.metadata.table.RDFTableView;
 import gndata.app.ui.metadata.tree.RDFTreeView;
 
 /**
  * Controller for the main application window.
  */
-public class MainCtrl implements Initializable {
+public class MainMetadataCtrl implements Initializable {
 
     @FXML
     public BorderPane view;
     @FXML
-    public Tab dashboard;
-    @FXML
-    public Tab metadata;
-    @FXML
-    public Tab calendar;
-    @FXML
-    public Tab query;
-    @FXML
-    public Tab files;
-    @FXML
-    public Tab notes;
+    private SplitPane splitPane;
 
+    private RDFTreeView metadataView;
 
-    private MenuView menuView;
-
-    private MainMetadataView metadataView;
+    private RDFTableView tableView;
 
     @Inject
-    public MainCtrl(MenuView menuView, MainMetadataView metadataView) {
-        this.menuView = menuView;
+    public MainMetadataCtrl(RDFTreeView metadataView, RDFTableView tableView) {
         this.metadataView = metadataView;
+        this.tableView = tableView;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            // top Menu bar
-            view.setTop(menuView.getScene());
-
-            metadata.setContent(metadataView.getScene());
-
+            // split pane with metadata tree
+            splitPane.getItems().add(metadataView.getScene());
+            splitPane.getItems().add(tableView.getScene());
         } catch (IOException e) {
             e.printStackTrace();
         }

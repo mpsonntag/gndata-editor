@@ -16,21 +16,14 @@ LICENSE file in the root of the Project.
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.main.MainCtrl"
+            fx:controller="gndata.app.ui.metadata.MainMetadataCtrl"
             prefHeight="620.0" prefWidth="1000.0"
             fx:id="view">
 
     <center>
-        <TabPane side="RIGHT">
-            <tabs>
-                <Tab text="Dashboard" fx:id="dashboard"></Tab>
-                <Tab text="Metadata" fx:id="metadata"></Tab>
-                <Tab text="Calendar" fx:id="calendar"></Tab>
-                <Tab text="Query" fx:id="query"></Tab>
-                <Tab text="Files" fx:id="files"></Tab>
-                <Tab text="Notes" fx:id="notes"></Tab>
-            </tabs>
-        </TabPane>
+        <SplitPane fx:id="splitPane" orientation="HORIZONTAL">
+
+        </SplitPane>
     </center>
 
 </BorderPane>
