@@ -17,6 +17,7 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
+import gndata.app.ui.filebrowser.FileBrowserView;
 import gndata.app.ui.metadata.MainMetadataView;
 import gndata.app.ui.metadata.table.RDFTableView;
 import gndata.app.ui.metadata.tree.RDFTreeView;
@@ -49,11 +50,14 @@ public class MainCtrl implements Initializable {
 
     private QueryView queryView;
 
+    private FileBrowserView fileBrowserView;
+
     @Inject
-    public MainCtrl(MenuView menuView, MainMetadataView metadataView, QueryView queryView) {
+    public MainCtrl(MenuView menuView, MainMetadataView metadataView, QueryView queryView, FileBrowserView fileBrowserView) {
         this.menuView = menuView;
         this.metadataView = metadataView;
         this.queryView = queryView;
+        this.fileBrowserView = fileBrowserView;
     }
 
     @Override
@@ -64,6 +68,8 @@ public class MainCtrl implements Initializable {
 
             metadata.setContent(metadataView.getScene());
             query.setContent(queryView.getScene());
+
+            files.setContent(fileBrowserView.getScene());
 
         } catch (IOException e) {
             e.printStackTrace();

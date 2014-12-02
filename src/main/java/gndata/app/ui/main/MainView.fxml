@@ -21,7 +21,7 @@ LICENSE file in the root of the Project.
             fx:id="view">
 
     <center>
-        <TabPane side="RIGHT">
+        <TabPane side="RIGHT" style="">
             <tabs>
                 <Tab text="Dashboard" fx:id="dashboard"></Tab>
                 <Tab text="Metadata" fx:id="metadata"></Tab>
