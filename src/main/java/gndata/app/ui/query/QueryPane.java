@@ -8,7 +8,9 @@ import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * An extension of the grid pane that can add/remove text fields.
+ */
 public class QueryPane extends GridPane {
 
     private Button addMore;
@@ -54,9 +56,5 @@ public class QueryPane extends GridPane {
 
             getChildren().removeAll(toRemove);
         });
-    }
-
-    public String getCurrentQuery() {
-        return "foo";
     }
 }

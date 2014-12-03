@@ -8,7 +8,6 @@
 
 package gndata.app.ui.query;
 
-import gndata.app.state.MetadataState;
 import gndata.app.ui.metadata.table.RDFTableView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,7 +25,7 @@ import java.util.ResourceBundle;
 
 
 /**
- * Controller for the main application window.
+ * Controller for the Query application tab.
  */
 public class QueryCtrl implements Initializable {
 
@@ -40,7 +39,8 @@ public class QueryCtrl implements Initializable {
     private RDFTableView tableView;
 
     @Inject
-    public QueryCtrl(MetadataState metadataState, RDFTableView tableView) {
+    public QueryCtrl(RDFTableView tableView) {
+        // TODO create a separate instance of table view
         this.tableView = tableView;
     }
 
