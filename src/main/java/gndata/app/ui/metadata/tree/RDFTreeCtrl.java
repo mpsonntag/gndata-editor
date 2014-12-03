@@ -9,9 +9,12 @@
 package gndata.app.ui.metadata.tree;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
 import javafx.collections.*;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.TreeView;
@@ -71,6 +74,15 @@ public class RDFTreeCtrl implements Initializable {
     private void loadTree(String filter) {
         if (projectState.getMetadata() != null) {
             Model annotations = projectState.getMetadata().getAnnotations();
+
+            annotations.register(new SimpleModelChangeHandler() {
+                @Override
+                public void changedHappened() {
+                    annotations.unregister(this);
+                    loadTree(filter);
+                }
+            });
+
             TreeItem<RDFNode> fakeRoot = new TreeItem<>(annotations.getResource("Metadata"));
 
             ObservableList<RDFTreeItem> items = filter == null ? getRootClasses() : getRootClasses(filter);
@@ -130,4 +142,43 @@ public class RDFTreeCtrl implements Initializable {
 
         return items;
     }
+}
+
+interface SimpleModelChangeHandler extends ModelChangedListener  {
+
+    @Override
+    public default void addedStatement(Statement statement) { changedHappened(); }
+
+    @Override
+    public default void addedStatements(Statement[] statements) { changedHappened(); }
+
+    @Override
+    public default void addedStatements(List<Statement> list) { changedHappened(); }
+
+    @Override
+    public default void addedStatements(StmtIterator stmtIterator) { changedHappened(); }
+
+    @Override
+    public default void addedStatements(Model model) { changedHappened(); }
+
+    @Override
+    public default void removedStatement(Statement statement) { changedHappened(); }
+
+    @Override
+    public default void removedStatements(Statement[] statements) { changedHappened(); }
+
+    @Override
+    public default void removedStatements(List<Statement> list) { changedHappened(); }
+
+    @Override
+    public default void removedStatements(StmtIterator stmtIterator) { changedHappened(); }
+
+    @Override
+    public default void removedStatements(Model model) { changedHappened(); }
+
+    @Override
+    public default void notifyEvent(Model model, Object o) { }
+
+    public void changedHappened();
+
 }
