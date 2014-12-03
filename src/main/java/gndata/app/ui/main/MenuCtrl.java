@@ -159,9 +159,14 @@ public class MenuCtrl implements Initializable {
         fopt.ifPresent(f -> projectState.getMetadata().importMetadata(f.getPath()));
     }
 
-    protected Optional<File> askForFile() {
+    protected Optional<File> askForFile(FileChooser.ExtensionFilter... extensionFilters) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select the metadata to import");
+
+        if (extensionFilters != null) {
+            fileChooser.getExtensionFilters().addAll(extensionFilters);
+        }
+
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         return Optional.of(fileChooser.showOpenDialog(menu.getScene().getWindow()));
