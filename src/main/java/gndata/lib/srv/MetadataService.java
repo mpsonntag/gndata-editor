@@ -24,7 +24,7 @@ import org.apache.jena.riot.RDFDataMgr;
  */
 public class MetadataService {
 
-    private static final String stdPrefix = StrUtils.strjoinNL(
+    public static final String stdPrefix = StrUtils.strjoinNL(
             "PREFIX rdf: <" + RDF.getURI() + ">",
             "PREFIX rdfs: <" + RDFS.getURI() + ">",
             "PREFIX owl: <" + OWL.getURI() + ">"
@@ -79,7 +79,7 @@ public class MetadataService {
                     ")}"
             );
 
-            return executeSPARQL(stdPrefix + "\n" + qs);
+            return CONSTRUCT(stdPrefix + "\n" + qs);
         } else {
             return getAnnotations();
         }
@@ -105,7 +105,17 @@ public class MetadataService {
         return reasoner.bindSchema(schema);
     }
 
-    private Model executeSPARQL(String queryString) {
+    public Model SELECT(String queryString) {
+        Query query = QueryFactory.create(queryString);
+        QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());
+
+        Model resultModel = ResultSetFormatter.toModel(qexec.execSelect());
+        qexec.close();
+
+        return resultModel;
+    }
+
+    public Model CONSTRUCT(String queryString) {
         Query query = QueryFactory.create(queryString);
         QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());
 
