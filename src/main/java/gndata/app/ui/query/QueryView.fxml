@@ -54,17 +54,7 @@ LICENSE file in the root of the Project.
     <center>
         <SplitPane fx:id="splitPane" orientation="HORIZONTAL">
             <items>
-                <VBox>
-                    <children>
-
-                        <GridPane fx:id="queryPane"/>
-
-                        <ListView fx:id="listPane" prefHeight="362.0" prefWidth="374.0"/>
-
-                        <TextArea fx:id="renderedQuery" prefHeight="180.0" prefWidth="374.0"/>
-
-                    </children>
-                </VBox>
+                <VBox fx:id="vBox" prefWidth="374.0"/>
             </items>
         </SplitPane>
     </center>

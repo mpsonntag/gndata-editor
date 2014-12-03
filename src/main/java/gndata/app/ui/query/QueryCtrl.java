@@ -8,18 +8,21 @@
 
 package gndata.app.ui.query;
 
+import gndata.app.state.MetadataState;
+import gndata.app.ui.metadata.table.RDFTableView;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
-import javax.inject.Inject;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-
-import gndata.app.state.MetadataState;
-import gndata.app.ui.metadata.table.*;
+import java.util.ResourceBundle;
 
 
 /**
@@ -32,11 +35,7 @@ public class QueryCtrl implements Initializable {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private GridPane queryPane;
-    @FXML
-    private ListView listPane;
-    @FXML
-    private TextArea renderedQuery;
+    private VBox vBox;
 
     private RDFTableView tableView;
 
@@ -48,41 +47,19 @@ public class QueryCtrl implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+            QueryPane qp = new QueryPane();
+
+            ListView lw = new ListView();
+            VBox.setVgrow(lw, Priority.ALWAYS);
+
+            TextArea ta = new TextArea();
+
+            vBox.getChildren().addAll(qp, lw, ta);
             splitPane.getItems().add(tableView.getScene());
 
-            int numRows = queryPane.getChildren().size();
-
-            TextField to = new TextField();
-            TextField tp = new TextField();
-            TextField ts = new TextField();
-            Button addMore = new Button("+");
-
-            GridPane.setConstraints(to, 0, numRows);
-            GridPane.setConstraints(tp, 1, numRows);
-            GridPane.setConstraints(ts, 2, numRows);
-            GridPane.setConstraints(addMore, 3, numRows);
-
-            queryPane.getChildren().addAll(to, tp, ts, addMore);
-
-            addMore.setOnAction(e -> {
-                int index = (int) addMore.getProperties().get("gridpane-row");
-
-                List<Node> toRemove = new ArrayList<>();
-                queryPane.getChildren().forEach(node -> {
-                    if (GridPane.getRowIndex(node) == index) {
-                        System.out.println(GridPane.getRowIndex(node).toString());
-                        toRemove.add(node);
-                    }
-                });
-
-                queryPane.getChildren().removeAll(toRemove);
-            });
-            
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 }
