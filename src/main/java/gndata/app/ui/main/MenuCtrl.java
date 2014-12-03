@@ -19,6 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -151,6 +152,19 @@ public class MenuCtrl implements Initializable {
     protected Optional<String> showListDialog(GlobalConfig config) {
         ProjectListView listView = new ProjectListView(config.getProjects());
         return listView.showDialog(menu.getScene().getWindow());
+    }
+
+    public void importMetadata() {
+        Optional<File> fopt = askForFile();
+        fopt.ifPresent(f -> projectState.getMetadata().importMetadata(f.getPath()));
+    }
+
+    protected Optional<File> askForFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the metadata to import");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        return Optional.of(fileChooser.showOpenDialog(menu.getScene().getWindow()));
     }
 
     /**

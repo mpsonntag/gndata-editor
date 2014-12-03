@@ -115,6 +115,11 @@ public class MetadataService {
         return resultModel;
     }
 
+    public void importMetadata(String path) {
+        Model newData =  RDFDataMgr.loadModel(path);
+        annotations.add(newData);
+    }
+
     /**
      * Creates a new Metadata Service using a given path. Combines existing
      * project RDF schemas (ontology files) and metadata storage (annotations)
