@@ -155,7 +155,8 @@ public class MenuCtrl implements Initializable {
     }
 
     public void importMetadata() {
-        Optional<File> fopt = askForFile();
+        Optional<File> fopt = askForFile(new FileChooser.ExtensionFilter("RDF data", "*.ttl", "*.rdf"),
+                                         new FileChooser.ExtensionFilter("All Files", "*.*"));
         fopt.ifPresent(f -> projectState.getMetadata().importMetadata(f.getPath()));
     }
 
