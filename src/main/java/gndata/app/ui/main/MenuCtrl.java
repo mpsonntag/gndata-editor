@@ -93,7 +93,7 @@ public class MenuCtrl implements Initializable {
         dirChooser.setTitle("Select the project directory");
         dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-        return Optional.of(dirChooser.showDialog(menu.getScene().getWindow()));
+        return Optional.ofNullable(dirChooser.showDialog(menu.getScene().getWindow()));
     }
 
     /**
@@ -170,7 +170,7 @@ public class MenuCtrl implements Initializable {
 
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-        return Optional.of(fileChooser.showOpenDialog(menu.getScene().getWindow()));
+        return Optional.ofNullable(fileChooser.showOpenDialog(menu.getScene().getWindow()));
     }
 
     /**
