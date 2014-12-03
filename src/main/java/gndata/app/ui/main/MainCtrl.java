@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
+import javax.management.Query;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +20,7 @@ import javafx.scene.layout.BorderPane;
 import gndata.app.ui.metadata.MainMetadataView;
 import gndata.app.ui.metadata.table.RDFTableView;
 import gndata.app.ui.metadata.tree.RDFTreeView;
+import gndata.app.ui.query.QueryView;
 
 /**
  * Controller for the main application window.
@@ -45,10 +47,13 @@ public class MainCtrl implements Initializable {
 
     private MainMetadataView metadataView;
 
+    private QueryView queryView;
+
     @Inject
-    public MainCtrl(MenuView menuView, MainMetadataView metadataView) {
+    public MainCtrl(MenuView menuView, MainMetadataView metadataView, QueryView queryView) {
         this.menuView = menuView;
         this.metadataView = metadataView;
+        this.queryView = queryView;
     }
 
     @Override
@@ -58,6 +63,7 @@ public class MainCtrl implements Initializable {
             view.setTop(menuView.getScene());
 
             metadata.setContent(metadataView.getScene());
+            query.setContent(queryView.getScene());
 
         } catch (IOException e) {
             e.printStackTrace();
