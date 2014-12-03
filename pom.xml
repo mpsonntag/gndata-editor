@@ -30,7 +30,6 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>8.20.8</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

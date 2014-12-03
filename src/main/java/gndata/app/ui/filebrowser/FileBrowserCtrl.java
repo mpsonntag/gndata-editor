@@ -18,10 +18,10 @@ public class FileBrowserCtrl implements Initializable{
     @FXML
     private SplitPane splitPane;
 
-    private FileDetailsView detailsView;
-    private FileListView listView;
-    private FileNavigationView navigationView;
-    private FileFavoritesView favoritesView;
+    private final FileDetailsView detailsView;
+    private final FileListView listView;
+    private final FileNavigationView navigationView;
+    private final FileFavoritesView favoritesView;
 
     @Inject
     public FileBrowserCtrl(FileDetailsView detailsView, FileListView listView, FileNavigationView navigationView,

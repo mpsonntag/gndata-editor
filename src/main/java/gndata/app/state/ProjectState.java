@@ -9,6 +9,7 @@
 package gndata.app.state;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import javax.inject.Singleton;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -28,6 +29,7 @@ public class ProjectState {
 
     private ProjectService service;
     private MetadataService metadata;
+    private FileService fileService;
 
     public ProjectState() {
         config = new SimpleObjectProperty<>();
@@ -53,9 +55,11 @@ public class ProjectState {
         if (config == null) {
             service = null;
             metadata = null;
+            fileService = null;
         } else if (config != this.config.get()) {
             service = ProjectService.create(config);
             metadata = MetadataService.create(config.getProjectPath());
+            fileService = new FileService(Paths.get(config.getProjectPath()));
         }
         this.config.set(config);
     }
@@ -71,4 +75,6 @@ public class ProjectState {
     public synchronized MetadataService getMetadata() {
         return metadata;
     }
+
+    public synchronized FileService getFileService() { return fileService; }
 }
