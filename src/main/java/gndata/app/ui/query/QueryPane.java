@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.query;
 
 import java.util.*;
@@ -58,7 +66,7 @@ public class QueryPane extends GridPane {
         remRow.setOnAction(e -> {
             int index = (int) remRow.getProperties().get("gridpane-row");
 
-            List<Node> toRemove = new ArrayList<Node>();
+            List<Node> toRemove = new ArrayList<>();
             getChildren().forEach(node -> {
                 if (GridPane.getRowIndex(node) == index &&
                         getChildren().size() > 5) {
@@ -70,6 +78,11 @@ public class QueryPane extends GridPane {
         });
     }
 
+    /**
+     * Iterates over all text input fields and reads actual inputs.
+     *
+     * @return  list of inputs
+     */
     private List<String> getTextInputs() {
         List<String> lst = new ArrayList<>();
 
@@ -83,6 +96,11 @@ public class QueryPane extends GridPane {
         return lst;
     }
 
+    /**
+     * Assembles the query body from several input fields.
+     *
+     * @return  SPARQL query body
+     */
     public String readQuery() {
         List<String> lst = getTextInputs();
 

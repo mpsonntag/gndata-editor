@@ -1,12 +1,18 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.query;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Statement;
-import gndata.app.state.QueryState;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.scene.control.ListView;
+
+import com.hp.hpl.jena.rdf.model.*;
+import gndata.app.state.QueryState;
 
 
 public class ListPane extends ListView<Statement> {
@@ -24,7 +30,7 @@ public class ListPane extends ListView<Statement> {
                 updateSelection(qs.getSelectedModel().get()));
     }
 
-    public void updateSelection(Model selection) {
+    private void updateSelection(Model selection) {
         ObservableList<Statement> lst = FXCollections.observableArrayList();
         if (selection != null) {
             lst.setAll(selection.listStatements().toList());
