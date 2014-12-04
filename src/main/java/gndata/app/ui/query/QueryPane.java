@@ -1,17 +1,12 @@
 package gndata.app.ui.query;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import java.util.*;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.apache.jena.atlas.lib.StrUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import gndata.app.state.QueryState;
+import org.apache.jena.atlas.lib.StrUtils;
 
 /**
  * An extension of the grid pane that can add/remove text fields.
@@ -21,7 +16,7 @@ public class QueryPane extends GridPane {
     private Button addMore;
     public Button submit;
 
-    public QueryPane() {
+    public QueryPane(QueryState qs) {
         super();
 
         addMore = new Button("+");
@@ -34,6 +29,8 @@ public class QueryPane extends GridPane {
         getChildren().addAll(submit, addMore);
 
         addQueryRow("?x", "?y", "?z");
+
+        submit.setOnAction(e -> qs.setCurrentQuery(readQuery()));
     }
 
     private void addEmptyQueryRow() {
@@ -99,7 +96,7 @@ public class QueryPane extends GridPane {
         List<String> conditions = new ArrayList<>();
         for(int i = 0; i < lst.size()/3; i++) {
             conditions.add(StrUtils.strjoin(" ",
-                lst.get(i), lst.get(i + 1), lst.get(i + 2)
+                lst.get(i * 3), lst.get(i * 3 + 1), lst.get(i * 3 + 2)
             ));
         }
 

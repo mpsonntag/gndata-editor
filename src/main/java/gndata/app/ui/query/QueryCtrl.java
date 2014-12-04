@@ -9,8 +9,6 @@
 package gndata.app.ui.query;
 
 import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import gndata.app.state.ProjectState;
 import gndata.app.state.QueryState;
@@ -48,42 +46,34 @@ public class QueryCtrl implements Initializable {
     private ProjectState projectState;
     private QueryState queryState;
 
-    private RDFTableView tableView;
+    private TablePane tb;
     private TextArea ta;
 
     @Inject
-    public QueryCtrl(ProjectState ps, QueryState qs, RDFTableView tw) {
+    public QueryCtrl(ProjectState ps, QueryState qs) {
         this.projectState = ps;
         this.queryState = qs;
-
-        // TODO create a separate instance of table view
-        this.tableView = tw;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            QueryPane qp = new QueryPane();
-            qp.submit.setOnAction(e -> queryState.setCurrentQuery(qp.readQuery()));
+        QueryPane qp = new QueryPane(queryState);
 
-            ListPane lp = new ListPane();
-            VBox.setVgrow(lp, Priority.ALWAYS);
-            lp.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                queryState.setSelectedNode(newVal != null ? newVal.getSubject() : null);
-            });
-            queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
-                    lp.updateSelection(runQuery()));
+        queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
+                queryState.setSelectedModel(runQuery()));
 
-            ta = new TextArea();
-            ta.setEditable(false);
-            ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
+        ListPane lp = new ListPane(queryState);
+        VBox.setVgrow(lp, Priority.ALWAYS);
 
-            vBox.getChildren().addAll(qp, lp, ta);
-            splitPane.getItems().add(tableView.getScene());
+        ta = new TextArea();
+        ta.setEditable(false);
+        ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        vBox.getChildren().addAll(qp, lp, ta);
+
+        tb = new TablePane(queryState);
+
+        splitPane.getItems().add(tb);
     }
 
     public Model runQuery() {

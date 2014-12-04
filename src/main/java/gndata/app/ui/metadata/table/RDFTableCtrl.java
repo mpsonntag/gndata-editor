@@ -18,6 +18,7 @@ import javafx.scene.control.TableView;
 
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.MetadataState;
+import gndata.app.ui.util.RDFTableItem;
 
 /**
  * Controller for the table to view metadata items.
@@ -41,7 +42,7 @@ public class RDFTableCtrl implements Initializable {
     }
 
     public void fillItems(RDFNode node) {
-        List<RDFTableItem> items = buildTableItems(node);
+        List<RDFTableItem> items = RDFTableItem.buildTableItems(node);
 
         if (items.size() > 0) {
             items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
@@ -57,26 +58,5 @@ public class RDFTableCtrl implements Initializable {
         } else {
             tableView.setItems(null);
         }
-    }
-
-    public static List<RDFTableItem> buildTableItems(RDFNode node) {
-        List<RDFTableItem> items = new ArrayList<>();
-
-        if (node == null || !node.isResource()) { return items; }
-
-        Resource r = node.asResource();
-        StmtIterator iter = r.listProperties();
-        while (iter.hasNext()) {
-            Statement st = iter.nextStatement();
-
-            if (st.getObject().isLiteral()) {
-                Property p = st.getPredicate();
-                Literal l = st.getObject().asLiteral();
-
-                items.add(new RDFTableItem(p, l));
-            }
-        }
-
-        return items;
     }
 }

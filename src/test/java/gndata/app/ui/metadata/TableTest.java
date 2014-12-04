@@ -3,7 +3,7 @@ package gndata.app.ui.metadata;
 import java.util.*;
 
 import com.hp.hpl.jena.rdf.model.*;
-import gndata.app.ui.metadata.table.*;
+import gndata.app.ui.util.RDFTableItem;
 import gndata.lib.util.FakeRDFModel;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class TableTest {
     @Test
     public void testTableCtrl() throws Exception {
         Resource tbl = model.getResource(FakeRDFModel.tbl);
-        List<RDFTableItem> l = RDFTableCtrl.buildTableItems(tbl);
+        List<RDFTableItem> l = RDFTableItem.buildTableItems(tbl);
 
         // list should only contain literals, one 'name' item in this case
         Optional<RDFTableItem> t = l.stream().filter(a -> a.getPredicate().equals("name")).findFirst();
@@ -23,7 +23,7 @@ public class TableTest {
         assert(t.get().getLiteral().equals("Tim Berners-Lee"));
 
         // node=null should result in empty list
-        List<RDFTableItem> empty = RDFTableCtrl.buildTableItems(null);
+        List<RDFTableItem> empty = RDFTableItem.buildTableItems(null);
         assert(empty.size() == 0);
     }
 
