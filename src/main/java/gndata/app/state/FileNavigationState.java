@@ -1,10 +1,11 @@
 package gndata.app.state;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import javax.inject.Singleton;
 import javafx.beans.property.*;
 import javafx.collections.*;
+
+import gndata.lib.srv.FileAdapter;
 
 /**
  * Created by msonntag on 03.12.14.
@@ -12,48 +13,48 @@ import javafx.collections.*;
 @Singleton
 public final class FileNavigationState {
 
-    private final ObjectProperty<Path> selectedParent;
-    private final ObjectProperty<Path> selectedFile;
-    private final ObservableList<Path> favoriteFolders;
-    private final ObservableList<Path> navigationPath;
+    private final ObjectProperty<FileAdapter> selectedParent;
+    private final ObjectProperty<FileAdapter> selectedFile;
+    private final ObservableList<FileAdapter> favoriteFolders;
+    private final ObservableList<FileAdapter> navigationPath;
 
     public FileNavigationState() {
         selectedParent = new SimpleObjectProperty<>();
         selectedFile = new SimpleObjectProperty<>();
 
-        favoriteFolders = FXCollections.observableList(new ArrayList<Path>());
-        navigationPath = FXCollections.observableList(new ArrayList<Path>());
+        favoriteFolders = FXCollections.observableList(new ArrayList<FileAdapter>());
+        navigationPath = FXCollections.observableList(new ArrayList<FileAdapter>());
     }
 
-    public Path getSelectedParent() {
+    public FileAdapter getSelectedParent() {
         return selectedParent.get();
     }
 
-    public ObjectProperty<Path> selectedParentProperty() {
+    public ObjectProperty<FileAdapter> selectedParentProperty() {
         return selectedParent;
     }
 
-    public void setSelectedParent(Path selectedParent) {
+    public void setSelectedParent(FileAdapter selectedParent) {
         this.selectedParent.set(selectedParent);
     }
 
-    public Path getSelectedFile() {
+    public FileAdapter getSelectedFile() {
         return selectedFile.get();
     }
 
-    public ObjectProperty<Path> selectedFileProperty() {
+    public ObjectProperty<FileAdapter> selectedFileProperty() {
         return selectedFile;
     }
 
-    public void setSelectedFile(Path selectedFile) {
+    public void setSelectedFile(FileAdapter selectedFile) {
         this.selectedFile.set(selectedFile);
     }
 
-    public ObservableList<Path> getFavoriteFolders() {
+    public ObservableList<FileAdapter> getFavoriteFolders() {
         return favoriteFolders;
     }
 
-    public ObservableList<Path> getNavigationPath() {
+    public ObservableList<FileAdapter> getNavigationPath() {
         return navigationPath;
     }
 }

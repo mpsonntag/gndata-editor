@@ -12,8 +12,12 @@ public class LocalFile extends FileAdapter {
     private Path path;
     private Optional<FileAdapter> parent;
 
-    public LocalFile (Path path) {
+    public LocalFile(Path path) {
         this.path = path.toAbsolutePath().normalize();
+    }
+
+    public LocalFile(String path) {
+        this(Paths.get(path));
     }
 
     @Override
@@ -50,4 +54,20 @@ public class LocalFile extends FileAdapter {
         return path.getFileName().toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (!(o instanceof LocalFile))
+            return false;
+
+        LocalFile localFile = (LocalFile) o;
+        return path.equals(localFile.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return path.hashCode();
+    }
 }

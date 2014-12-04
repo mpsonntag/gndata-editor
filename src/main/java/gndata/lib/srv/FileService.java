@@ -33,4 +33,11 @@ public class FileService {
 
     }
 
+    public boolean isFileInProject(FileAdapter path) {
+
+        // TODO implement check
+        return true;
+
+    }
+
 }

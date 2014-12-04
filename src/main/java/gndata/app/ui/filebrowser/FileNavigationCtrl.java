@@ -10,6 +10,7 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 
 import gndata.app.state.*;
+import gndata.lib.srv.*;
 import org.controlsfx.control.SegmentedButton;
 
 /**
@@ -39,15 +40,15 @@ public class FileNavigationCtrl implements Initializable {
 
         // TODO initialize with first favorite in favorite panel
         projectState.configProperty().addListener(
-                (b, o, n) -> navState.getNavigationPath().add(Paths.get(projectState.getConfig().getProjectPath()))
+                (b, o, n) -> navState.getNavigationPath().add(new LocalFile(projectState.getConfig().getProjectPath()))
         );
     }
 
-    private class NavPathListener implements ListChangeListener<Path> {
+    private class NavPathListener implements ListChangeListener<FileAdapter> {
 
         @Override
-        public void onChanged(Change<? extends Path> c) {
-            List<Path> l = new ArrayList(c.getList());
+        public void onChanged(Change<? extends FileAdapter> c) {
+            List<FileAdapter> l = new ArrayList(c.getList());
             if (! l.isEmpty()) {
                 navBar.getButtons().clear();
 
@@ -60,10 +61,10 @@ public class FileNavigationCtrl implements Initializable {
         }
     }
 
-    private class SelectedParentListener implements ChangeListener<Path> {
+    private class SelectedParentListener implements ChangeListener<FileAdapter> {
 
         @Override
-        public void changed(ObservableValue<? extends Path> observable, Path oldValue, Path newValue) {
+        public void changed(ObservableValue<? extends FileAdapter> observable, FileAdapter oldValue, FileAdapter newValue) {
             if (oldValue == newValue) {
                 return;
             }
@@ -71,17 +72,23 @@ public class FileNavigationCtrl implements Initializable {
                 return;
             }
 
-            int position = navState.getNavigationPath().lastIndexOf(newValue);
-            if (position < 0) {
+            int pos = navState.getNavigationPath().lastIndexOf(newValue);
 
-                //TODO check if newValue is child of one of the elements in NavigationPath
+            if (pos < 0) {
 
-                navState.getNavigationPath().clear();
+                for (pos = navState.getNavigationPath().size() - 1; pos >= 0; pos--) {
+                    FileAdapter curr = navState.getNavigationPath().get(pos);
+                    if (curr.hasChild(newValue))
+                        break;
+
+                    navState.getNavigationPath().remove(pos);
+                }
+
                 navState.getNavigationPath().add(newValue);
-                position = 0;
+                pos++;
             }
 
-            ToggleButton toggle = navBar.getButtons().get(position);
+            ToggleButton toggle = navBar.getButtons().get(pos);
             navBar.getToggleGroup().selectToggle(toggle);
         }
     }

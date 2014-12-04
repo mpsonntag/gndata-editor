@@ -10,6 +10,10 @@ public abstract class FileAdapter implements Comparable<FileAdapter> {
 
     public abstract Optional<FileAdapter> getParent();
 
+    /**
+     *
+     * @return sorted list of child FileAdapters
+     */
     public abstract List<FileAdapter> getChildren();
 
     public abstract boolean isDirectory();
@@ -21,9 +25,7 @@ public abstract class FileAdapter implements Comparable<FileAdapter> {
             return false;
         }
 
-        return getChildren().stream()
-                    .filter(fa -> fa.getFileName().equals(child.getFileName()))
-                    .count() > 0;
+        return getChildren().contains(child);
     }
 
     @Override
@@ -42,4 +44,7 @@ public abstract class FileAdapter implements Comparable<FileAdapter> {
         }
 
     }
+
+    @Override
+    public abstract boolean equals(Object obj);
 }

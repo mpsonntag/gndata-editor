@@ -1,8 +1,6 @@
 package gndata.app.ui.filebrowser;
 
-import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.*;
 import javax.inject.Inject;
 import javafx.beans.property.*;
@@ -14,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 
 import gndata.app.state.FileNavigationState;
 import gndata.app.ui.util.DoubleClickHandler;
+import gndata.lib.srv.FileAdapter;
 
 /**
  * Created by msonntag on 02.12.14.
@@ -21,21 +20,21 @@ import gndata.app.ui.util.DoubleClickHandler;
 public class FileListCtrl implements Initializable {
 
     @FXML
-    private ListView<Path> fileList;
+    private ListView<FileAdapter> fileList;
 
     @FXML
     private TextField fileFilter;
 
     private final FileNavigationState navState;
     private final StringProperty filter;
-    private final ObservableList<Path> filteredList;
-    private final List<Path> unfilteredList;
+    private final ObservableList<FileAdapter> filteredList;
+    private final List<FileAdapter> unfilteredList;
 
     @Inject
     public FileListCtrl(FileNavigationState navState) {
         this.navState = navState;
         filter = new SimpleStringProperty();
-        filteredList = FXCollections.observableList(new ArrayList<Path>());
+        filteredList = FXCollections.observableList(new ArrayList<FileAdapter>());
         unfilteredList = new ArrayList<>();
 
         this.navState.selectedParentProperty().addListener(new SelectedParentListener());
@@ -59,31 +58,24 @@ public class FileListCtrl implements Initializable {
 
         } else {
             unfilteredList.stream()
-                    .filter(p -> p.getFileName().toString().contains(filter))
-                    .forEach(p -> filteredList.add(p));
+                    .filter(fa -> fa.getFileName().contains(filter))
+                    .forEach(fa -> filteredList.add(fa));
         }
     }
 
-    private class SelectedParentListener implements ChangeListener<Path> {
+    private class SelectedParentListener implements ChangeListener<FileAdapter> {
 
         @Override
-        public void changed(ObservableValue<? extends Path> observable, Path oldValue, Path newValue) {
+        public void changed(ObservableValue<? extends FileAdapter> observable, FileAdapter oldValue, FileAdapter newValue) {
             if (newValue == null || oldValue == newValue) {
                 return;
             }
-            File file = newValue.toFile();
-            if (! file.exists() || ! file.isDirectory()) {
+
+            if (! newValue.isDirectory()) {
                 return;
             }
-
-            List<File> children;
-            children = Arrays.asList(file.listFiles());
-
             unfilteredList.clear();
-            children.stream()
-                    .sorted(new FileComparator())
-                    .map(f -> f.toPath())
-                    .forEach(p -> unfilteredList.add(p));
+            unfilteredList.addAll(newValue.getChildren());
 
             String currentFilter = filter.get();
             if (currentFilter == null || currentFilter.equals("")) {
@@ -94,27 +86,15 @@ public class FileListCtrl implements Initializable {
         }
     }
 
-    private class FileComparator implements Comparator<File> {
-
-        @Override
-        public int compare(File o1, File o2) {
-            if (o1.isDirectory() && ! o2.isDirectory()) {
-                return -1;
-            } else if ( ! o1.isDirectory() && o2.isDirectory()) {
-                return 1;
-            } else {
-                return o1.getName().compareTo(o2.getName());
-            }
-        }
-    }
-
     private class ListNavigationHandler extends DoubleClickHandler {
 
         @Override
         public void handleDoubleClick(MouseEvent mouseEvent) {
-            Path p = fileList.getSelectionModel().getSelectedItem();
-            // TODO check for directory
-            navState.setSelectedParent(p);
+            FileAdapter fa = fileList.getSelectionModel().getSelectedItem();
+            if (! fa.isDirectory()) {
+                return;
+            }
+            navState.setSelectedParent(fa);
         }
     }
 }
