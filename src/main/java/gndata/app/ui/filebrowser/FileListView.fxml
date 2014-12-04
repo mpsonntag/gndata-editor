@@ -10,11 +10,16 @@ modification, are permitted under the terms of the BSD License. See
 LICENSE file in the root of the Project.
 -->
 
-
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.filebrowser.FileListCtrl"
             fx:id="view">
-
+    <center>
+        <ListView fx:id="fileList" />
+    </center>
+    <bottom>
+        <TextField fx:id="fileFilter" promptText="Filter" />
+    </bottom>
 </BorderPane>

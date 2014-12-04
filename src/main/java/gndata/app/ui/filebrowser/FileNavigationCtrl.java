@@ -2,7 +2,7 @@ package gndata.app.ui.filebrowser;
 
 import java.net.URL;
 import java.nio.file.*;
-import java.util.ResourceBundle;
+import java.util.*;
 import javax.inject.Inject;
 import javafx.beans.value.*;
 import javafx.collections.ListChangeListener;
@@ -47,11 +47,16 @@ public class FileNavigationCtrl implements Initializable {
 
         @Override
         public void onChanged(Change<? extends Path> c) {
-            navBar.getButtons().clear();
-            c.getList().stream()
-                    .map(p -> new ToggleButton(p.getFileName().toString()))
-                    .forEach(tb -> navBar.getButtons().add(tb));
-            navState.setSelectedParent(c.getList().get(c.getList().size()-1));
+            List<Path> l = new ArrayList(c.getList());
+            if (! l.isEmpty()) {
+                navBar.getButtons().clear();
+
+                l.stream()
+                        .map(p -> new ToggleButton(p.getFileName().toString()))
+                        .forEach(tb -> navBar.getButtons().add(tb));
+
+                navState.setSelectedParent(l.get(l.size() - 1));
+            }
         }
     }
 

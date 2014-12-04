@@ -10,7 +10,6 @@ modification, are permitted under the terms of the BSD License. See
 LICENSE file in the root of the Project.
 -->
 
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.SegmentedButton?>
@@ -20,7 +19,7 @@ LICENSE file in the root of the Project.
       fx:id="view">
 
     <children>
-        <!-- Think about implementing ToolBarOverflowMenu-->
+        <!-- TODO Think about implementing ToolBarOverflowMenu-->
         <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
             <items>
                 <SegmentedButton fx:id="navBar">
