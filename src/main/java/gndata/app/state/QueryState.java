@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.*;
 
 /**
  * Class that provides state information about metadata selections, changes and
@@ -23,12 +23,14 @@ public class QueryState {
 
     private ObjectProperty<RDFNode> selectedNode;
     private ObjectProperty<String> currentQuery;
+    private ObjectProperty<Model> selectedModel;
 
     private ObservableList<String> queryHistory;  // mockup for the future <-->
 
     public QueryState() {
         selectedNode = new SimpleObjectProperty<>();
         currentQuery = new SimpleObjectProperty<>();
+        selectedModel = new SimpleObjectProperty<>();
     }
 
     public ObjectProperty<RDFNode> getSelectedNode() {
@@ -45,5 +47,13 @@ public class QueryState {
 
     public void setCurrentQuery(String query) {
         this.currentQuery.set(query);
+    }
+
+    public ObjectProperty<Model> getSelectedModel() {
+        return selectedModel;
+    }
+
+    public void setSelectedModel(Model model) {
+        this.selectedModel.set(model);
     }
 }

@@ -11,11 +11,8 @@ LICENSE file in the root of the Project.
 -->
 
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.query.QueryCtrl"
@@ -52,10 +49,12 @@ LICENSE file in the root of the Project.
     </top>
 
     <center>
-        <SplitPane fx:id="splitPane" orientation="HORIZONTAL">
-            <items>
-                <VBox fx:id="vBox" prefWidth="374.0"/>
-            </items>
+        <SplitPane orientation="HORIZONTAL">
+            <VBox fx:id="vBox" prefWidth="374.0"/>
+            <TabPane side="BOTTOM">
+                <Tab closable="false" text="Text" fx:id="textLikeView"/>
+                <Tab closable="false" text="Table" fx:id="tableLikeView"/>
+            </TabPane>
         </SplitPane>
     </center>
 

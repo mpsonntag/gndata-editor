@@ -6,39 +6,31 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata.table;
+package gndata.app.ui.query;
 
-import java.net.URL;
-import java.util.*;
-import javax.inject.Inject;
+import java.util.List;
 import javafx.collections.*;
 import javafx.collections.transformation.SortedList;
-import javafx.fxml.*;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
-import com.hp.hpl.jena.rdf.model.*;
-import gndata.app.state.MetadataState;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import gndata.app.state.QueryState;
 import gndata.app.ui.util.RDFTableItem;
 
-/**
- * Controller for the table to view metadata items.
- */
-public class RDFTableCtrl implements Initializable {
 
-    private MetadataState metadataState;
+public class TablePane extends TableView<RDFTableItem> {
 
-    @FXML
-    private TableView<RDFTableItem> tableView;
+    public TablePane(QueryState qs) {
+        super();
 
-    @Inject
-    public RDFTableCtrl(MetadataState metadataState) {
-        this.metadataState = metadataState;
-    }
+        TableColumn<RDFTableItem,String> c1 = new TableColumn<>("Predicate");
+        c1.setCellValueFactory(new PropertyValueFactory("predicate"));
+        TableColumn<RDFTableItem,String> c2 = new TableColumn<>("Literal Value");
+        c2.setCellValueFactory(new PropertyValueFactory("literal"));
+        getColumns().setAll(c1, c2);
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // listen to changes in metadata state
-        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> fillItems(newVal));
+        qs.getSelectedNode().addListener((obs, odlVal, newVal) -> fillItems(newVal));
     }
 
     public void fillItems(RDFNode node) {
@@ -52,11 +44,11 @@ public class RDFTableCtrl implements Initializable {
 
             // sort items by predicate value
             sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
-            sortedData.comparatorProperty().bind(tableView.comparatorProperty());
+            sortedData.comparatorProperty().bind(comparatorProperty());
 
-            tableView.setItems(sortedData);
+            setItems(sortedData);
         } else {
-            tableView.setItems(null);
+            setItems(null);
         }
     }
 }

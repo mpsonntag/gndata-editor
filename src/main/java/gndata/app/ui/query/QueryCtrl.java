@@ -8,20 +8,18 @@
 
 package gndata.app.ui.query;
 
-import gndata.app.ui.metadata.table.RDFTableView;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-
-import javax.inject.Inject;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javax.inject.Inject;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+import com.hp.hpl.jena.query.QueryParseException;
+import com.hp.hpl.jena.rdf.model.Model;
+import gndata.app.state.*;
+import gndata.lib.srv.MetadataService;
+import org.apache.jena.atlas.lib.StrUtils;
 
 
 /**
@@ -32,34 +30,62 @@ public class QueryCtrl implements Initializable {
     @FXML
     public BorderPane queryView;
     @FXML
-    private SplitPane splitPane;
-    @FXML
     private VBox vBox;
+    @FXML
+    private Tab textLikeView;
+    @FXML
+    private Tab tableLikeView;
 
-    private RDFTableView tableView;
+    private ProjectState projectState;
+    private QueryState queryState;
+
+    private TextArea ta;
 
     @Inject
-    public QueryCtrl(RDFTableView tableView) {
-        // TODO create a separate instance of table view
-        this.tableView = tableView;
+    public QueryCtrl(ProjectState ps, QueryState qs) {
+        this.projectState = ps;
+        this.queryState = qs;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            QueryPane qp = new QueryPane();
+        queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
+                queryState.setSelectedModel(runQuery()));
 
-            ListView lw = new ListView();
-            VBox.setVgrow(lw, Priority.ALWAYS);
+        QueryPane qp = new QueryPane(queryState);
 
-            TextArea ta = new TextArea();
+        ListPane lp = new ListPane(queryState);
+        VBox.setVgrow(lp, Priority.ALWAYS);
 
-            vBox.getChildren().addAll(qp, lw, ta);
-            splitPane.getItems().add(tableView.getScene());
+        ta = new TextArea();
+        ta.setEditable(false);
+        ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        vBox.getChildren().addAll(qp, lp, ta);
+
+        tableLikeView.setContent(new TablePane(queryState));
+        textLikeView.setContent(TextPane.getInstance(queryState));
     }
 
+    public Model runQuery() {
+        String maxResults = "100";
+
+        Model selection = null;
+
+        if (projectState.isConfigured()) {
+            try {
+                selection = projectState.getMetadata().SELECT(
+                    StrUtils.strjoinNL(
+                        MetadataService.stdPrefix,
+                        queryState.getCurrentQuery().get(),
+                        "LIMIT " + maxResults
+                    ));
+
+            } catch (QueryParseException e) {
+                ta.setText(e.getMessage());
+            }
+        }
+
+        return selection;
+    }
 }

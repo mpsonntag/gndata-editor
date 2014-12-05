@@ -6,7 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata.table;
+package gndata.app.ui.util;
+
+import java.util.*;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.rdf.model.*;
@@ -36,5 +38,26 @@ public class RDFTableItem {
         RDFDatatype dt = literal.getDatatype();
 
         return dt != null ? dt.getJavaClass().getSimpleName() : "";
+    }
+
+    public static List<RDFTableItem> buildTableItems(RDFNode node) {
+        List<RDFTableItem> items = new ArrayList<>();
+
+        if (node == null || !node.isResource()) { return items; }
+
+        Resource r = node.asResource();
+        StmtIterator iter = r.listProperties();
+        while (iter.hasNext()) {
+            Statement st = iter.nextStatement();
+
+            if (st.getObject().isLiteral()) {
+                Property p = st.getPredicate();
+                Literal l = st.getObject().asLiteral();
+
+                items.add(new RDFTableItem(p, l));
+            }
+        }
+
+        return items;
     }
 }
