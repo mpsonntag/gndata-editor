@@ -29,8 +29,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.0.5</version>
-            <scope>runtime</scope>
+            <version>8.20.8</version>
         </dependency>
 
         <dependency>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted under the terms of the BSD License. See
+LICENSE file in the root of the Project.
+-->
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8"
+            fx:controller="gndata.app.ui.filebrowser.FileFavoritesCtrl"
+            fx:id="view">
+    <children>
+        <Label text="Favorites"><font><Font size="18.0"/></font></Label>
+
+        <ListView fx:id="fileBrowserFavorites" />
+        <Button fx:id="openFileFavoriteHandling" text="Manage Favorites" />
+    </children>
+</VBox>
