@@ -12,7 +12,8 @@ LICENSE file in the root of the Project.
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.controlsfx.control.SegmentedButton?>
+<?import gndata.app.ui.util.BreadCrumbNav?>
+
 <HBox xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/8"
       fx:controller="gndata.app.ui.filebrowser.FileNavigationCtrl"
@@ -22,8 +23,7 @@ LICENSE file in the root of the Project.
         <!-- TODO Think about implementing ToolBarOverflowMenu-->
         <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
             <items>
-                <SegmentedButton fx:id="navBar">
-                </SegmentedButton>
+                <BreadCrumbNav fx:id="navBar" />
             </items>
         </ToolBar>
         <ToolBar nodeOrientation="RIGHT_TO_LEFT">
