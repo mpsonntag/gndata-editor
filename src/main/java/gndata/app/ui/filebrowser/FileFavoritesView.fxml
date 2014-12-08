@@ -21,14 +21,14 @@ LICENSE file in the root of the Project.
     <top>
         <VBox>
             <children>
-                <Label text="Favorites"><font><Font size="18.0"/></font></Label>
+                <Label styleClass="fav-header" text="Favorites"><font><Font size="18.0"/></font></Label>
 
                 <ListView fx:id="fileFavorites" />
             </children>
         </VBox>
     </top>
     <bottom>
-        <Button fx:id="openFileFavoriteHandling" text="Manage Favorites" />
+        <Button fx:id="openFileFavoriteHandling" text="Manage Favorites" maxWidth="Infinity" />
     </bottom>
 
 </BorderPane>
