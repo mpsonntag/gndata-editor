@@ -38,9 +38,8 @@ public class FileNavigationCtrl implements Initializable {
         navState.selectedParentProperty().addListener(new SelectedParentListener());
         navBar.getToggleGroup().selectedToggleProperty().addListener(new ToggleGroupListener());
 
-        // TODO initialize with first favorite in favorite panel
         projectState.configProperty().addListener(
-                (b, o, n) -> navState.getNavigationPath().add(new LocalFile(projectState.getConfig().getProjectPath()))
+                (b, o, n) -> navState.getNavigationPath().add(navState.getFavoriteFolders().get(0))
         );
     }
 

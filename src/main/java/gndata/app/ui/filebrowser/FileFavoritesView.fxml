@@ -13,14 +13,22 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.filebrowser.FileFavoritesCtrl"
             fx:id="view">
-    <children>
-        <Label text="Favorites"><font><Font size="18.0"/></font></Label>
+    <top>
+        <VBox>
+            <children>
+                <Label text="Favorites"><font><Font size="18.0"/></font></Label>
 
-        <ListView fx:id="fileBrowserFavorites" />
+                <ListView fx:id="fileFavorites" />
+            </children>
+        </VBox>
+    </top>
+    <bottom>
         <Button fx:id="openFileFavoriteHandling" text="Manage Favorites" />
-    </children>
-</VBox>
+    </bottom>
+
+</BorderPane>
