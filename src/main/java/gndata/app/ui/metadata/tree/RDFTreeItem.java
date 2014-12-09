@@ -14,7 +14,7 @@ import javafx.scene.control.TreeItem;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
-import gndata.app.ui.metadata.VisualItem;
+import gndata.app.ui.util.RDFVisualItem;
 
 /**
  * A tree representation of the RDF model graph.
@@ -118,8 +118,8 @@ public class RDFTreeItem extends TreeItem<RDFNode> {
         }
 
         // sort alphabetically
-        children.sort((a, b) -> VisualItem.renderForSorting(a.getValue()).compareTo(
-                                VisualItem.renderForSorting(b.getValue())));
+        children.sort((a, b) -> RDFVisualItem.renderForSorting(a.getValue()).compareTo(
+                                RDFVisualItem.renderForSorting(b.getValue())));
 
         return children;
     }

@@ -11,10 +11,9 @@ package gndata.app.ui.metadata.tree;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.TextAlignment;
 
 import com.hp.hpl.jena.rdf.model.*;
-import gndata.app.ui.metadata.VisualItem;
+import gndata.app.ui.util.RDFVisualItem;
 
 /**
  * Facade class for metadata tree items.
@@ -30,16 +29,16 @@ public final class RDFTreeCell extends TreeCell<RDFNode> {
         } else {
             Resource node = item.asResource();
 
-            String classname = VisualItem.getClassName(node);
+            String classname = RDFVisualItem.getClassName(node);
             String titletext, subtitletext = "";
 
             if (classname == null) { // root node
-                titletext = VisualItem.getID(node);
+                titletext = RDFVisualItem.getID(node);
             } else { // non-root node
-                String label = VisualItem.getLabel(node);
+                String label = RDFVisualItem.getLabel(node);
                 titletext = String.format("%s: %s", classname, label == null ? "" : label);
 
-                String id = VisualItem.getID(node);
+                String id = RDFVisualItem.getID(node);
                 subtitletext = id.length() < 15 ? id : id.substring(0, 14);
             }
 

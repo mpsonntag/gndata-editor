@@ -119,9 +119,9 @@ public class QueryPane extends GridPane {
         }
 
         return StrUtils.strjoinNL(
-                "SELECT ",
+                "CONSTRUCT {",
                 String.join(" ", selectors),
-                "WHERE { ",
+                "} WHERE { ",
                 String.join(" . ", conditions),
                 "}"
         );
