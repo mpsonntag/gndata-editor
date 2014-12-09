@@ -3,24 +3,26 @@ package gndata.lib.srv;
 import java.nio.file.Files;
 import java.util.*;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * Created by msonntag on 04.12.14.
  */
-public abstract class FileAdapter implements Comparable<FileAdapter> {
+public abstract class FileAdapter<T extends FileAdapter> implements Comparable<T> {
 
-    public abstract Optional<FileAdapter> getParent();
+    public abstract Optional<T> getParent();
 
     /**
      *
      * @return sorted list of child FileAdapters
      */
-    public abstract List<FileAdapter> getChildren();
+    public abstract List<T> getChildren();
 
     public abstract boolean isDirectory();
 
     public abstract String getFileName();
 
-    public boolean hasChild(FileAdapter child) {
+    public boolean hasChild(T child) {
         if ( ! isDirectory() ) {
             return false;
         }
@@ -34,7 +36,7 @@ public abstract class FileAdapter implements Comparable<FileAdapter> {
     }
 
     @Override
-    public int compareTo(FileAdapter o) {
+    public int compareTo(T o) {
         if (isDirectory() && ! o.isDirectory()) {
             return -1;
         } else if ( ! isDirectory() && o.isDirectory()) {
