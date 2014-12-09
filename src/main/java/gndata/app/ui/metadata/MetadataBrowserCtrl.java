@@ -16,9 +16,7 @@ import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.main.MenuView;
 import gndata.app.ui.metadata.table.RDFTableView;
-import gndata.app.ui.metadata.tree.RDFTreeView;
 
 /**
  * Controller for the main application window.

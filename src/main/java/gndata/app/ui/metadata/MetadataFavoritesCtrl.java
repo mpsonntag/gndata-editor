@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javafx.fxml.*;
 import javafx.scene.control.ListView;
 
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.vocabulary.*;
 import gndata.app.state.*;
 import gndata.lib.srv.ResourceAdapter;
@@ -28,8 +28,6 @@ public class MetadataFavoritesCtrl implements Initializable {
         this.navState = navState;
 
         this.projectState.configProperty().addListener((p, o, n) -> {
-            Selector sel = new SimpleSelector(null, RDF.type, (Object) null);
-
             navState.getFavoriteFolders().setAll(
                     projectState.getMetadata().getAnnotations().listObjectsOfProperty(RDF.type).toList().stream()
                             .filter(RDFNode::isResource)
