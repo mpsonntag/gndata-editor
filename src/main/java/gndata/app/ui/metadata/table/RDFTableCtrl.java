@@ -38,7 +38,12 @@ public class RDFTableCtrl implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // listen to changes in metadata state
-        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> fillItems(newVal.getResource()));
+        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
+            if (newVal == null)
+                tableView.setItems(null);
+            else
+                fillItems(newVal.getResource());
+        });
     }
 
     public void fillItems(RDFNode node) {

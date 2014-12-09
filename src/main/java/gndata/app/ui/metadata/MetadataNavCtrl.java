@@ -31,10 +31,8 @@ public class MetadataNavCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         navBar.setItems(navState.getNavigationPath());
 
-        navState.selectedParentProperty().bind(navBar.getSelectionModel().selectedItemProperty());
-        navState.selectedParentProperty().addListener((p, o, n) -> {
-            navBar.getSelectionModel().select(n);
-        });
+        navBar.getSelectionModel().selectedItemProperty().addListener((p, o, n) -> navState.setSelectedParent(n));
+        navState.selectedParentProperty().addListener((p, o, n) -> navBar.getSelectionModel().select(n));
 
         projectState.configProperty().addListener((p, o, n) -> {
             if (navState.getFavoriteFolders().size() > 0) {
