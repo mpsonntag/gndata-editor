@@ -11,6 +11,8 @@ package gndata.app.ui.dia;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
+
+import gndata.app.ui.util.TwoLineListCell;
 import javafx.fxml.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -55,19 +57,13 @@ public class ProjectListCtrl extends DialogController<String> implements Initial
         return view;
     }
 
-    private class ProjectListCell extends ListCell<Entry<String, String>> {
+    private class ProjectListCell extends TwoLineListCell<Entry<String, String>> {
 
         @Override
-        protected void updateItem(Entry<String, String> content, boolean empty) {
-            super.updateItem(content, empty);
-
+        protected void update(Entry<String, String> content, boolean empty) {
             if (!empty) {
-                Label head = new Label(content.getValue());
-                head.setStyle("-fx-font-size: 1.2em; -fx-font-weight: bold");
-
-                Label other = new Label(content.getKey());
-
-                setGraphic(new VBox(head, other));
+                lineOne.set(content.getKey());
+                lineTwo.set(content.getValue());
             }
         }
 
