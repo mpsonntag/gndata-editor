@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
 import javafx.collections.*;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.TreeView;
@@ -30,7 +28,7 @@ import gndata.app.state.*;
 public class RDFTreeCtrl implements Initializable {
 
     private final ProjectState projectState;
-    private final MetadataState metadataState;
+    private final MetadataNavState metadataState;
 
     @FXML
     private TreeView<RDFNode> metadataTreeView;
@@ -38,7 +36,7 @@ public class RDFTreeCtrl implements Initializable {
     private TextField searchInput;
 
     @Inject
-    public RDFTreeCtrl(ProjectState projectState, MetadataState metadataState) {
+    public RDFTreeCtrl(ProjectState projectState, MetadataNavState metadataState) {
         this.projectState = projectState;
         this.metadataState = metadataState;
     }
@@ -48,9 +46,9 @@ public class RDFTreeCtrl implements Initializable {
         projectState.addListener((observable, oldVal, newVal) -> loadTree(null));
 
         // bind selection to metadata state
-        metadataTreeView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            metadataState.setSelectedNode(newVal != null ? newVal.getValue() : null);
-        });
+//        metadataTreeView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+//            metadataState.setSelectedNode(newVal != null ? newVal.getValue() : null);
+//        });
 
         // listener to reload tree if search text is entered
         searchInput.setOnKeyPressed(e -> {

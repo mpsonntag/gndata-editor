@@ -18,12 +18,12 @@ public class RDFTreeCtrlTest {
     private static final Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir"), "test-project");
 
     ProjectState projectState;
-    MetadataState metadataState;
+    MetadataNavState metadataState;
     RDFTreeCtrl treeCtrl;
 
     @Before
     public void setUp() throws Exception {
-        metadataState = new MetadataState();
+        metadataState = new MetadataNavState();
         projectState = new ProjectState();
 
         ProjectConfig config = ProjectConfig.load(tmpPath.toString());

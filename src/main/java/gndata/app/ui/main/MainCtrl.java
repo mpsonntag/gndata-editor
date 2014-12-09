@@ -12,15 +12,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
-import javax.management.Query;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
 import gndata.app.ui.filebrowser.FileBrowserView;
-import gndata.app.ui.metadata.MainMetadataView;
-import gndata.app.ui.metadata.table.RDFTableView;
-import gndata.app.ui.metadata.tree.RDFTreeView;
+import gndata.app.ui.metadata.MetadataBrowserView;
 import gndata.app.ui.query.QueryView;
 
 /**
@@ -46,14 +43,14 @@ public class MainCtrl implements Initializable {
 
     private MenuView menuView;
 
-    private MainMetadataView metadataView;
+    private MetadataBrowserView metadataView;
 
     private QueryView queryView;
 
     private FileBrowserView fileBrowserView;
 
     @Inject
-    public MainCtrl(MenuView menuView, MainMetadataView metadataView, QueryView queryView, FileBrowserView fileBrowserView) {
+    public MainCtrl(MenuView menuView, MetadataBrowserView metadataView, QueryView queryView, FileBrowserView fileBrowserView) {
         this.menuView = menuView;
         this.metadataView = metadataView;
         this.queryView = queryView;
