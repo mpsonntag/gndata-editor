@@ -19,12 +19,12 @@ public class ResourceAdapter extends FileAdapter {
     }
 
     @Override
-    public Optional<FileAdapter> getParent() {
+    public Optional<ResourceAdapter> getParent() {
         return null;
     }
 
     @Override
-    public List<FileAdapter> getChildren() {
+    public List<ResourceAdapter> getChildren() {
         return null;
     }
 

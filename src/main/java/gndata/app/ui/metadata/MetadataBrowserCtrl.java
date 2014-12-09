@@ -33,12 +33,15 @@ public class MetadataBrowserCtrl implements Initializable {
     private final MetadataNavView navView;
     private final MetadataFavoritesView favoritesView;
     private final MetadataListView listView;
+    private final RDFTableView tableView;
 
+    @Inject
     public MetadataBrowserCtrl(MetadataNavView navView, MetadataFavoritesView favoritesView,
-                               MetadataListView listView) {
+                               MetadataListView listView, RDFTableView tableView) {
         this.navView = navView;
         this.favoritesView = favoritesView;
         this.listView = listView;
+        this.tableView = tableView;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class MetadataBrowserCtrl implements Initializable {
             view.setLeft(favoritesView.getScene());
             // split pane with metadata tree
             splitPane.getItems().add(listView.getScene());
-            //splitPane.getItems().add(tableView.getScene());
+            splitPane.getItems().add(tableView.getScene());
         } catch (IOException e) {
             e.printStackTrace();
         }
