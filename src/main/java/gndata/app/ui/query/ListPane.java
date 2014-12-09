@@ -8,6 +8,8 @@
 
 package gndata.app.ui.query;
 
+import gndata.app.ui.util.RDFVisualItem;
+import gndata.app.ui.util.TwoLineListCell;
 import javafx.collections.*;
 import javafx.scene.control.ListView;
 
@@ -19,6 +21,8 @@ public class ListPane extends ListView<Statement> {
 
     public ListPane(QueryState qs) {
         super();
+
+        setCellFactory(view -> new QueryListCell());
 
         // update State when item is selected
         getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) ->
@@ -37,5 +41,22 @@ public class ListPane extends ListView<Statement> {
         }
 
         getItems().setAll(lst);
+    }
+
+    private class QueryListCell extends TwoLineListCell<Statement> {
+
+        @Override
+        protected void update(Statement stmt, boolean empty) {
+            if (!empty) {
+                Resource node = stmt.getSubject();
+
+                String label = RDFVisualItem.getLabel(node);
+                String clsname = RDFVisualItem.getClassName(node);
+                lineOne.set(String.format("%s: %s", clsname, label == null ? "" : label));
+
+                String id = RDFVisualItem.getID(node);
+                lineTwo.set(id.length() < 15 ? id : id.substring(0, 14));
+            }
+        }
     }
 }

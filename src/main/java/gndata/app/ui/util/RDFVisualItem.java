@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata;
+package gndata.app.ui.util;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
@@ -14,7 +14,7 @@ import com.hp.hpl.jena.vocabulary.*;
 /**
  * Class to render RDF items.
  */
-public class VisualItem {
+public class RDFVisualItem {
 
     public static String getClassName(Resource node) {
         String name = null;
@@ -57,13 +57,13 @@ public class VisualItem {
 
         Resource node = item.asResource();
 
-        String classname = VisualItem.getClassName(node);
+        String classname = RDFVisualItem.getClassName(node);
         String name = "";
 
         if (classname == null) { // root nodes
-            name = VisualItem.getID(node);
+            name = RDFVisualItem.getID(node);
         } else { // non-root nodes
-            String label = VisualItem.getLabel(node);
+            String label = RDFVisualItem.getLabel(node);
 
             name = String.format("%s: %s", classname, label == null ? "" : label);
         }

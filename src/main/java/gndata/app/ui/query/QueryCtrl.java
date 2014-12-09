@@ -74,7 +74,7 @@ public class QueryCtrl implements Initializable {
 
         if (projectState.isConfigured()) {
             try {
-                selection = projectState.getMetadata().SELECT(
+                selection = projectState.getMetadata().CONSTRUCT(
                     StrUtils.strjoinNL(
                         MetadataService.stdPrefix,
                         queryState.getCurrentQuery().get(),
