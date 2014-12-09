@@ -1,17 +1,13 @@
 package gndata.app.ui.filebrowser;
 
 import java.net.URL;
-import java.nio.file.*;
 import java.util.*;
 import javax.inject.Inject;
-import javafx.beans.value.*;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.*;
-import javafx.scene.control.*;
 
 import gndata.app.state.*;
+import gndata.app.ui.util.BreadCrumbNav;
 import gndata.lib.srv.*;
-import org.controlsfx.control.SegmentedButton;
 
 /**
  * Created by msonntag on 02.12.14.
@@ -19,7 +15,7 @@ import org.controlsfx.control.SegmentedButton;
 public class FileNavigationCtrl implements Initializable {
 
     @FXML
-    private SegmentedButton navBar;
+    private BreadCrumbNav<FileAdapter> navBar;
 
     private final ProjectState projectState;
     private final FileNavigationState navState;
@@ -34,75 +30,18 @@ public class FileNavigationCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        navState.getNavigationPath().addListener(new NavPathListener());
-        navState.selectedParentProperty().addListener(new SelectedParentListener());
-        navBar.getToggleGroup().selectedToggleProperty().addListener(new ToggleGroupListener());
 
-        // TODO initialize with first favorite in favorite panel
-        projectState.configProperty().addListener(
-                (b, o, n) -> navState.getNavigationPath().add(new LocalFile(projectState.getConfig().getProjectPath()))
-        );
-    }
+        navBar.setItems(navState.getNavigationPath());
 
-    private class NavPathListener implements ListChangeListener<FileAdapter> {
+        // ensure bidirectional changes in navigation bar and navigation state
+        navBar.getSelectionModel().selectedItemProperty().addListener((p, o, n) -> navState.setSelectedParent(n));
+        navState.selectedParentProperty().addListener((p, o, n) -> navBar.getSelectionModel().select(n));
 
-        @Override
-        public void onChanged(Change<? extends FileAdapter> c) {
-            List<FileAdapter> l = new ArrayList(c.getList());
-            if (! l.isEmpty()) {
-                navBar.getButtons().clear();
-
-                l.stream()
-                        .map(p -> new ToggleButton(p.getFileName().toString()))
-                        .forEach(tb -> navBar.getButtons().add(tb));
-
-                navState.setSelectedParent(l.get(l.size() - 1));
-            }
-        }
-    }
-
-    private class SelectedParentListener implements ChangeListener<FileAdapter> {
-
-        @Override
-        public void changed(ObservableValue<? extends FileAdapter> observable, FileAdapter oldValue, FileAdapter newValue) {
-            if (oldValue == newValue) {
+        projectState.configProperty().addListener((b, o, n) -> {
+            if (n == null || navState.getFavoriteFolders().size() < 1)
                 return;
-            }
-            if (! projectState.getFileService().isFileInProject(newValue)) {
-                return;
-            }
 
-            int pos = navState.getNavigationPath().lastIndexOf(newValue);
-
-            if (pos < 0) {
-
-                for (pos = navState.getNavigationPath().size() - 1; pos >= 0; pos--) {
-                    FileAdapter curr = navState.getNavigationPath().get(pos);
-                    if (curr.hasChild(newValue))
-                        break;
-
-                    navState.getNavigationPath().remove(pos);
-                }
-
-                navState.getNavigationPath().add(newValue);
-                pos++;
-            }
-
-            ToggleButton toggle = navBar.getButtons().get(pos);
-            navBar.getToggleGroup().selectToggle(toggle);
-        }
-    }
-
-    private class ToggleGroupListener implements ChangeListener<Toggle> {
-
-        @Override
-        public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-            if (newValue == null || oldValue == newValue) {
-                return;
-            }
-
-            int position = navBar.getButtons().indexOf(newValue);
-            navState.setSelectedParent(navState.getNavigationPath().get(position));
-        }
+            navState.getNavigationPath().add(navState.getFavoriteFolders().get(0));
+        });
     }
 }

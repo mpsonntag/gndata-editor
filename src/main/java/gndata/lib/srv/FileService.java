@@ -18,14 +18,6 @@ public class FileService {
         return root.get();
     }
 
-    public ObjectProperty<Path> rootProperty() {
-        return root;
-    }
-
-    public void setRoot(Path root) {
-        this.root.set(root);
-    }
-
     public boolean isFileInProject(Path path) {
 
         // TODO implement check

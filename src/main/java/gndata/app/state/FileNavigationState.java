@@ -2,6 +2,8 @@ package gndata.app.state;
 
 import java.util.ArrayList;
 import javax.inject.Singleton;
+
+import gndata.lib.srv.LocalFile;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
@@ -23,6 +25,9 @@ public final class FileNavigationState {
         selectedFile = new SimpleObjectProperty<>();
 
         favoriteFolders = FXCollections.observableList(new ArrayList<FileAdapter>());
+        // TODO get actual file favorites from project settings instead of
+        // using dummy entries
+
         navigationPath = FXCollections.observableList(new ArrayList<FileAdapter>());
     }
 
@@ -50,9 +55,7 @@ public final class FileNavigationState {
         this.selectedFile.set(selectedFile);
     }
 
-    public ObservableList<FileAdapter> getFavoriteFolders() {
-        return favoriteFolders;
-    }
+    public ObservableList<FileAdapter> getFavoriteFolders() { return favoriteFolders; }
 
     public ObservableList<FileAdapter> getNavigationPath() {
         return navigationPath;

@@ -5,12 +5,12 @@ import java.util.function.Function;
 import javafx.beans.property.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 
 import static java.util.stream.Collectors.toList;
 
 import gndata.lib.srv.FileAdapter;
+import javafx.scene.layout.Region;
 import org.controlsfx.control.SegmentedButton;
 
 /**
@@ -19,7 +19,7 @@ import org.controlsfx.control.SegmentedButton;
  * The elements of in the navigation bar are represented as a list of FileAdapter
  * instances and each instance is used to create a button in the navigation bar.
  */
-public class BreadCrumbNav<T extends FileAdapter> extends Parent {
+public class BreadCrumbNav<T extends FileAdapter> extends Region {
 
     private ObjectProperty<ObservableList<T>> items;
     private SelectionModel<T> selectionModel;
@@ -74,6 +74,7 @@ public class BreadCrumbNav<T extends FileAdapter> extends Parent {
     }
 
     public void setItems(ObservableList<T> items) {
+        this.items.set(null);
         this.items.set(items);
     }
 
