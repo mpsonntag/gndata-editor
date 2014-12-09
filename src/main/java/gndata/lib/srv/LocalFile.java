@@ -1,8 +1,22 @@
 package gndata.lib.srv;
 
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.detect.Detector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+
 import java.io.File;
-import java.nio.file.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by msonntag on 04.12.14.
@@ -52,6 +66,42 @@ public class LocalFile extends FileAdapter {
     @Override
     public String getFileName() {
         return path.getFileName().toString();
+    }
+
+    @Override
+    public long getSizeInBytes() {
+        try {
+            return Files.size(path);
+        } catch (IOException e) {
+            // TODO insert proper exception handling
+            return 0;
+        }
+    }
+
+    @Override
+    public String getMimeType() {
+
+        String returnString = "";
+
+        if(!Files.isDirectory(path)) {
+            TikaConfig tc = TikaConfig.getDefaultConfig();
+            Detector detector = tc.getDetector();
+            TikaInputStream stream = null;
+            try {
+                stream = TikaInputStream.get(new FileInputStream(new File(path.toString())));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Metadata metadata = new Metadata();
+            metadata.add(Metadata.RESOURCE_NAME_KEY, path.getFileName().toString());
+            try {
+                MediaType mediaType = detector.detect(stream, metadata);
+                returnString = mediaType.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return returnString;
     }
 
     @Override

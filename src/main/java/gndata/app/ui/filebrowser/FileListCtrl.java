@@ -1,18 +1,28 @@
 package gndata.app.ui.filebrowser;
 
-import java.net.URL;
-import java.util.*;
-import javax.inject.Inject;
-import javafx.beans.property.*;
-import javafx.beans.value.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-
 import gndata.app.state.FileNavigationState;
 import gndata.app.ui.util.DoubleClickHandler;
+import gndata.app.ui.util.TwoLineListCell;
 import gndata.lib.srv.FileAdapter;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by msonntag on 02.12.14.
@@ -34,7 +44,7 @@ public class FileListCtrl implements Initializable {
     public FileListCtrl(FileNavigationState navState) {
         this.navState = navState;
         filter = new SimpleStringProperty();
-        filteredList = FXCollections.observableList(new ArrayList<FileAdapter>());
+        filteredList = FXCollections.observableList(new ArrayList<>());
         unfilteredList = new ArrayList<>();
 
         this.navState.selectedParentProperty().addListener(new SelectedParentListener());
@@ -44,6 +54,8 @@ public class FileListCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fileFilter.textProperty().bindBidirectional(filter);
+
+        fileList.setCellFactory(cell -> new FileListCell());
         fileList.setItems(filteredList);
 
         navState.selectedFileProperty().bind(fileList.getSelectionModel().selectedItemProperty());
@@ -91,10 +103,41 @@ public class FileListCtrl implements Initializable {
         @Override
         public void handleDoubleClick(MouseEvent mouseEvent) {
             FileAdapter fa = fileList.getSelectionModel().getSelectedItem();
-            if (! fa.isDirectory()) {
+            if (fa == null || ! fa.isDirectory()) {
                 return;
             }
             navState.setSelectedParent(fa);
+        }
+    }
+
+    private class FileListCell extends TwoLineListCell<FileAdapter> {
+
+        @Override
+        protected void update(FileAdapter item, boolean empty) {
+            // reset cells
+            lineOne.setValue("");
+            lineTwo.setValue("");
+            icon.set(null);
+
+            if ( !empty ) {
+                String firstLine = item.getFileName();
+                String secondLine = item.getMimeType();
+                String selectIcon;
+
+                if(item.isDirectory()) {
+                    firstLine += " ("+ item.getChildren().size() +")";
+                    selectIcon = "folder.png";
+
+                } else {
+                    secondLine += " "+ Long.toString(item.getSizeInBytes()) + " bytes";
+                    selectIcon = "txt.png";
+                }
+                Image img = new Image(ClassLoader.getSystemResource(new File("icons", selectIcon).toString()).toString());
+
+                lineOne.setValue(firstLine);
+                lineTwo.setValue(secondLine);
+                icon.set(img);
+            }
         }
     }
 }

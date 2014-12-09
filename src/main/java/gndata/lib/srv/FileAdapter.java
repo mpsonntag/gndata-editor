@@ -1,7 +1,7 @@
 package gndata.lib.srv;
 
-import java.nio.file.Files;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by msonntag on 04.12.14.
@@ -19,6 +19,10 @@ public abstract class FileAdapter implements Comparable<FileAdapter> {
     public abstract boolean isDirectory();
 
     public abstract String getFileName();
+
+    public abstract long getSizeInBytes();
+
+    public abstract String getMimeType();
 
     public boolean hasChild(FileAdapter child) {
         if ( ! isDirectory() ) {
