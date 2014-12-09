@@ -27,8 +27,6 @@ public final class FileNavigationState {
         favoriteFolders = FXCollections.observableList(new ArrayList<FileAdapter>());
         // TODO get actual file favorites from project settings instead of
         // using dummy entries
-        favoriteFolders.add(new LocalFile("/home/msonntag/work/software/sampleRDFSet/metadata"));
-        favoriteFolders.add(new LocalFile("/home/msonntag/work/software/sampleRDFSet/metadata/schemas"));
 
         navigationPath = FXCollections.observableList(new ArrayList<FileAdapter>());
     }

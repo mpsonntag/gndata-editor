@@ -37,9 +37,11 @@ public class FileNavigationCtrl implements Initializable {
         navBar.getSelectionModel().selectedItemProperty().addListener((p, o, n) -> navState.setSelectedParent(n));
         navState.selectedParentProperty().addListener((p, o, n) -> navBar.getSelectionModel().select(n));
 
-        projectState.configProperty().addListener(
-                (b, o, n) -> navState.getNavigationPath().add(navState.getFavoriteFolders().get(0))
-        );
-    }
+        projectState.configProperty().addListener((b, o, n) -> {
+            if (n == null || navState.getFavoriteFolders().size() < 1)
+                return;
 
+            navState.getNavigationPath().add(navState.getFavoriteFolders().get(0));
+        });
+    }
 }
