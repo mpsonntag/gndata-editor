@@ -19,7 +19,12 @@ public abstract class FileAdapter<T extends FileAdapter> implements Comparable<T
 
     public abstract String getFileName();
 
+    public abstract long getSizeInBytes();
+
+    public abstract String getMimeType();
+
     public boolean hasChild(T child) {
+
         if ( ! isDirectory() ) {
             return false;
         }

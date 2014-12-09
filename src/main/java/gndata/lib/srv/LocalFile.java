@@ -1,15 +1,23 @@
 package gndata.lib.srv;
 
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.detect.Detector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+
 
 /**
  * Created by msonntag on 04.12.14.
  */
-public class LocalFile extends FileAdapter {
+public class LocalFile extends FileAdapter<LocalFile> {
 
     private Path path;
-    private Optional<FileAdapter> parent;
+    private Optional<LocalFile> parent;
 
     public LocalFile(Path path) {
         this.path = path.toAbsolutePath().normalize();
@@ -20,7 +28,7 @@ public class LocalFile extends FileAdapter {
     }
 
     @Override
-    public Optional<FileAdapter> getParent() {
+    public Optional<LocalFile> getParent() {
         if (parent == null) {
             parent = path.getParent() == null ? Optional.empty() : Optional.of(new LocalFile(path.getParent()));
         }
@@ -29,8 +37,8 @@ public class LocalFile extends FileAdapter {
     }
 
     @Override
-    public List<FileAdapter> getChildren() {
-        List<FileAdapter> list = new ArrayList<>();
+    public List<LocalFile> getChildren() {
+        List<LocalFile> list = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
 
             stream.forEach(p -> list.add(new LocalFile(p)));
@@ -51,6 +59,42 @@ public class LocalFile extends FileAdapter {
     @Override
     public String getFileName() {
         return path.getFileName().toString();
+    }
+
+    @Override
+    public long getSizeInBytes() {
+        try {
+            return Files.size(path);
+        } catch (IOException e) {
+            // TODO insert proper exception handling
+            return 0;
+        }
+    }
+
+    @Override
+    public String getMimeType() {
+
+        String returnString = "";
+
+        if(!Files.isDirectory(path)) {
+            TikaConfig tc = TikaConfig.getDefaultConfig();
+            Detector detector = tc.getDetector();
+            TikaInputStream stream = null;
+            try {
+                stream = TikaInputStream.get(new FileInputStream(new File(path.toString())));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Metadata metadata = new Metadata();
+            metadata.add(Metadata.RESOURCE_NAME_KEY, path.getFileName().toString());
+            try {
+                MediaType mediaType = detector.detect(stream, metadata);
+                returnString = mediaType.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return returnString;
     }
 
     @Override

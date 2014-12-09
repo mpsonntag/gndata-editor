@@ -20,7 +20,7 @@ public abstract class TwoLineListCell<T> extends ListCell<T> {
     public TwoLineListCell() {
         Label labelOne = new Label();
         lineOne = labelOne.textProperty();
-        labelOne.setStyle("-fx-font-size: 1.2em; -fx-font-weight: bold");
+        labelOne.setStyle("-fx-font-size: 1.1em; -fx-font-weight: bold");
 
         Label labelTwo = new Label();
         lineTwo = labelTwo.textProperty();
@@ -28,7 +28,9 @@ public abstract class TwoLineListCell<T> extends ListCell<T> {
 
         ImageView iconView = new ImageView();
         icon = iconView.imageProperty();
+
         HBox hbox = new HBox(iconView, vbox);
+        hbox.setStyle("-fx-spacing: 10");
 
         setGraphic(hbox);
     }
