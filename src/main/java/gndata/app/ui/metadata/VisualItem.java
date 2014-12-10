@@ -14,6 +14,7 @@ import com.hp.hpl.jena.vocabulary.*;
 /**
  * Class to render RDF items.
  */
+@Deprecated
 public class VisualItem {
 
     public static String getClassName(Resource node) {
