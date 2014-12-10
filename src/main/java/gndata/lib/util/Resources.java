@@ -53,22 +53,47 @@ public class Resources {
      * @return Human readable information about the resource.
      */
     public static String toInfoString(Resource resource) {
-        // TODO implement
-        return "Resource info";
+        long litCount = streamLiteralsFor(resource).count();
+        long relCount = streamResourcesFor(resource).count();
+        return String.format("Relations: %d, Literals: %d", relCount, litCount);
     }
 
-
+    /**
+     * Streams all statements containing literal values as object for a certain resource.
+     *
+     * @param resource The resource to get the literals for.
+     *
+     * @return A stream with literals.
+     */
     public static Stream<Statement> streamLiteralsFor(Resource resource) {
         Iterator<Statement> it = resource.listProperties().filterKeep(new LiteralFilter());
 
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, characteristics), false);
     }
 
-
+    /**
+     * Streams all statements containing literal values as object for a certain resource.
+     * This is equivalent to {@link #streamLiteralsFor(Resource)}.
+     *
+     * @param resource The resource to get the literals for.
+     *
+     * @return A list with literals.
+     */
     public static List<Statement> listLiteralsFor(Resource resource) {
         return streamLiteralsFor(resource).collect(Collectors.toList());
     }
 
+    /**
+     * Streams all resources directly related to the given resource. Blank nodes and
+     * Resources that represent a type are ignored. If the resource itself is a {@link OWL#Class}
+     * the method will return all instances of this class.
+     *
+     * For instance resources the method also resolves reverse relationships.
+     *
+     * @param resource The resource to get the related resources for.
+     *
+     * @return A stream with related resources.
+     */
     public static Stream<Resource> streamResourcesFor(Resource resource) {
         ExtendedIterator<Statement> it;
 
@@ -78,13 +103,31 @@ public class Resources {
                     .sorted(new StatementComparator())
                     .map(Statement::getSubject);
         } else {
+            // TODO reverse relationships should be resolved via reasoner once the ontology supports this
             it = resource.listProperties().filterKeep(new ResourceFilter());
-            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, characteristics), false)
+            Stream<Statement> forward = StreamSupport.stream(
+                    Spliterators.spliteratorUnknownSize(it, characteristics), false);
+
+            it = resource.getModel().listStatements(null, null, resource).filterKeep(new ResourceFilter());
+            Stream<Statement> reverse = StreamSupport.stream(
+                    Spliterators.spliteratorUnknownSize(it, characteristics), false);
+
+            return Stream.concat(forward, reverse)
                     .sorted(new StatementComparator())
-                    .map(stmt -> stmt.getObject().asResource());
+                    .map(stmt -> stmt.getSubject().equals(resource) ? stmt.getObject().asResource() : stmt.getSubject());
         }
     }
 
+    /**
+     * Streams all resources directly related to the given resource. This method is the list
+     * equivalent for {@link #streamResourcesFor(Resource)}.
+     *
+     * @param resource The resource to get the related resources for.
+     *
+     * @return A list with related resources.
+     *
+     * @see #streamResourcesFor(Resource)
+     */
     public static List<Resource> listResourcesFor(Resource resource) {
         return streamResourcesFor(resource).collect(Collectors.toList());
     }
