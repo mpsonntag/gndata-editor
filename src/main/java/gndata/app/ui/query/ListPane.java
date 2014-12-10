@@ -8,13 +8,13 @@
 
 package gndata.app.ui.query;
 
-import gndata.app.ui.util.RDFVisualItem;
-import gndata.app.ui.util.TwoLineListCell;
 import javafx.collections.*;
 import javafx.scene.control.ListView;
 
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.QueryState;
+import gndata.app.ui.util.TwoLineListCell;
+import gndata.lib.util.Resources;
 
 
 public class ListPane extends ListView<Statement> {
@@ -50,12 +50,8 @@ public class ListPane extends ListView<Statement> {
             if (!empty) {
                 Resource node = stmt.getSubject();
 
-                String label = RDFVisualItem.getLabel(node);
-                String clsname = RDFVisualItem.getClassName(node);
-                lineOne.set(String.format("%s: %s", clsname, label == null ? "" : label));
-
-                String id = RDFVisualItem.getID(node);
-                lineTwo.set(id.length() < 15 ? id : id.substring(0, 14));
+                lineOne.set(Resources.toNameString(node));
+                lineTwo.set(Resources.toInfoString(node));
             }
         }
     }

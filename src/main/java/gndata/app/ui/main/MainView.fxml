@@ -23,12 +23,12 @@ LICENSE file in the root of the Project.
     <center>
         <TabPane side="RIGHT" style="">
             <tabs>
-                <Tab text="Dashboard" fx:id="dashboard"></Tab>
-                <Tab text="Metadata" fx:id="metadata"></Tab>
-                <Tab text="Calendar" fx:id="calendar"></Tab>
-                <Tab text="Query" fx:id="query"></Tab>
-                <Tab text="Files" fx:id="files"></Tab>
-                <Tab text="Notes" fx:id="notes"></Tab>
+                <Tab text="Dashboard" fx:id="dashboard"/>
+                <Tab text="Metadata" fx:id="metadata"/>
+                <Tab text="Calendar" fx:id="calendar"/>
+                <Tab text="Query" fx:id="query"/>
+                <Tab text="Files" fx:id="files"/>
+                <Tab text="Notes" fx:id="notes"/>
             </tabs>
         </TabPane>
     </center>
