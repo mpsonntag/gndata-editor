@@ -35,7 +35,14 @@ public class Resources {
             if (resource.hasProperty(RDFS.label)) {
                 name = resource.getProperty(RDFS.label).getLiteral().toString();
             } else {
-                String type = resource.getProperty(RDF.type).getResource().getLocalName();
+                String type;
+                Statement typeStmt = resource.getProperty(RDF.type);
+
+                if (typeStmt != null) {
+                    type = typeStmt.getResource().getLocalName();
+                } else {
+                    type = "Thing";
+                }
                 String id = resource.getLocalName().substring(0, 7);
                 name = String.format("%s: %s", type, id);
             }
