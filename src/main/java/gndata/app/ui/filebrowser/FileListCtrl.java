@@ -121,6 +121,7 @@ public class FileListCtrl implements Initializable {
                     selectIcon = "folder.png";
 
                 } else {
+
                     secondLine += " "+ humanReadableByteCount(item.getSizeInBytes(), true);
                     selectIcon = "txt.png";
                 }
@@ -150,5 +151,4 @@ public class FileListCtrl implements Initializable {
 
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
-
 }
