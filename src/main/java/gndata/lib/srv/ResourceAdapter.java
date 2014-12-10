@@ -1,11 +1,11 @@
 package gndata.lib.srv;
 
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
-import java.util.stream.*;
+
+import static gndata.lib.util.Resources.*;
+import static java.util.stream.Collectors.toList;
 
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.vocabulary.*;
 
 /**
  * Adapter for navigation on rdf resources.
@@ -29,25 +29,9 @@ public class ResourceAdapter extends FileAdapter {
 
     @Override
     public List<ResourceAdapter> getChildren() {
-        //resource.listProperties().forEachRemaining(p -> System.out.println(p.toString()));
-
-        Stream<Resource> statements;
-
-        if (resource.hasProperty(RDF.type, OWL.Class)) {
-            statements = resource.getModel().listStatements(null, RDF.type, resource).toList()
-                    .stream()
-                    .map(Statement::getSubject);
-        } else {
-            statements = resource.listProperties().toList()
-                    .stream()
-                    .filter(stmt -> stmt.getObject().isResource())
-                    .filter(stmt -> ! stmt.getPredicate().equals(RDF.type))
-                    .map(stmt -> stmt.getObject().asResource());
-        }
-
-        return statements
-                .map(r -> new ResourceAdapter(r, this))
-                .collect(Collectors.toList());
+        return streamResourcesFor(resource)
+                    .map(r -> new ResourceAdapter(r, this))
+                    .collect(toList());
     }
 
     @Override
@@ -57,21 +41,7 @@ public class ResourceAdapter extends FileAdapter {
 
     @Override
     public String getFileName() {
-        String name;
-
-        if (resource.hasProperty(RDF.type, OWL.Class)) {
-            name = resource.getLocalName();
-        } else {
-            if (resource.hasProperty(RDFS.label)) {
-                name = resource.getProperty(RDFS.label).getLiteral().toString();
-            } else {
-                String type = resource.getProperty(RDF.type).getResource().getLocalName();
-                String id = resource.getLocalName().substring(0, 7);
-                name = String.format("%s: %s", type, id);
-            }
-        }
-
-        return name;
+        return toNameString(resource);
     }
 
     public Resource getResource() {
