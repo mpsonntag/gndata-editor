@@ -10,7 +10,6 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 
-
 /**
  * Created by msonntag on 04.12.14.
  */
@@ -61,7 +60,6 @@ public class LocalFile extends FileAdapter<LocalFile> {
         return path.getFileName().toString();
     }
 
-    @Override
     public long getSizeInBytes() {
         try {
             return Files.size(path);
@@ -71,7 +69,6 @@ public class LocalFile extends FileAdapter<LocalFile> {
         }
     }
 
-    @Override
     public String getMimeType() {
 
         String returnString = "";

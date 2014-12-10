@@ -1,28 +1,20 @@
 package gndata.app.ui.filebrowser;
 
-import gndata.app.state.FileNavigationState;
-import gndata.app.ui.util.DoubleClickHandler;
-import gndata.app.ui.util.TwoLineListCell;
-import gndata.lib.srv.FileAdapter;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import java.io.File;
+import java.net.URL;
+import java.util.*;
+import javax.inject.Inject;
+import javafx.beans.property.*;
+import javafx.beans.value.*;
+import javafx.collections.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 
-import javax.inject.Inject;
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import gndata.app.state.FileNavigationState;
+import gndata.app.ui.util.*;
+import gndata.lib.srv.*;
 
 /**
  * Controller for {@link FileListView}
@@ -30,15 +22,15 @@ import java.util.ResourceBundle;
 public class FileListCtrl implements Initializable {
 
     @FXML
-    private ListView<FileAdapter> fileList;
+    private ListView<LocalFile> fileList;
 
     @FXML
     private TextField fileFilter;
 
     private final FileNavigationState navState;
     private final StringProperty filter;
-    private final ObservableList<FileAdapter> filteredList;
-    private final List<FileAdapter> unfilteredList;
+    private final ObservableList<LocalFile> filteredList;
+    private final List<LocalFile> unfilteredList;
 
     @Inject
     public FileListCtrl(FileNavigationState navState) {
@@ -110,10 +102,10 @@ public class FileListCtrl implements Initializable {
         }
     }
 
-    private class FileListCell extends TwoLineListCell<FileAdapter> {
+    private class FileListCell extends TwoLineListCell<LocalFile> {
 
         @Override
-        protected void update(FileAdapter item, boolean empty) {
+        protected void update(LocalFile item, boolean empty) {
             // reset cells
             lineOne.setValue("");
             lineTwo.setValue("");
