@@ -17,7 +17,7 @@ import javafx.fxml.*;
 import javafx.scene.control.TableView;
 
 import com.hp.hpl.jena.rdf.model.*;
-import gndata.app.state.MetadataState;
+import gndata.app.state.MetadataNavState;
 import gndata.app.ui.util.RDFTableItem;
 
 /**
@@ -25,20 +25,25 @@ import gndata.app.ui.util.RDFTableItem;
  */
 public class RDFTableCtrl implements Initializable {
 
-    private MetadataState metadataState;
+    private MetadataNavState metadataState;
 
     @FXML
     private TableView<RDFTableItem> tableView;
 
     @Inject
-    public RDFTableCtrl(MetadataState metadataState) {
+    public RDFTableCtrl(MetadataNavState metadataState) {
         this.metadataState = metadataState;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // listen to changes in metadata state
-        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> fillItems(newVal));
+        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
+            if (newVal == null)
+                tableView.setItems(null);
+            else
+                fillItems(newVal.getResource());
+        });
     }
 
     public void fillItems(RDFNode node) {

@@ -16,35 +16,39 @@ import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.main.MenuView;
 import gndata.app.ui.metadata.table.RDFTableView;
-import gndata.app.ui.metadata.tree.RDFTreeView;
 
 /**
  * Controller for the main application window.
  */
-public class MainMetadataCtrl implements Initializable {
+public class MetadataBrowserCtrl implements Initializable {
 
     @FXML
     public BorderPane view;
     @FXML
     private SplitPane splitPane;
 
-    private RDFTreeView metadataView;
-
-    private RDFTableView tableView;
+    private final MetadataNavView navView;
+    private final MetadataFavoritesView favoritesView;
+    private final MetadataListView listView;
+    private final RDFTableView tableView;
 
     @Inject
-    public MainMetadataCtrl(RDFTreeView metadataView, RDFTableView tableView) {
-        this.metadataView = metadataView;
+    public MetadataBrowserCtrl(MetadataNavView navView, MetadataFavoritesView favoritesView,
+                               MetadataListView listView, RDFTableView tableView) {
+        this.navView = navView;
+        this.favoritesView = favoritesView;
+        this.listView = listView;
         this.tableView = tableView;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+            view.setTop(navView.getScene());
+            view.setLeft(favoritesView.getScene());
             // split pane with metadata tree
-            splitPane.getItems().add(metadataView.getScene());
+            splitPane.getItems().add(listView.getScene());
             splitPane.getItems().add(tableView.getScene());
         } catch (IOException e) {
             e.printStackTrace();

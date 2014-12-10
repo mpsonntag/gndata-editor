@@ -16,10 +16,10 @@ import gndata.app.ui.util.InjectorView;
 /**
  * The main view of the application.
  */
-public class MainMetadataView extends InjectorView {
+public class MetadataBrowserView extends InjectorView {
 
     @Inject
-    public MainMetadataView(Injector injector) {
+    public MetadataBrowserView(Injector injector) {
         super(injector);
     }
 
