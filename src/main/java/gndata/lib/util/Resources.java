@@ -69,22 +69,23 @@ public class Resources {
         return streamLiteralsFor(resource).collect(Collectors.toList());
     }
 
-    public Stream<Statement> streamResourcesFor(Resource resource) {
+    public static Stream<Resource> streamResourcesFor(Resource resource) {
         ExtendedIterator<Statement> it;
 
         if (resource.hasProperty(RDF.type, OWL.Class)) {
             it = resource.getModel().listStatements(null, RDF.type, resource);
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, characteristics), false)
+                    .sorted(new StatementComparator())
+                    .map(Statement::getSubject);
         } else {
-            it = resource.listProperties();
+            it = resource.listProperties().filterKeep(new ResourceFilter());
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, characteristics), false)
+                    .sorted(new StatementComparator())
+                    .map(stmt -> stmt.getObject().asResource());
         }
-
-        it = it.filterKeep(new ResourceFilter());
-
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, characteristics), false)
-                            .sorted(new StatementComparator());
     }
 
-    public List<Statement> listResourcesFor(Resource resource) {
+    public static List<Resource> listResourcesFor(Resource resource) {
         return streamResourcesFor(resource).collect(Collectors.toList());
     }
 
