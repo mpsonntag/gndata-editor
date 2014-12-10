@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Created by msonntag on 02.12.14.
+ * Controller for {@link FileListView}
  */
 public class FileListCtrl implements Initializable {
 
@@ -129,7 +129,7 @@ public class FileListCtrl implements Initializable {
                     selectIcon = "folder.png";
 
                 } else {
-                    secondLine += " "+ Long.toString(item.getSizeInBytes()) + " bytes";
+                    secondLine += " "+ humanReadableByteCount(item.getSizeInBytes(), true);
                     selectIcon = "txt.png";
                 }
                 Image img = new Image(ClassLoader.getSystemResource(new File("icons", selectIcon).toString()).toString());
@@ -140,4 +140,23 @@ public class FileListCtrl implements Initializable {
             }
         }
     }
+
+    /**
+     * Method returns number of bytes in readable format
+     *
+     * @param bytes: number of bytes to be displayed in readable format
+     * @param si: use true, if basis for byte conversion should be 1000, false if basis should be 1024
+     * @return: Formatted String
+     */
+    private static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit)
+            return bytes + " B";
+
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
 }
