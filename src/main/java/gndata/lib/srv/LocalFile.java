@@ -4,6 +4,7 @@ package gndata.lib.srv;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import javafx.scene.image.Image;
 
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.detect.Detector;
@@ -62,19 +63,71 @@ public class LocalFile extends FileAdapter<LocalFile> {
         return path.getFileName().toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (!(o instanceof LocalFile))
+            return false;
+
+        LocalFile localFile = (LocalFile) o;
+        return path.equals(localFile.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return path.hashCode();
+    }
+
+    /**
+     * Returns the byte size of the current LocalFile, if it is not a directory.
+     */
     public long getSizeInBytes() {
         try {
             return Files.size(path);
         } catch (IOException e) {
             e.printStackTrace();
-            // TODO insert proper exception handling
-            return 0;
+            return -1;
         }
     }
 
+    /**
+     * Returns the contents of the current LocalFile, if it is a directory.
+     *
+     * @return formatted String containing "Directories: " #directories ", Files: " #files
+     */
+    public String getFolderContent() {
+
+        long files = 0;
+        long dir = 0;
+
+        if(Files.isDirectory(path)){
+            try {
+                files = Files.list(new File(path.toString()).toPath())
+                                .filter(p -> !p.toFile().isDirectory())
+                                .count();
+                dir = Files.list(new File(path.toString()).toPath())
+                                .filter(p -> p.toFile().isDirectory())
+                                .count();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return String.format("Directories: %d, Files: %d ", dir, files);
+    }
+
+    /**
+     * This method returns the MimeType of the current LocalFile, if it is not a directory.
+     * In case no MimeType can be identified, "application/octet-stream" is returned.
+     *
+     * @return detected MimeType as String
+     */
     public String getMimeType() {
 
-        String returnString = "";
+        String returnString = "application/octet-stream";
 
         if(!Files.isDirectory(path)) {
             TikaConfig tc = TikaConfig.getDefaultConfig();
@@ -93,20 +146,51 @@ public class LocalFile extends FileAdapter<LocalFile> {
         return returnString;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
+    /**
+     * This method returns additional information like MimeType, file size or folder content
+     * dependent on if the current item is a file or a directory.
+     */
+    public String getInfo() {
+        String info;
 
-        if (!(o instanceof LocalFile))
-            return false;
-
-        LocalFile localFile = (LocalFile) o;
-        return path.equals(localFile.path);
+        if (this.isDirectory()){
+            info = this.getFolderContent();
+        } else {
+            info = this.getMimeType() +" "+ humanReadableByteCount(this.getSizeInBytes(), true);
+        }
+        return info;
     }
 
-    @Override
-    public int hashCode() {
-        return path.hashCode();
+    /**
+     * This method returns different images dependent on whether the current item is a file or a directory
+     */
+    public Image getIcon() {
+        String selectIcon;
+
+        if (this.isDirectory()){
+            selectIcon = "folder.png";
+        } else {
+            selectIcon = "txt.png";
+        }
+
+        return new Image(ClassLoader.getSystemResource(new File("icons", selectIcon).toString()).toString());
+    }
+
+    /**
+     * Returns a number of input bytes in readable format
+     *
+     * @param bytes: number of bytes to be displayed in readable format
+     * @param si: use true, if basis for byte conversion should be 1000, false if basis should be 1024
+     * @return bytes as formatted String
+     */
+    private static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit)
+            return bytes + " B";
+
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }
