@@ -41,15 +41,6 @@ public class FileFavoritesCtrl implements Initializable {
             // set navState selected parent to the first favorite folder upon loading of a project
             this.navState.setSelectedParent(this.navState.getFavoriteFolders().get(0));
         });
-
-        // unselected file favorite, if the selected file favorite is not the same as the
-        // current selected parent of the navigation state any longer
-        this.navState.selectedParentProperty().addListener((p, o, n) -> {
-            if (n == null || n.equals(fileFavorites.getSelectionModel().getSelectedItem()))
-                return;
-
-            fileFavorites.getSelectionModel().clearSelection();
-        });
     }
 
     @Override
@@ -61,6 +52,15 @@ public class FileFavoritesCtrl implements Initializable {
             if (n == null)
                 return;
             navState.setSelectedParent(n);
+        });
+
+        // Deselect file favorite, if the selected file favorite is not the same as the
+        // current selected parent of the navigation state any longer
+        this.navState.selectedParentProperty().addListener((p, o, n) -> {
+            if (n == null || n.equals(fileFavorites.getSelectionModel().getSelectedItem()))
+                return;
+
+            fileFavorites.getSelectionModel().clearSelection();
         });
     }
 }
