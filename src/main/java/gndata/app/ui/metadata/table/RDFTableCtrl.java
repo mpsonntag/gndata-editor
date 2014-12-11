@@ -10,58 +10,47 @@ package gndata.app.ui.metadata.table;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javafx.collections.*;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.*;
 import javafx.scene.control.TableView;
 
-import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.MetadataNavState;
-import gndata.app.ui.util.RDFTableItem;
+import gndata.app.ui.util.StatementTableItem;
+import gndata.lib.util.Resources;
 
 /**
  * Controller for the table to view metadata items.
  */
 public class RDFTableCtrl implements Initializable {
 
-    private MetadataNavState metadataState;
-
     @FXML
-    private TableView<RDFTableItem> tableView;
+    private TableView<StatementTableItem> tableView;
+
+    private MetadataNavState metadataState;
+    private ObservableList<StatementTableItem> statements;
 
     @Inject
     public RDFTableCtrl(MetadataNavState metadataState) {
         this.metadataState = metadataState;
+        this.statements = FXCollections.observableList(new ArrayList<StatementTableItem>());
+
+        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
+            if (newVal == null)
+                statements.clear();
+            else
+                statements.setAll(
+                        Resources.streamLiteralsFor(newVal.getResource())
+                                 .map(StatementTableItem::new)
+                                 .collect(Collectors.toList())
+                );
+        });
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // listen to changes in metadata state
-        metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
-            if (newVal == null)
-                tableView.setItems(null);
-            else
-                fillItems(newVal.getResource());
-        });
+        tableView.setItems(statements);
     }
 
-    public void fillItems(RDFNode node) {
-        List<RDFTableItem> items = RDFTableItem.buildTableItems(node);
-
-        if (items.size() > 0) {
-            items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
-
-            ObservableList<RDFTableItem> observableData = FXCollections.observableArrayList(items);
-            SortedList<RDFTableItem> sortedData = new SortedList<>(observableData);
-
-            // sort items by predicate value
-            sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
-            sortedData.comparatorProperty().bind(tableView.comparatorProperty());
-
-            tableView.setItems(sortedData);
-        } else {
-            tableView.setItems(null);
-        }
-    }
 }
