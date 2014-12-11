@@ -1,6 +1,8 @@
 package gndata.lib.srv;
 
+
 import java.util.*;
+
 
 /**
  * Created by msonntag on 04.12.14.
@@ -20,6 +22,7 @@ public abstract class FileAdapter<T extends FileAdapter> implements Comparable<T
     public abstract String getFileName();
 
     public boolean hasChild(T child) {
+
         if ( ! isDirectory() ) {
             return false;
         }

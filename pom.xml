@@ -62,6 +62,13 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers</artifactId>
+            <version>1.6</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -187,6 +194,7 @@
                     <include>**/*.owl</include>
                     <include>**/*.rdf</include>
                     <include>**/*.properties</include>
+                    <include>**/*.png</include>
                 </includes>
             </resource>
 
