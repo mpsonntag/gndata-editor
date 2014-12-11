@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javafx.fxml.*;
 import javafx.scene.layout.BorderPane;
 
+import gndata.app.ui.calendar.favorites.CalendarFavoritesView;
+
 
 public class CalendarCtrl implements Initializable {
 
@@ -14,19 +16,21 @@ public class CalendarCtrl implements Initializable {
     private BorderPane view;
 
     private final TimelineView timeline;
+    private final CalendarFavoritesView favview;
 
     @Inject
-    public CalendarCtrl(TimelineView timeline) {
+    public CalendarCtrl(TimelineView timeline, CalendarFavoritesView favview) {
         this.timeline = timeline;
+        this.favview = favview;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             view.setTop(timeline.getScene());
+            view.setLeft(favview.getScene());
 
             /* TODO
-            view.setLeft(favoritesView.getScene());
 
             splitPane.getItems().add(0, listView.getScene());
             splitPane.getItems().add(1, detailsView.getScene());

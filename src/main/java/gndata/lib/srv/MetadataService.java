@@ -10,6 +10,8 @@ package gndata.lib.srv;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.query.*;
@@ -103,6 +105,19 @@ public class MetadataService {
     public Reasoner getReasoner() {
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
         return reasoner.bindSchema(schema);
+    }
+
+    /**
+     * Returns available types (resources) in the current annotations.
+     *
+     * @return List<Resource>
+     */
+    public List<Resource> getAvailableTypes() {
+        return getAnnotations().listObjectsOfProperty(RDF.type).toList()
+                .stream()
+                .map(RDFNode::asResource)
+                .filter(r -> !r.getNameSpace().equals(OWL.getURI()))
+                .collect(Collectors.toList());
     }
 
     public Model SELECT(String queryString) {

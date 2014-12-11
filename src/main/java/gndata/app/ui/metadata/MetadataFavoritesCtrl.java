@@ -29,10 +29,7 @@ public class MetadataFavoritesCtrl implements Initializable {
 
         this.projectState.configProperty().addListener((p, o, n) -> {
             navState.getFavoriteFolders().setAll(
-                    projectState.getMetadata().getAnnotations().listObjectsOfProperty(RDF.type).toList().stream()
-                            .filter(RDFNode::isResource)
-                            .map(RDFNode::asResource)
-                            .filter(r -> ! r.getNameSpace().equals(OWL.getURI()))
+                    projectState.getMetadata().getAvailableTypes().stream()
                             .map(r -> new ResourceAdapter(r, null))
                             .collect(Collectors.toList())
             );
