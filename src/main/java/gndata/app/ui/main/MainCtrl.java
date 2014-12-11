@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
+
+import gndata.app.ui.calendar.CalendarView;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -49,12 +51,17 @@ public class MainCtrl implements Initializable {
 
     private FileBrowserView fileBrowserView;
 
+    private CalendarView calendarView;
+
     @Inject
-    public MainCtrl(MenuView menuView, MetadataBrowserView metadataView, QueryView queryView, FileBrowserView fileBrowserView) {
+    public MainCtrl(MenuView menuView, MetadataBrowserView metadataView,
+                    QueryView queryView, FileBrowserView fileBrowserView,
+                    CalendarView calendarView) {
         this.menuView = menuView;
         this.metadataView = metadataView;
         this.queryView = queryView;
         this.fileBrowserView = fileBrowserView;
+        this.calendarView = calendarView;
     }
 
     @Override
@@ -65,7 +72,7 @@ public class MainCtrl implements Initializable {
 
             metadata.setContent(metadataView.getScene());
             query.setContent(queryView.getScene());
-
+            calendar.setContent(calendarView.getScene());
             files.setContent(fileBrowserView.getScene());
 
         } catch (IOException e) {

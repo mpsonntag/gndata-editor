@@ -43,7 +43,10 @@ public class Resources {
                 } else {
                     type = "Thing";
                 }
-                String id = resource.getLocalName().substring(0, 7);
+
+                String id = resource.getLocalName();
+                id = id.length() < 8 ? id : id.substring(0, 7);
+
                 name = String.format("%s: %s", type, id);
             }
         }

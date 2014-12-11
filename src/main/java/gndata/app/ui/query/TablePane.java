@@ -8,21 +8,25 @@
 
 package gndata.app.ui.query;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import javafx.collections.*;
-import javafx.collections.transformation.SortedList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import gndata.app.state.QueryState;
 import gndata.app.ui.util.StatementTableItem;
+import gndata.lib.util.Resources;
 
 
 public class TablePane extends TableView<StatementTableItem> {
 
+    private ObservableList<StatementTableItem> statements;
+
     public TablePane(QueryState qs) {
         super();
+
+        this.statements = FXCollections.observableList(new ArrayList<StatementTableItem>());
 
         TableColumn<StatementTableItem,String> c1 = new TableColumn<>("Predicate");
         c1.setCellValueFactory(new PropertyValueFactory("predicate"));
@@ -30,27 +34,20 @@ public class TablePane extends TableView<StatementTableItem> {
         c2.setCellValueFactory(new PropertyValueFactory("literal"));
         getColumns().setAll(c1, c2);
 
-        qs.getSelectedNode().addListener((obs, odlVal, newVal) -> fillItems(newVal));
-    }
+        qs.getSelectedStatement().addListener((obs, odlVal, newVal) -> {
+            if (newVal == null)
+                statements.clear();
+            else {
+                List<StatementTableItem> lst = new ArrayList<>();
 
-    public void fillItems(RDFNode node) {
-        // TODO use Resources.steamLiteralsFor here
-        // TODO use Resource instead of RDFNode
-        List<StatementTableItem> items = StatementTableItem.buildTableItems(node);
+                lst = Resources.streamLiteralsFor(newVal.getSubject())
+                        .map(StatementTableItem::new)
+                        .collect(Collectors.toList());
 
-        if (items.size() > 0) {
-            items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
+                statements.setAll(lst);
+            }
+        });
 
-            ObservableList<StatementTableItem> observableData = FXCollections.observableArrayList(items);
-            SortedList<StatementTableItem> sortedData = new SortedList<>(observableData);
-
-            // sort items by predicate value
-            sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
-            sortedData.comparatorProperty().bind(comparatorProperty());
-
-            setItems(sortedData);
-        } else {
-            setItems(null);
-        }
+        setItems(statements);
     }
 }

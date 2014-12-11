@@ -19,7 +19,7 @@ public class TextPane {
     public static WebView getInstance(QueryState qs) {
         WebView wv = new WebView();
 
-        qs.getSelectedNode().addListener((obs, odlVal, newVal) ->
+        qs.getSelectedStatement().addListener((obs, odlVal, newVal) ->
             wv.getEngine().loadContent(
                     String.join("",
                             "<html><body><p>",

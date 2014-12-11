@@ -21,24 +21,24 @@ import com.hp.hpl.jena.rdf.model.*;
 @Singleton
 public class QueryState {
 
-    private ObjectProperty<RDFNode> selectedNode;
+    private ObjectProperty<Statement> selectedStatement;
     private ObjectProperty<String> currentQuery;
     private ObjectProperty<Model> selectedModel;
 
     private ObservableList<String> queryHistory;  // mockup for the future <-->
 
     public QueryState() {
-        selectedNode = new SimpleObjectProperty<>();
+        selectedStatement = new SimpleObjectProperty<>();
         currentQuery = new SimpleObjectProperty<>();
         selectedModel = new SimpleObjectProperty<>();
     }
 
-    public ObjectProperty<RDFNode> getSelectedNode() {
-        return selectedNode;
+    public ObjectProperty<Statement> getSelectedStatement() {
+        return selectedStatement;
     }
 
-    public void setSelectedNode(RDFNode selectedNode) {
-        this.selectedNode.set(selectedNode);
+    public void setSelectedStatement(Statement selectedStatement) {
+        this.selectedStatement.set(selectedStatement);
     }
 
     public ObjectProperty<String> getCurrentQuery() {

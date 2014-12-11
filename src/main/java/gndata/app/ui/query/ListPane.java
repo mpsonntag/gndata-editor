@@ -26,7 +26,7 @@ public class ListPane extends ListView<Statement> {
 
         // update State when item is selected
         getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) ->
-            qs.setSelectedNode(newVal != null ? newVal.getSubject() : null)
+            qs.setSelectedStatement(newVal != null ? newVal : null)
         );
 
         // update list contents if the selection changed
