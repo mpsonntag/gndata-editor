@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
 
-import gndata.app.ui.calendar.CalendarCtrl;
 import gndata.app.ui.calendar.CalendarView;
 import javafx.fxml.*;
 import javafx.scene.control.*;
