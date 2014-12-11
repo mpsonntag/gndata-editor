@@ -1,29 +1,22 @@
 package gndata.app.ui.filebrowser;
 
-import com.google.inject.Inject;
-import gndata.app.state.FileNavigationState;
-import gndata.app.state.ProjectState;
-import gndata.lib.srv.FileAdapter;
-import gndata.lib.srv.LocalFile;
-
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ResourceBundle;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+
+import com.google.inject.Inject;
+import gndata.app.state.*;
+import gndata.lib.srv.*;
 
 /**
- * Created by msonntag on 02.12.14.
+ * Controller for {@link FileFavoritesView}
  */
 public class FileFavoritesCtrl implements Initializable {
 
     @FXML
     private ListView<FileAdapter> fileFavorites;
-
     @FXML
     private Button openFileFavoriteHandling;
 
@@ -41,6 +34,15 @@ public class FileFavoritesCtrl implements Initializable {
             Path path = Paths.get(n.getProjectPath());
             this.navState.getFavoriteFolders().add(new LocalFile(path));
             this.navState.getFavoriteFolders().add(new LocalFile(path.resolve(Paths.get("schemas"))));
+        });
+
+        // unselected file favorite, if the selected file favorite is not the same as the
+        // current selected parent of the navigation state any longer
+        this.navState.selectedParentProperty().addListener((p, o, n) -> {
+            if (n == null || n.equals(fileFavorites.getSelectionModel().getSelectedItem()))
+                return;
+
+            fileFavorites.getSelectionModel().clearSelection();
         });
     }
 
