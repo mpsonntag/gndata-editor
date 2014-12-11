@@ -44,6 +44,10 @@ public class ResourceAdapter extends FileAdapter {
         return toNameString(resource);
     }
 
+    public String getInfo() {
+        return toInfoString(resource);
+    }
+
     public Resource getResource() {
         return resource;
     }
