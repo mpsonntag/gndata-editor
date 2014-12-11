@@ -16,17 +16,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import gndata.app.state.QueryState;
-import gndata.app.ui.util.RDFTableItem;
+import gndata.app.ui.util.StatementTableItem;
 
 
-public class TablePane extends TableView<RDFTableItem> {
+public class TablePane extends TableView<StatementTableItem> {
 
     public TablePane(QueryState qs) {
         super();
 
-        TableColumn<RDFTableItem,String> c1 = new TableColumn<>("Predicate");
+        TableColumn<StatementTableItem,String> c1 = new TableColumn<>("Predicate");
         c1.setCellValueFactory(new PropertyValueFactory("predicate"));
-        TableColumn<RDFTableItem,String> c2 = new TableColumn<>("Literal Value");
+        TableColumn<StatementTableItem,String> c2 = new TableColumn<>("Literal Value");
         c2.setCellValueFactory(new PropertyValueFactory("literal"));
         getColumns().setAll(c1, c2);
 
@@ -34,13 +34,15 @@ public class TablePane extends TableView<RDFTableItem> {
     }
 
     public void fillItems(RDFNode node) {
-        List<RDFTableItem> items = RDFTableItem.buildTableItems(node);
+        // TODO use Resources.steamLiteralsFor here
+        // TODO use Resource instead of RDFNode
+        List<StatementTableItem> items = StatementTableItem.buildTableItems(node);
 
         if (items.size() > 0) {
             items.sort((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
 
-            ObservableList<RDFTableItem> observableData = FXCollections.observableArrayList(items);
-            SortedList<RDFTableItem> sortedData = new SortedList<>(observableData);
+            ObservableList<StatementTableItem> observableData = FXCollections.observableArrayList(items);
+            SortedList<StatementTableItem> sortedData = new SortedList<>(observableData);
 
             // sort items by predicate value
             sortedData.setComparator((a, b) -> a.getPredicate().compareTo(b.getPredicate()));
