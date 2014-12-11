@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 
 import com.google.inject.Inject;
 import gndata.app.state.MetadataNavState;
-import gndata.app.ui.util.DoubleClickHandler;
+import gndata.app.ui.util.*;
 import gndata.lib.srv.ResourceAdapter;
 
 /**
@@ -51,6 +51,7 @@ public class MetadataListCtrl implements Initializable {
         navState.selectedNodeProperty().bind(metadataListView.getSelectionModel().selectedItemProperty());
 
         metadataListView.addEventHandler(MouseEvent.MOUSE_CLICKED, new ListNavigationHandler());
+        metadataListView.setCellFactory(ra -> new MetadataListCell());
     }
 
 
@@ -94,6 +95,21 @@ public class MetadataListCtrl implements Initializable {
         public void handleDoubleClick(MouseEvent mouseEvent) {
             ResourceAdapter ra = metadataListView.getSelectionModel().getSelectedItem();
             navState.setSelectedParent(ra);
+        }
+    }
+
+
+    private class MetadataListCell extends TwoLineListCell<ResourceAdapter> {
+
+        @Override
+        protected void update(ResourceAdapter item, boolean empty) {
+            if (! empty) {
+                lineOne.set(item.getFileName());
+                lineTwo.set(item.getInfo());
+            } else {
+                lineOne.set(null);
+                lineTwo.set(null);
+            }
         }
     }
 }

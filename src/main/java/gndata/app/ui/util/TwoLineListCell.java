@@ -20,11 +20,12 @@ public abstract class TwoLineListCell<T> extends ListCell<T> {
     public TwoLineListCell() {
         Label labelOne = new Label();
         lineOne = labelOne.textProperty();
-        labelOne.setStyle("-fx-font-size: 1.1em; -fx-font-weight: bold");
+        labelOne.setStyle("-fx-font-weight: bold");
 
         Label labelTwo = new Label();
         lineTwo = labelTwo.textProperty();
         VBox vbox = new VBox(labelOne, labelTwo);
+        labelTwo.setStyle("-fx-text-fill: #666666");
 
         ImageView iconView = new ImageView();
         icon = iconView.imageProperty();

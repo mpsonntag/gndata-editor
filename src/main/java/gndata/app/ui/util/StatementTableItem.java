@@ -33,7 +33,7 @@ public class StatementTableItem {
     public String getLiteral() {
         RDFNode object = statement.getObject();
         if (object.isLiteral()) {
-            return object.asLiteral().toString();
+            return object.asLiteral().getValue().toString();
         } else {
             return "";
         }
