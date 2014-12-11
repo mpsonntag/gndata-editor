@@ -21,7 +21,7 @@ public class TogglePane extends Region {
 
         first = new SimpleObjectProperty<>();
         second = new SimpleObjectProperty<>();
-        showFirst = new SimpleBooleanProperty();
+        showFirst = new SimpleBooleanProperty(true);
 
         first.addListener((p, o, n) -> {
             if (showFirst.get()) {
