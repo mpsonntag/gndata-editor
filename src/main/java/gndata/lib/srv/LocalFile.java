@@ -12,7 +12,8 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 
 /**
- * Created by msonntag on 04.12.14.
+ * Class implementing methods for handling local files and folders
+ * giving access to information like file size or mime type.
  */
 public class LocalFile extends FileAdapter<LocalFile> {
 
@@ -65,6 +66,7 @@ public class LocalFile extends FileAdapter<LocalFile> {
         try {
             return Files.size(path);
         } catch (IOException e) {
+            e.printStackTrace();
             // TODO insert proper exception handling
             return 0;
         }
@@ -77,21 +79,17 @@ public class LocalFile extends FileAdapter<LocalFile> {
         if(!Files.isDirectory(path)) {
             TikaConfig tc = TikaConfig.getDefaultConfig();
             Detector detector = tc.getDetector();
-            TikaInputStream stream = null;
-            try {
-                stream = TikaInputStream.get(new FileInputStream(new File(path.toString())));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            Metadata metadata = new Metadata();
-            metadata.add(Metadata.RESOURCE_NAME_KEY, path.getFileName().toString());
-            try {
+
+            try (TikaInputStream stream = TikaInputStream.get(new FileInputStream(new File(path.toString())))) {
+                Metadata metadata = new Metadata();
+                metadata.add(Metadata.RESOURCE_NAME_KEY, path.getFileName().toString());
                 MediaType mediaType = detector.detect(stream, metadata);
                 returnString = mediaType.toString();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         return returnString;
     }
 
