@@ -12,19 +12,19 @@ LICENSE file in the root of the Project.
     -fx-padding: 10 0 0 10;
 }
 
-.list-view {
+.fav-list {
     -fx-border-width: 0;
     -fx-background-color: transparent;
     -fx-focus-traversable: false;
     -fx-padding: 0 0 0 15;
 }
 
-.list-cell {
+.fav-list .list-cell {
     -fx-text-fill: #000000;
     -fx-background-color: transparent;
     -fx-font-size: 13;
 }
 
-.list-cell:selected {
+.fav-list .list-cell:selected {
     -fx-font-weight: bold;
 }

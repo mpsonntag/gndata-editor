@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata.table;
+package gndata.app.ui.metadata;
 
 import java.net.URL;
 import java.util.*;
