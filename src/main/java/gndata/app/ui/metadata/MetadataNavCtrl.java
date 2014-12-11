@@ -56,4 +56,14 @@ public class MetadataNavCtrl implements Initializable {
     public void toggleNavBar() {
         showBreadCrumbs.set(! showBreadCrumbs.get());
     }
+
+    public void goBack() {
+        // TODO implement
+        System.out.println("MetadataNavCtrl: goBack");
+    }
+
+    public void goForward() {
+        // TODO implement
+        System.out.println("MetadataNavCtrl: goForward");
+    }
 }

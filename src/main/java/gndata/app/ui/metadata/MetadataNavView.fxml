@@ -18,8 +18,7 @@ LICENSE file in the root of the Project.
 <?import gndata.app.ui.util.TogglePane?>
 <HBox xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/8"
-      fx:controller="gndata.app.ui.metadata.MetadataNavCtrl"
-      fx:id="view">
+      fx:controller="gndata.app.ui.metadata.MetadataNavCtrl">
 
     <children>
         <!-- TODO Think about implementing ToolBarOverflowMenu-->
@@ -37,8 +36,8 @@ LICENSE file in the root of the Project.
         </ToolBar>
         <ToolBar nodeOrientation="RIGHT_TO_LEFT">
             <items>
-                <Button fx:id="fileNavFwd" text="&gt;"/>
-                <Button fx:id="fileNavBack" text="&lt;"/>
+                <Button text="&gt;" onAction="#goForward"/>
+                <Button text="&lt;" onAction="#goBack"/>
                 <ToggleButton onAction="#toggleNavBar" text="search"/>
             </items>
         </ToolBar>
