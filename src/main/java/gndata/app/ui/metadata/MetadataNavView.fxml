@@ -38,7 +38,7 @@ LICENSE file in the root of the Project.
             <items>
                 <Button text="&gt;" onAction="#goForward"/>
                 <Button text="&lt;" onAction="#goBack"/>
-                <ToggleButton onAction="#toggleNavBar" text="search"/>
+                <Button onAction="#toggleNavBar" text="search"/>
             </items>
         </ToolBar>
     </children>

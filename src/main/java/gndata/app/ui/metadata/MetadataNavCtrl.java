@@ -3,7 +3,6 @@ package gndata.app.ui.metadata;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
-import javafx.beans.property.*;
 import javafx.fxml.*;
 import javafx.scene.control.TextField;
 
@@ -25,14 +24,10 @@ public class MetadataNavCtrl implements Initializable {
     private final ProjectState projectState;
     private final MetadataNavState navState;
 
-    private final BooleanProperty showBreadCrumbs;
-
     @Inject
     public MetadataNavCtrl(ProjectState projectState, MetadataNavState navState) {
         this.projectState = projectState;
         this.navState = navState;
-
-        showBreadCrumbs = new SimpleBooleanProperty(true);
     }
 
 
@@ -49,11 +44,12 @@ public class MetadataNavCtrl implements Initializable {
             }
         });
 
-        togglePane.showFirstProperty().bindBidirectional(showBreadCrumbs);
+        togglePane.showFirstProperty().bindBidirectional(navState.showBrowsingResultsProperty());
+        searchField.textProperty().bindBidirectional(navState.searchStringProperty());
     }
 
     public void toggleNavBar() {
-        showBreadCrumbs.set(! showBreadCrumbs.get());
+        navState.setShowBrowsingResults(!navState.getShowBrowsingResults());
     }
 
     public void goBack() {

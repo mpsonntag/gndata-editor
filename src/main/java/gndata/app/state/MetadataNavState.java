@@ -8,12 +8,11 @@
 
 package gndata.app.state;
 
-import java.util.ArrayList;
 import javax.inject.Singleton;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
-import gndata.lib.srv.*;
+import gndata.lib.srv.ResourceAdapter;
 
 
 /**
@@ -23,6 +22,8 @@ import gndata.lib.srv.*;
 @Singleton
 public class MetadataNavState {
 
+    private final StringProperty searchString;
+    private final BooleanProperty showBrowsingResults;
     private final ObjectProperty<ResourceAdapter> selectedParent;
     private final ObjectProperty<ResourceAdapter> selectedNode;
     private final ObservableList<ResourceAdapter> favoriteFolders;
@@ -31,11 +32,37 @@ public class MetadataNavState {
 
 
     public MetadataNavState() {
+        searchString = new SimpleStringProperty();
+        showBrowsingResults = new SimpleBooleanProperty(true);
         selectedParent = new SimpleObjectProperty<>();
         selectedNode = new SimpleObjectProperty<>();
 
-        favoriteFolders = FXCollections.observableList(new ArrayList<ResourceAdapter>());
-        navigationPath = FXCollections.observableList(new ArrayList<ResourceAdapter>());
+        favoriteFolders = FXCollections.observableArrayList();
+        navigationPath = FXCollections.observableArrayList();
+    }
+
+    public String getSearchString() {
+        return searchString.get();
+    }
+
+    public StringProperty searchStringProperty() {
+        return searchString;
+    }
+
+    public void setSearchString(String searchString) {
+        this.searchString.set(searchString);
+    }
+
+    public boolean getShowBrowsingResults() {
+        return showBrowsingResults.get();
+    }
+
+    public BooleanProperty showBrowsingResultsProperty() {
+        return showBrowsingResults;
+    }
+
+    public void setShowBrowsingResults(boolean showBrowsingResults) {
+        this.showBrowsingResults.set(showBrowsingResults);
     }
 
     public ResourceAdapter getSelectedNode() {

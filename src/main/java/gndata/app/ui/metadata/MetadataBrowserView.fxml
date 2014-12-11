@@ -16,13 +16,21 @@ LICENSE file in the root of the Project.
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.metadata.MetadataBrowserCtrl"
             prefHeight="620.0" prefWidth="1000.0"
             fx:id="view">
 
+    <top>
+        <fx:include source="MetadataNavView.fxml"/>
+    </top>
+
+    <left>
+        <fx:include source="MetadataFavoritesView.fxml"/>
+    </left>
+
     <center>
         <SplitPane fx:id="splitPane" orientation="HORIZONTAL">
-
+            <fx:include source="MetadataListView.fxml"/>
+            <fx:include source="RDFTableView.fxml"/>
         </SplitPane>
     </center>
 

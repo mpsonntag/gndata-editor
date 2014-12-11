@@ -11,9 +11,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import com.google.inject.Inject;
-import gndata.app.state.MetadataNavState;
+import gndata.app.state.*;
 import gndata.app.ui.util.*;
-import gndata.lib.srv.ResourceAdapter;
+import gndata.lib.srv.*;
 
 /**
  * Controller for the metadata list.
@@ -26,21 +26,25 @@ public class MetadataListCtrl implements Initializable {
     @FXML
     private TextField filterTextField;
 
+    private final ProjectState projectState;
     private final MetadataNavState navState;
     private final StringProperty filter;
     private final ObservableList<ResourceAdapter> filteredList;
     private final List<ResourceAdapter> unfilteredList;
 
     @Inject
-    public MetadataListCtrl(MetadataNavState navState) {
+    public MetadataListCtrl(ProjectState projectState, MetadataNavState navState) {
+        this.projectState = projectState;
         this.navState = navState;
 
         filter = new SimpleStringProperty();
-        filteredList = FXCollections.observableList(new ArrayList<ResourceAdapter>());
+        filteredList = FXCollections.observableArrayList();
         unfilteredList = new ArrayList<>();
 
         this.navState.selectedParentProperty().addListener(new SelectedParentListener());
         filter.addListener((p, o, n) -> applyFilter(n));
+
+        this.navState.searchStringProperty().addListener(new SearchStringHandler());
     }
 
     @Override
@@ -68,7 +72,9 @@ public class MetadataListCtrl implements Initializable {
         }
     }
 
-
+    /**
+     * Listen for selected parent changes.
+     */
     private class SelectedParentListener implements ChangeListener<ResourceAdapter> {
 
         @Override
@@ -85,10 +91,14 @@ public class MetadataListCtrl implements Initializable {
                 filter.set(null); // reset the filter (triggers filtering)
             }
 
+            navState.setShowBrowsingResults(true);
         }
     }
 
 
+    /**
+     * Listen for double clicks on the list.
+     */
     private class ListNavigationHandler extends DoubleClickHandler {
 
         @Override
@@ -99,6 +109,37 @@ public class MetadataListCtrl implements Initializable {
     }
 
 
+    /**
+     * Listen for changes in the search string property of the navigation state.
+     */
+    private class SearchStringHandler implements ChangeListener<String> {
+
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            MetadataService ms = projectState.getMetadata();
+
+            if (ms != null) {
+                unfilteredList.clear();
+                unfilteredList.addAll(
+                        ms.streamSearchResults(navState.getSearchString())
+                            .map(r -> new ResourceAdapter(r, null))
+                            .collect(Collectors.toList())
+                );
+
+                String fltr = filter.get();
+                if (fltr == null || fltr.equals("")) {
+                    applyFilter(null); // just filter with null
+                } else {
+                    filter.set(null); // reset the filter (triggers filtering)
+                }
+            }
+        }
+    }
+
+
+    /**
+     * A list cell for lists showing a {@link ResourceAdapter}.
+     */
     private class MetadataListCell extends TwoLineListCell<ResourceAdapter> {
 
         @Override
