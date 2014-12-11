@@ -2,12 +2,11 @@ package gndata.app.ui.metadata;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javax.inject.Inject;
 import javafx.beans.property.*;
-import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.scene.control.TextField;
 
-import com.google.inject.Inject;
 import gndata.app.state.*;
 import gndata.app.ui.util.*;
 import gndata.lib.srv.ResourceAdapter;
