@@ -38,6 +38,7 @@ public class TimelineCtrl implements Initializable {
         NumberAxis yAxis = new NumberAxis();
 
         timeline = new AreaChart<Number,Number>(xAxis,yAxis);
+        timeline.setPrefHeight(150.0);
 
         setData();
 
@@ -53,6 +54,7 @@ public class TimelineCtrl implements Initializable {
 
         //SimpleDateFormat formatter = new SimpleDateFormat( "yyyyMM" );
         //series.setName(formatter.format(new java.util.Date()));
+        timeline.setLegendVisible(false);
 
         // TODO - fetch actual numbers from ps.metadataService
 

@@ -1,22 +1,14 @@
 package gndata.app.ui.calendar;
 
-import gndata.app.ui.filebrowser.FileDetailsView;
-import gndata.app.ui.filebrowser.FileFavoritesView;
-import gndata.app.ui.filebrowser.FileListView;
-import gndata.app.ui.filebrowser.FileNavigationView;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
-
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javax.inject.Inject;
+import javafx.fxml.*;
+import javafx.scene.layout.BorderPane;
 
 
-public class CalendarCtrl implements Initializable{
+public class CalendarCtrl implements Initializable {
 
     @FXML
     private BorderPane view;
