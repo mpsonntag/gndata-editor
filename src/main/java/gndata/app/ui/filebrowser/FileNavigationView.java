@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import gndata.app.ui.util.InjectorView;
 
 /**
- * Created by msonntag on 02.12.14.
+ * View for the navigation bar of the file browser
  */
 public class FileNavigationView extends InjectorView {
 

@@ -12,7 +12,7 @@ LICENSE file in the root of the Project.
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import gndata.app.ui.util.BreadCrumbNav?>
+<?import gndata.app.ui.util.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/8"
@@ -23,14 +23,21 @@ LICENSE file in the root of the Project.
         <!-- TODO Think about implementing ToolBarOverflowMenu-->
         <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
             <items>
-                <BreadCrumbNav fx:id="navBar" />
+                <TogglePane fx:id="togglePane">
+                    <first>
+                        <BreadCrumbNav fx:id="navBar" />
+                    </first>
+                    <second>
+                        <TextField fx:id="searchField" promptText="Search ..."/>
+                    </second>
+                </TogglePane>
             </items>
         </ToolBar>
         <ToolBar nodeOrientation="RIGHT_TO_LEFT">
             <items>
-                <Button fx:id="fileNavFwd" text="&gt;"/>
-                <Button fx:id="fileNavBack" text="&lt;"/>
-                <Button fx:id="fileSearch" text="search"/>
+                <Button text="&gt;" onAction="#goForward"/>
+                <Button text="&lt;" onAction="#goBack"/>
+                <ToggleButton onAction="#toggleNavBar" text="search"/>
             </items>
         </ToolBar>
     </children>
