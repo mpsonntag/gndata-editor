@@ -31,9 +31,15 @@ public class FileFavoritesCtrl implements Initializable {
             if (n == null)
                 return;
 
+            // load favorite folders from project
             Path path = Paths.get(n.getProjectPath());
+
+            // TODO load actual file favorites instead of the following 2 lines of dummy favorites
             this.navState.getFavoriteFolders().add(new LocalFile(path));
             this.navState.getFavoriteFolders().add(new LocalFile(path.resolve(Paths.get("schemas"))));
+
+            // set navState selected parent to the first favorite folder upon loading of a project
+            this.navState.setSelectedParent(this.navState.getFavoriteFolders().get(0));
         });
 
         // unselected file favorite, if the selected file favorite is not the same as the
