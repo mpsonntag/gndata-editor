@@ -46,7 +46,7 @@ public class CalendarFavoritesCtrl implements Initializable {
     }
 
     private void updateFavorites() {
-        ObservableList<SelectableResource> lst = FXCollections.observableList(new ArrayList<>());
+        ObservableList<SelectableResource> lst = FXCollections.observableArrayList();
 
         if (ps.getMetadata() != null) {
             lst.addAll(ps.getMetadata().getAvailableTypes()
