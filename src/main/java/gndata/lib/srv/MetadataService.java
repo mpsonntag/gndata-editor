@@ -10,6 +10,10 @@ package gndata.lib.srv;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.*;
+
+import static java.util.Spliterator.*;
 
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.query.*;
@@ -83,6 +87,44 @@ public class MetadataService {
         } else {
             return getAnnotations();
         }
+    }
+
+    /**
+     * Fulltext search on literal values inside the metadata model.
+     *
+     * @param search The search parameter.
+     *
+     * @return A stream of resources with a property having a part of the
+     *         search string as literal value.
+     */
+    public Stream<Resource> streamSearchResults(String search) {
+        String qs = StrUtils.strjoin("",
+                "SELECT DISTINCT ?s ",
+                "WHERE {",
+                "  ?s ?p ?o ",
+                "  FILTER regex(?o, '", search, "', 'i')}"
+        );
+
+        Query query = QueryFactory.create(qs);
+        ResultSet rs = QueryExecutionFactory.create(query, getAnnotations()).execSelect();
+
+        String var = rs.getResultVars().get(0);
+        Stream<QuerySolution> stream =StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(rs, NONNULL | IMMUTABLE | DISTINCT), false);
+
+        return stream.map(sol -> sol.getResource(var));
+    }
+
+    /**
+     * Fulltext search on literal values inside the metadata model.
+     *
+     * @param search The search parameter.
+     *
+     * @return A stream of resources with a property having a part of the
+     *         search string as literal value.
+     */
+    public List<Resource> listSearchResults(String search) {
+        return streamSearchResults(search).collect(Collectors.toList());
     }
 
     /**
