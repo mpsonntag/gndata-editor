@@ -1,29 +1,22 @@
 package gndata.app.ui.filebrowser;
 
-import com.google.inject.Inject;
-import gndata.app.state.FileNavigationState;
-import gndata.app.state.ProjectState;
-import gndata.lib.srv.FileAdapter;
-import gndata.lib.srv.LocalFile;
-
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ResourceBundle;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+
+import com.google.inject.Inject;
+import gndata.app.state.*;
+import gndata.lib.srv.*;
 
 /**
- * Created by msonntag on 02.12.14.
+ * Controller for {@link FileFavoritesView}
  */
 public class FileFavoritesCtrl implements Initializable {
 
     @FXML
     private ListView<FileAdapter> fileFavorites;
-
     @FXML
     private Button openFileFavoriteHandling;
 
@@ -38,9 +31,15 @@ public class FileFavoritesCtrl implements Initializable {
             if (n == null)
                 return;
 
+            // load favorite folders from project
             Path path = Paths.get(n.getProjectPath());
+
+            // TODO load actual file favorites instead of the following 2 lines of dummy favorites
             this.navState.getFavoriteFolders().add(new LocalFile(path));
             this.navState.getFavoriteFolders().add(new LocalFile(path.resolve(Paths.get("schemas"))));
+
+            // set navState selected parent to the first favorite folder upon loading of a project
+            this.navState.setSelectedParent(this.navState.getFavoriteFolders().get(0));
         });
     }
 
@@ -53,6 +52,15 @@ public class FileFavoritesCtrl implements Initializable {
             if (n == null)
                 return;
             navState.setSelectedParent(n);
+        });
+
+        // Deselect file favorite, if the selected file favorite is not the same as the
+        // current selected parent of the navigation state any longer
+        this.navState.selectedParentProperty().addListener((p, o, n) -> {
+            if (n == null || n.equals(fileFavorites.getSelectionModel().getSelectedItem()))
+                return;
+
+            fileFavorites.getSelectionModel().clearSelection();
         });
     }
 }
