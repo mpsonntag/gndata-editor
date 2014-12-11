@@ -1,6 +1,5 @@
 package gndata.app.ui.filebrowser;
 
-import java.io.File;
 import java.net.URL;
 import java.util.*;
 import javax.inject.Inject;
@@ -9,7 +8,6 @@ import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 
 import gndata.app.state.FileNavigationState;
@@ -112,43 +110,10 @@ public class FileListCtrl implements Initializable {
             icon.set(null);
 
             if ( !empty ) {
-                String firstLine = item.getFileName();
-                String secondLine = item.getMimeType();
-                String selectIcon;
-
-                if(item.isDirectory()) {
-                    firstLine += " ("+ item.getChildren().size() +")";
-                    selectIcon = "folder.png";
-
-                } else {
-
-                    secondLine += " "+ humanReadableByteCount(item.getSizeInBytes(), true);
-                    selectIcon = "txt.png";
-                }
-                Image img = new Image(ClassLoader.getSystemResource(new File("icons", selectIcon).toString()).toString());
-
-                lineOne.setValue(firstLine);
-                lineTwo.setValue(secondLine);
-                icon.set(img);
+                lineOne.setValue(item.getFileName());
+                lineTwo.setValue(item.getInfo());
+                icon.set(item.getIcon());
             }
         }
-    }
-
-    /**
-     * Method returns number of bytes in readable format
-     *
-     * @param bytes: number of bytes to be displayed in readable format
-     * @param si: use true, if basis for byte conversion should be 1000, false if basis should be 1024
-     * @return: Formatted String
-     */
-    private static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit)
-            return bytes + " B";
-
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }
