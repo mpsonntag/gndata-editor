@@ -62,8 +62,8 @@ public class ProjectListCtrl extends DialogController<String> implements Initial
         @Override
         protected void update(Entry<String, String> content, boolean empty) {
             if (!empty) {
-                lineOne.set(content.getKey());
-                lineTwo.set(content.getValue());
+                lineOne.set(content.getValue());
+                lineTwo.set(content.getKey());
             }
         }
 
