@@ -15,13 +15,15 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.text.Font?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.notes.NotesFavoritesCtrl"
-            fx:id="view">
+            fx:controller="gndata.app.ui.notes.NotesFavoritesCtrl">
     <top>
         <VBox>
             <children>
-                <Label styleClass="fav-header" text="Favorites"><font><Font size="18.0"/></font></Label>
+                <Label styleClass="fav-header" text="Favorites">
+                    <font><Font size="18.0"/></font>
+                </Label>
 
+                <!-- TODO: use ControlsFX CheckListView instead -->
                 <ListView styleClass="fav-list" fx:id="notesFavorites" />
             </children>
         </VBox>
