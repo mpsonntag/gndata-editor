@@ -29,35 +29,40 @@ public class CalendarFavoritesCtrl implements Initializable {
     private final ProjectState ps;
     private final CalendarState cs;
 
+    private ObservableList<ResourceAdapter> items;
+
     @Inject
     public CalendarFavoritesCtrl(ProjectState ps, CalendarState cs) {
         this.ps = ps;
         this.cs = cs;
 
-        this.ps.configProperty().addListener((p, o, n) -> updateFavorites());
+        items = FXCollections.observableArrayList();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateFavorites();
-    }
 
-    private void updateFavorites() {
-        ObservableList<ResourceAdapter> lst = FXCollections.observableArrayList();
-
-        if (ps.getMetadata() != null) {
-            lst.addAll(ps.getMetadata().getAvailableTypes()
-                    .stream()
-                    .map(r -> new ResourceAdapter(r, null))
-                    .collect(Collectors.toList()));
-        }
-
-        favoritesList.setItems(lst);
+        favoritesList.setItems(items);
         favoritesList.getCheckModel().checkAll();
 
         favoritesList.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener.Change<? extends ResourceAdapter> l) ->
-                    cs.getSelectedTypes().setAll(favoritesList.getCheckModel().getCheckedItems())
+                        cs.getSelectedTypes().setAll(favoritesList.getCheckModel().getCheckedItems())
         );
+
+        ps.configProperty().addListener((p, o, n) -> {
+            updateFavorites();
+            favoritesList.getCheckModel().checkAll();
+        });
+    }
+
+    private void updateFavorites() {
+        if (ps.getMetadata() != null) {
+            items.setAll(ps.getMetadata().getAvailableTypes()
+                    .stream()
+                    .map(r -> new ResourceAdapter(r, null))
+                    .collect(Collectors.toList()));
+        }
     }
 }
