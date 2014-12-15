@@ -8,15 +8,13 @@
 
 package gndata.app.state;
 
-import gndata.lib.srv.ResourceAdapter;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import javax.inject.Singleton;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
+import javax.inject.Singleton;
+import javafx.beans.property.*;
+import javafx.collections.*;
+
+import gndata.lib.srv.ResourceAdapter;
 
 /**
  * Class that provides state information about selected date and object types
@@ -25,7 +23,7 @@ import java.util.Date;
 @Singleton
 public class CalendarState {
 
-    private ObjectProperty<Date> selectedDate;
+    private ObjectProperty<LocalDate> selectedDate;
     private ObservableList<ResourceAdapter> selectedTypes;
 
     public CalendarState() {
@@ -33,11 +31,11 @@ public class CalendarState {
         selectedTypes = FXCollections.observableList(new ArrayList<ResourceAdapter>());
     }
 
-    public ObjectProperty<Date> getSelectedDate() {
+    public ObjectProperty<LocalDate> getSelectedDate() {
         return selectedDate;
     }
 
-    public void setSelectedDate(Date selectedDate) {
+    public void setSelectedDate(LocalDate selectedDate) {
         this.selectedDate.set(selectedDate);
     }
 
