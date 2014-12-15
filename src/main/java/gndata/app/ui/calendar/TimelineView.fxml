@@ -12,9 +12,26 @@ LICENSE file in the root of the Project.
 
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.AreaChart?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.calendar.TimelineCtrl"
             fx:id="view">
+    <top>
+        <AreaChart fx:id="timeline" prefHeight="150.0">
+            <legendVisible>False</legendVisible>
+            <yAxis>
+                <NumberAxis id="yAxis" side="LEFT" />
+            </yAxis>
+            <xAxis>
+                <NumberAxis id="xAxis">
+                    <lowerBound>1.0</lowerBound>
+                    <upperBound>31.0</upperBound>
+                </NumberAxis>
+            </xAxis>
+
+        </AreaChart>
+    </top>
 
 </BorderPane>

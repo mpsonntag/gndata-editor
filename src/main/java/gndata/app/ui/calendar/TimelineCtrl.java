@@ -21,7 +21,12 @@ public class TimelineCtrl implements Initializable {
     @FXML
     private BorderPane view;
 
+    @FXML
     private AreaChart timeline;
+    @FXML
+    private NumberAxis xAxis;
+    @FXML
+    private NumberAxis yAxis;
 
     private final ProjectState ps;
     private final CalendarState cs;
@@ -34,27 +39,13 @@ public class TimelineCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        NumberAxis xAxis = new NumberAxis(1, 31, 1);
-        NumberAxis yAxis = new NumberAxis();
-
-        timeline = new AreaChart<Number,Number>(xAxis,yAxis);
-        timeline.setPrefHeight(150.0);
-
         setData();
-
-        view.setCenter(timeline);
 
         // TODO - update CalendarState with date selection
     }
 
     private void setData() {
         XYChart.Series series= new XYChart.Series();
-
-        // TODO - set nice title
-
-        //SimpleDateFormat formatter = new SimpleDateFormat( "yyyyMM" );
-        //series.setName(formatter.format(new java.util.Date()));
-        timeline.setLegendVisible(false);
 
         // TODO - fetch actual numbers from ps.metadataService
 
