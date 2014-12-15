@@ -14,8 +14,14 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.calendar.CalendarCtrl"
             fx:id="view">
 
+    <top>
+        <fx:include source="TimelineView.fxml"/>
+    </top>
+
+    <left>
+        <fx:include source="favorites/CalendarFavoritesView.fxml"/>
+    </left>
 
 </BorderPane>

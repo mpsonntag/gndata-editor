@@ -16,8 +16,7 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.chart.AreaChart?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.calendar.TimelineCtrl"
-            fx:id="view">
+            fx:controller="gndata.app.ui.calendar.TimelineCtrl">
     <top>
         <AreaChart fx:id="timeline" prefHeight="150.0">
             <legendVisible>False</legendVisible>

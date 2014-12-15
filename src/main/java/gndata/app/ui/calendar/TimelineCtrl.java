@@ -1,25 +1,15 @@
 package gndata.app.ui.calendar;
 
-import gndata.app.state.CalendarState;
-import gndata.app.state.ProjectState;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.layout.BorderPane;
-
-import javax.inject.Inject;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
+import javax.inject.Inject;
+import javafx.fxml.*;
+import javafx.scene.chart.*;
+
+import gndata.app.state.*;
 
 
 public class TimelineCtrl implements Initializable {
-
-    @FXML
-    private BorderPane view;
 
     @FXML
     private AreaChart timeline;
