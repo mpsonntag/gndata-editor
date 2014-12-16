@@ -26,15 +26,15 @@ public class TimelineCtrl implements Initializable {
     public TimelineCtrl(ProjectState ps, CalendarState cs) {
         this.ps = ps;
         this.cs = cs;
+
+        // TODO - update CalendarState properly
+
+        ps.configProperty().addListener(pc -> cs.setSelectedDate(LocalDate.now()));
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setData();
-
-        ps.configProperty().addListener(pc -> cs.setSelectedDate(LocalDate.now()));
-
-        // TODO - update CalendarState properly
     }
 
     private void setData() {
