@@ -4,6 +4,7 @@ package gndata.lib.srv;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import gndata.app.ui.util.Dates;
 import jfxtras.scene.control.agenda.Agenda;
 import jfxtras.scene.control.agenda.Agenda.Appointment;
 
@@ -20,18 +21,12 @@ public interface EventAdapter extends Appointment {
 
     @Override
     public default Calendar getStartTime() {
-        LocalDateTime dt = getEventStart();
-
-        return new GregorianCalendar(dt.getYear(), dt.getMonthValue(),
-                dt.getDayOfMonth(), dt.getHour(), dt.getMinute());
+        return Dates.toCalendar(getEventStart());
     }
 
     @Override
     public default Calendar getEndTime() {
-        LocalDateTime dt = getEventEnd();
-
-        return new GregorianCalendar(dt.getYear(), dt.getMonthValue(),
-                dt.getDayOfMonth(), dt.getHour(), dt.getMinute());
+        return Dates.toCalendar(getEventEnd());
     }
 
     @Override
@@ -76,7 +71,7 @@ public interface EventAdapter extends Appointment {
 
     @Override
     public default Agenda.AppointmentGroup getAppointmentGroup() {
-        return null;
+        return new Agenda.AppointmentGroupImpl();
     }
 
     @Override

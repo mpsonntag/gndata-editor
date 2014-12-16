@@ -1,6 +1,7 @@
 package gndata.app.ui.calendar;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javafx.collections.*;
 import javafx.fxml.*;
 
 import gndata.app.state.*;
+import gndata.app.ui.util.Dates;
 import gndata.lib.srv.ResourceEvent;
 import jfxtras.scene.control.agenda.Agenda;
 
@@ -34,12 +36,19 @@ public class AgendaCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         agenda.appointments().setAll(events);
 
-        cs.getSelectedDate().addListener(dt -> updateEvents());
+        cs.getSelectedDate().addListener((o, p, n) -> {
+            updateEvents(n);
+            agenda.displayedCalendar().setValue(Dates.toCalendar(n));
+        });
+
+        events.addListener(
+                (ListChangeListener.Change<? extends ResourceEvent> l) ->
+                        agenda.appointments().setAll(events));
     }
 
-    private void updateEvents() {
+    private void updateEvents(LocalDate dt) {
 
-        // TODO select resources by cs.getSelectedDate()
+        // TODO select resources by given date
 
         if (ps.getMetadata() != null) {
             events.setAll(ps.getMetadata().getAnnotations()
