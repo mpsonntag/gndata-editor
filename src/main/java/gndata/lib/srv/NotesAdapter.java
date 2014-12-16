@@ -53,7 +53,8 @@ public class NotesAdapter {
     }
 
     public String getInfo() {
-        return String.format("%s, Author: %s\n%s\n\n%s\n\n", getFormattedDate("yyyy-MM-dd HH:mm"), author, title, content);
+        String ls = System.getProperty("line.separator");
+        return String.format("%s, Author: %s%s%s%s%s%s", getFormattedDate("yyyy-MM-dd HH:mm"), author, ls, title, ls, content, ls);
     }
 
     public String getFormattedDate(String formatPattern) {

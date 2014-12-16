@@ -11,7 +11,7 @@ package gndata.app.state;
 import javax.inject.Singleton;
 import javafx.collections.*;
 
-import com.hp.hpl.jena.rdf.model.Resource;
+import gndata.lib.srv.NotesFavoritesResourceAdapter;
 
 /**
  * Class providing the state information about notes favorites
@@ -20,12 +20,16 @@ import com.hp.hpl.jena.rdf.model.Resource;
 @Singleton
 public class NotesState {
 
-    private final ObservableList<Resource> selectedFavorites;
+    private final ObservableList<NotesFavoritesResourceAdapter> favorites;
+    private final ObservableList<NotesFavoritesResourceAdapter> selectedFavorites;
 
     public NotesState() {
+        favorites = FXCollections.observableArrayList();
         selectedFavorites = FXCollections.observableArrayList();
     }
 
-    public ObservableList<Resource> getSelectedFavNotes() { return selectedFavorites;}
+    public ObservableList<NotesFavoritesResourceAdapter> getFavorites() { return favorites; }
+
+    public ObservableList<NotesFavoritesResourceAdapter> getSelectedFavorites() { return selectedFavorites; }
 
 }
