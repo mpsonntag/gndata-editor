@@ -69,6 +69,12 @@
             <version>1.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-agenda</artifactId>
+            <version>8.0-r3</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -1,6 +1,7 @@
 package gndata.app.ui.calendar;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 import javax.inject.Inject;
 import javafx.fxml.*;
@@ -25,13 +26,15 @@ public class TimelineCtrl implements Initializable {
     public TimelineCtrl(ProjectState ps, CalendarState cs) {
         this.ps = ps;
         this.cs = cs;
+
+        // TODO - update CalendarState properly
+
+        ps.configProperty().addListener(pc -> cs.setSelectedDate(LocalDate.now()));
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setData();
-
-        // TODO - update CalendarState with date selection
     }
 
     private void setData() {
