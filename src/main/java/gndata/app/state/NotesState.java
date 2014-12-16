@@ -9,6 +9,7 @@
 package gndata.app.state;
 
 import javax.inject.Singleton;
+import javafx.beans.property.*;
 import javafx.collections.*;
 
 import gndata.lib.srv.NotesFavoritesResourceAdapter;
@@ -21,15 +22,21 @@ import gndata.lib.srv.NotesFavoritesResourceAdapter;
 public class NotesState {
 
     private final ObservableList<NotesFavoritesResourceAdapter> favorites;
-    private final ObservableList<NotesFavoritesResourceAdapter> selectedFavorites;
+    private final ObjectProperty<NotesFavoritesResourceAdapter> selectedFavorites;
 
     public NotesState() {
         favorites = FXCollections.observableArrayList();
-        selectedFavorites = FXCollections.observableArrayList();
+        selectedFavorites = new SimpleObjectProperty<>();
     }
 
     public ObservableList<NotesFavoritesResourceAdapter> getFavorites() { return favorites; }
 
-    public ObservableList<NotesFavoritesResourceAdapter> getSelectedFavorites() { return selectedFavorites; }
+    public ObjectProperty<NotesFavoritesResourceAdapter> getSelectedFavoritesProperty() { return selectedFavorites; }
+
+    public NotesFavoritesResourceAdapter getSelectedFavorites() { return selectedFavorites.get(); }
+
+    public void setSelectedFavorites(NotesFavoritesResourceAdapter selectedFavorite) {
+        this.selectedFavorites.set(selectedFavorite);
+    }
 
 }

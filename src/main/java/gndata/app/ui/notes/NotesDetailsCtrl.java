@@ -11,9 +11,9 @@ package gndata.app.ui.notes;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.*;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -38,10 +38,14 @@ public class NotesDetailsCtrl implements Initializable {
         this.projectState = projectState;
         this.notesState = notesState;
 
-        //this.notesState.getSelectedFavorites().addListener(new FavoritesNotesListener());
 
+        filteredNotes = FXCollections.observableList(new ArrayList<>());
+
+        // add listener to selected notes favorite
+        this.notesState.getSelectedFavoritesProperty().addListener(new FavoritesNotesListener());
     }
 
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         notesList.setCellFactory(cell -> new NotesListCell());
 
@@ -49,11 +53,11 @@ public class NotesDetailsCtrl implements Initializable {
             if (n == null)
                 return;
 
-            // reset  when project is loaded
+            // reset notes list when project is loaded
             notesList.getItems().clear();
 
-            // TODO implement retrieving actual notes from project
-            notesList.getItems().addAll(getTmpNotes());
+            // get unfiltered notes list, when project is loaded
+            notesList.getItems().addAll(getUnfilteredNotes());
         });
     }
 
@@ -97,45 +101,71 @@ public class NotesDetailsCtrl implements Initializable {
         @Override
         public void changed(ObservableValue<? extends NotesFavoritesResourceAdapter> observable, NotesFavoritesResourceAdapter oldValue, NotesFavoritesResourceAdapter newValue) {
 
+            // reset notes list and filtered list
+            if (notesList != null) { notesList.getItems().clear(); }
+            if (filteredNotes != null) { filteredNotes.clear(); }
+
+            // set notes list to unfiltered notes
+            notesList.getItems().addAll(getUnfilteredNotes());
+
             if (newValue == null || oldValue == newValue) {
                 return;
             }
 
-            //
+            //System.out.println(String.format("V: %s, RDF: %s, Use: %s, ID: %s", newValue.getValue(), newValue.getRdfType(), newValue.use().toString(), newValue.getId()));
 
+            // use selected favorite note value or rdfType to filter notes
+            SimpleStringProperty currFilter = new SimpleStringProperty();
+            currFilter.setValue("");
+            if (! newValue.getValue().isEmpty()) {
+                currFilter.setValue(newValue.getValue());
+            } else if (!newValue.getRdfType().isEmpty()) {
+                currFilter.setValue(newValue.getRdfType());
+            }
+
+            // filter notes list using only lower case terms
+            notesList.getItems().stream()
+                    .filter(ad -> ad.getInfo().toLowerCase().contains(currFilter.getValue().toLowerCase()))
+                    .forEach(ad -> filteredNotes.add(ad));
+
+            // reset notesList and add only filtered list
+            notesList.getItems().clear();
+            notesList.getItems().addAll(filteredNotes);
         }
     }
 
-    //TODO remove after implementation of real notes
-    private static Collection<NotesAdapter> getTmpNotes() {
-        Collection<NotesAdapter> tmp = new ArrayList<>();
+
+    private static Collection<NotesAdapter> getUnfilteredNotes() {
+        Collection<NotesAdapter> unfilteredNotes = new ArrayList<>();
+
+        //TODO implementation retrieval of unfiltered notes list from rdf resource
         LocalDateTime currDateTime;
         String currCont;
         currDateTime = LocalDateTime.of(2014,11,20, 5, 55);
         currCont = "Trial 5 went well, animal was lively crawling around not impeded by surgery.\n";
         currCont += "Trial 6 animal was too weak to participate, data should be excluded from analysis.\n";
         currCont += "Trial 8 animal displayed new behavioral pattern.";
-        tmp.add(new NotesAdapter("7", currDateTime, "Harris Kapler", "Session 12", currCont));
+        unfilteredNotes.add(new NotesAdapter("7", currDateTime, "Harris Kepler", "Session 12", currCont));
         currDateTime = LocalDateTime.of(2014,11,18, 16, 59);
         currCont = "Tested all new stimulus protocols in trials 5-12 respectively, discard protocols 2 and 7.";
-        tmp.add(new NotesAdapter("6", currDateTime, "Tina Schroeder", "Stimulus test runs", currCont));
+        unfilteredNotes.add(new NotesAdapter("6", currDateTime, "Tina Schroeder", "Stimulus test runs", currCont));
         currDateTime = LocalDateTime.of(2014,11,17, 17, 55);
         currCont = "Used setup 5 today, defective electrode in the first three trials.";
-        tmp.add(new NotesAdapter("5", currDateTime, "Tina Schroeder", "Session 8", currCont));
+        unfilteredNotes.add(new NotesAdapter("5", currDateTime, "Tina Schroeder", "Session 8", currCont));
         currDateTime = LocalDateTime.of(2014,11,8, 14, 46);
         currCont = "Stim protocol 7 shows same problem as 2, include into tests of new protocols.";
-        tmp.add(new NotesAdapter("4", currDateTime, "Harris Kapler", "", currCont));
+        unfilteredNotes.add(new NotesAdapter("4", currDateTime, "Harris Kepler", "", currCont));
         currDateTime = LocalDateTime.of(2014,11,8, 1, 14);
         currCont = "Trial 2 went well, animal behaved as expected.";
         currCont += "Trial 3, best recording so far, mark as reference dataset for presentations.";
-        tmp.add(new NotesAdapter("3", currDateTime, "Tina Schroeder", "Further stimulus problem", currCont));
+        unfilteredNotes.add(new NotesAdapter("3", currDateTime, "Tina Schroeder", "Further stimulus problem", currCont));
         currDateTime = LocalDateTime.of(2014,11,6, 23, 12);
         currCont = "Found problem with stimulus protocol 2. should implement new protocol";
-        tmp.add(new NotesAdapter("2", currDateTime, "Tina Schroeder", "Stimulus problem", currCont));
+        unfilteredNotes.add(new NotesAdapter("2", currDateTime, "Tina Schroeder", "Stimulus problem", currCont));
         currDateTime = LocalDateTime.of(2014,11,6, 13, 0);
         currCont = "Set up training session with animal #122, behaved well, not stressed at all.";
-        tmp.add(new NotesAdapter("1", currDateTime, "Harris Kapler", "Training new animal #122", currCont));
+        unfilteredNotes.add(new NotesAdapter("1", currDateTime, "Harris Kepler", "Training new animal #122", currCont));
 
-        return tmp;
+        return unfilteredNotes;
     }
 }
