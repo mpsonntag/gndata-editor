@@ -1,11 +1,58 @@
-<html>
+<!DOCTYPE html>
 
+#* @vtlvariable name="model" type="gndata.app.ui.dash.DashboardData" *#
+<html>
 <head>
     <link rel="stylesheet" href="${css}/bootstrap.css">
 </head>
-
 <body>
-    <h1>$model.getName()</h1>
-</body>
+<div class="container-fluid">
+    <h3>Project: $model.name</h3>
 
+    <p>
+        $model.description
+    </p>
+
+    <p>
+        <a href="#" onclick="controller.goToMetadata()">Browse Metadata</a>
+    </p>
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>Project Stats</h4>
+            <ul>
+                <li>File count: $model.fileCount</li>
+                <li>Metadata count: $model.metadataCount</li>
+            </ul>
+        </div>
+        <div class="col-xs-6">
+            <h4>Experimenter</h4>
+            <ul>
+                #foreach($s in $model.scientists)
+                    <li>$s</li>
+                #end
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>Active experiments</h4>
+            <ul>
+                #foreach($e in $model.experiments)
+                    <li>$e</li>
+                #end
+            </ul>
+        </div>
+        <div class="col-xs-6">
+            <h4>Recent sessions</h4>
+            <ul>
+                #foreach($s in $model.recentSessions)
+                    <li>$s</li>
+                #end
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
 </html>
