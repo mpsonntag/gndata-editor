@@ -23,10 +23,12 @@ public class NotesState {
 
     private final ObservableList<NotesFavoritesResourceAdapter> favorites;
     private final ObjectProperty<NotesFavoritesResourceAdapter> selectedFavorites;
+    private final ObjectProperty<Boolean> resetNotesList;
 
     public NotesState() {
         favorites = FXCollections.observableArrayList();
         selectedFavorites = new SimpleObjectProperty<>();
+        resetNotesList = new SimpleObjectProperty<>();
     }
 
     public ObservableList<NotesFavoritesResourceAdapter> getFavorites() { return favorites; }
@@ -37,6 +39,14 @@ public class NotesState {
 
     public void setSelectedFavorites(NotesFavoritesResourceAdapter selectedFavorite) {
         this.selectedFavorites.set(selectedFavorite);
+    }
+
+    public ObjectProperty<Boolean> getResetNotesListProperty() { return resetNotesList; }
+
+    public Boolean getResetNotesList() { return resetNotesList.get(); }
+
+    public void setResetNotesList(Boolean resetNotesList) {
+        this.resetNotesList.set(resetNotesList);
     }
 
 }

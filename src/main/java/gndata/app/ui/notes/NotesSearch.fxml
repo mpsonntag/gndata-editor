@@ -27,6 +27,7 @@ LICENSE file in the root of the Project.
             <items>
                 <Button text="&gt;" onAction="#goForward"/>
                 <Button text="&lt;" onAction="#goBack"/>
+                <Button text="reset" onAction="#resetNotesFilter"/>
             </items>
         </ToolBar>
     </children>

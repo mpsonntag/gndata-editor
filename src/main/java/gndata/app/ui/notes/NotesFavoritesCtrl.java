@@ -11,6 +11,7 @@ package gndata.app.ui.notes;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 
@@ -35,6 +36,9 @@ public class NotesFavoritesCtrl implements Initializable {
     public NotesFavoritesCtrl(ProjectState projectState, NotesState notesState) {
         this.projectState = projectState;
         this.notesState = notesState;
+
+        // add listener to reset button in search bar
+        this.notesState.getResetNotesListProperty().addListener(new ListResetListener());
     }
 
     @Override
@@ -51,6 +55,8 @@ public class NotesFavoritesCtrl implements Initializable {
 
             //TODO load actual favorites from project settings
             NotesFavoritesResourceAdapter curr;
+            curr = new NotesFavoritesResourceAdapter("92b3dz7f0-c650-135c-d7c2-c352c51314a9", "Author", "", Boolean.FALSE);
+            notesState.getFavorites().add(curr);
             curr = new NotesFavoritesResourceAdapter("959b57f0-ad50-435c-a7c2-c252c8131b59", "Author", "Harris Kepler", Boolean.FALSE);
             notesState.getFavorites().add(curr);
             curr = new NotesFavoritesResourceAdapter("720710ea-dbd0-40ff-ae27-2dfa57b580d7", "Author", "Tina Schroeder", Boolean.FALSE);
@@ -69,6 +75,22 @@ public class NotesFavoritesCtrl implements Initializable {
 
             notesState.setSelectedFavorites(n);
         });
+    }
+
+
+    //TODO a similar listener is used in NotesDetailsCtrl, maybe could they be merged
+    private class ListResetListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if (notesState.getResetNotesList()){
+
+                // reset favorites selection to make previously selected favorite responsive again
+                notesFavorites.getSelectionModel().clearSelection();
+                notesState.setSelectedFavorites(null);
+            }
+            return;
+        }
     }
 
     private class NotesFavoritesListCell extends ListCell<NotesFavoritesResourceAdapter> {

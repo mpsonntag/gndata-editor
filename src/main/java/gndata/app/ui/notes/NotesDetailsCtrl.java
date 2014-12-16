@@ -38,11 +38,12 @@ public class NotesDetailsCtrl implements Initializable {
         this.projectState = projectState;
         this.notesState = notesState;
 
-
         filteredNotes = FXCollections.observableList(new ArrayList<>());
 
         // add listener to selected notes favorite
         this.notesState.getSelectedFavoritesProperty().addListener(new FavoritesNotesListener());
+        // add listener to reset button in search bar
+        this.notesState.getResetNotesListProperty().addListener(new ListResetListener());
     }
 
     @Override
@@ -96,6 +97,22 @@ public class NotesDetailsCtrl implements Initializable {
         }
     }
 
+    //TODO a similar listener is used in NotesFavoritesCtrl, maybe could they be merged
+    private class ListResetListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if (notesState.getResetNotesList()){
+
+                // reset notes and add all unfiltered notes
+                notesList.getItems().clear();
+                notesList.getItems().addAll(getUnfilteredNotes());
+                notesState.setResetNotesList(Boolean.FALSE);
+            }
+            return;
+        }
+    }
+
     private class FavoritesNotesListener implements ChangeListener<NotesFavoritesResourceAdapter> {
 
         @Override
@@ -111,8 +128,6 @@ public class NotesDetailsCtrl implements Initializable {
             if (newValue == null || oldValue == newValue) {
                 return;
             }
-
-            //System.out.println(String.format("V: %s, RDF: %s, Use: %s, ID: %s", newValue.getValue(), newValue.getRdfType(), newValue.use().toString(), newValue.getId()));
 
             // use selected favorite note value or rdfType to filter notes
             SimpleStringProperty currFilter = new SimpleStringProperty();
