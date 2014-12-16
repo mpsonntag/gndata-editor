@@ -13,6 +13,9 @@ import org.apache.velocity.*;
  */
 public class Page {
 
+    private static final String BOOTSTRAP = "META-INF/resources/webjars/bootstrap/3.1.0/css/bootstrap.min.css";
+    private static final String ICONS = "icons";
+
     private final WebView webView;
     private Template view;
 
@@ -45,8 +48,8 @@ public class Page {
         VelocityContext context = new VelocityContext();
 
         context.put("model", model);
-        context.put("css", ClassLoader.getSystemResource("css"));
-        context.put("icons", ClassLoader.getSystemResource("icons"));
+        context.put("bootstrap", ClassLoader.getSystemResource(BOOTSTRAP));
+        context.put("icons", ClassLoader.getSystemResource(ICONS));
 
         StringWriter writer = new StringWriter();
 
