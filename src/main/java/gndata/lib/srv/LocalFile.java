@@ -168,12 +168,12 @@ public class LocalFile extends FileAdapter<LocalFile> {
         String selectIcon;
 
         if (this.isDirectory()){
-            selectIcon = "folder.png";
+            selectIcon = "icons/folder.png";
         } else {
-            selectIcon = "txt.png";
+            selectIcon = "icons/txt.png";
         }
 
-        return new Image(ClassLoader.getSystemResource(new File("icons", selectIcon).toString()).toString());
+        return new Image(ClassLoader.getSystemResource(selectIcon).toString());
     }
 
     /**
