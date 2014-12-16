@@ -170,6 +170,11 @@
                             <mainClass>gndata.App</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>META-INF/*.SF</exclude>
+                        <exclude>META-INF/*.DSA</exclude>
+                        <exclude>META-INF/*.RSA</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -194,6 +199,7 @@
         </plugins>
 
         <resources>
+
             <resource>
                 <directory>src/main/java</directory>
                 <targetPath>${project.build.directory}/classes</targetPath>
