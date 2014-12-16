@@ -147,6 +147,19 @@ public class MetadataService {
         return reasoner.bindSchema(schema);
     }
 
+    /**
+     * Returns available types (resources) in the current annotations.
+     *
+     * @return List<Resource>
+     */
+    public List<Resource> getAvailableTypes() {
+        return getAnnotations().listObjectsOfProperty(RDF.type).toList()
+                .stream()
+                .map(RDFNode::asResource)
+                .filter(r -> !r.getNameSpace().equals(OWL.getURI()))
+                .collect(Collectors.toList());
+    }
+
     public Model SELECT(String queryString) {
         Query query = QueryFactory.create(queryString);
         QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());

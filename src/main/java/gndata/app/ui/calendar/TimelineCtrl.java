@@ -1,27 +1,22 @@
 package gndata.app.ui.calendar;
 
-import gndata.app.state.CalendarState;
-import gndata.app.state.ProjectState;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.layout.BorderPane;
-
-import javax.inject.Inject;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
+import javax.inject.Inject;
+import javafx.fxml.*;
+import javafx.scene.chart.*;
+
+import gndata.app.state.*;
 
 
 public class TimelineCtrl implements Initializable {
 
     @FXML
-    private BorderPane view;
-
     private AreaChart timeline;
+    @FXML
+    private NumberAxis xAxis;
+    @FXML
+    private NumberAxis yAxis;
 
     private final ProjectState ps;
     private final CalendarState cs;
@@ -34,27 +29,13 @@ public class TimelineCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        NumberAxis xAxis = new NumberAxis(1, 31, 1);
-        NumberAxis yAxis = new NumberAxis();
-
-        timeline = new AreaChart<Number,Number>(xAxis,yAxis);
-        timeline.setPrefHeight(150.0);
-
         setData();
-
-        view.setCenter(timeline);
 
         // TODO - update CalendarState with date selection
     }
 
     private void setData() {
         XYChart.Series series= new XYChart.Series();
-
-        // TODO - set nice title
-
-        //SimpleDateFormat formatter = new SimpleDateFormat( "yyyyMM" );
-        //series.setName(formatter.format(new java.util.Date()));
-        timeline.setLegendVisible(false);
 
         // TODO - fetch actual numbers from ps.metadataService
 
