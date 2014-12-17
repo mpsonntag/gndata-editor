@@ -19,13 +19,16 @@ LICENSE file in the root of the Project.
 
 <center>
         <TableView fx:id="tableView">
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
             <columns>
-                <TableColumn text="Predicate" prefWidth="200">
+                <TableColumn text="Predicate">
                     <cellValueFactory>
                         <PropertyValueFactory property="predicate" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Literal Value" prefWidth="200">
+                <TableColumn text="Literal Value">
                     <cellValueFactory>
                         <PropertyValueFactory property="literal" />
                     </cellValueFactory>
