@@ -28,9 +28,9 @@ LICENSE file in the root of the Project.
     </left>
 
     <center>
-        <SplitPane fx:id="splitPane" orientation="HORIZONTAL">
+        <SplitPane fx:id="splitPane" orientation="HORIZONTAL" dividerPositions="0.4">
             <fx:include source="MetadataListView.fxml"/>
-            <fx:include source="RDFTableView.fxml"/>
+            <fx:include source="MetadataDetailsView.fxml"/>
         </SplitPane>
     </center>
 

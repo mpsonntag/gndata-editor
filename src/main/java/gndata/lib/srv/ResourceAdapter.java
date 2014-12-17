@@ -34,6 +34,10 @@ public class ResourceAdapter extends FileAdapter {
                     .collect(toList());
     }
 
+    public List<Statement> getLiterals() {
+        return listLiteralsFor(resource);
+    }
+
     @Override
     public boolean isDirectory() {
         return true;
