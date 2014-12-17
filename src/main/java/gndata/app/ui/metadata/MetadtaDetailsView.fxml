@@ -15,7 +15,7 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.metadata.RDFTableCtrl">
+            fx:controller="gndata.app.ui.metadata.MetadataDetailsCtrl">
 
 <center>
         <TableView fx:id="tableView">

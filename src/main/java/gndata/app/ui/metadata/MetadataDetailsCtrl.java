@@ -23,7 +23,7 @@ import gndata.lib.util.Resources;
 /**
  * Controller for the table to view metadata items.
  */
-public class RDFTableCtrl implements Initializable {
+public class MetadataDetailsCtrl implements Initializable {
 
     @FXML
     private TableView<StatementTableItem> tableView;
@@ -32,7 +32,7 @@ public class RDFTableCtrl implements Initializable {
     private ObservableList<StatementTableItem> statements;
 
     @Inject
-    public RDFTableCtrl(MetadataNavState metadataState) {
+    public MetadataDetailsCtrl(MetadataNavState metadataState) {
         this.metadataState = metadataState;
         this.statements = FXCollections.observableList(new ArrayList<StatementTableItem>());
 
