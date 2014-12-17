@@ -33,6 +33,8 @@ public class MetadataFavoritesCtrl implements Initializable {
                             .map(r -> new ResourceAdapter(r, null))
                             .collect(Collectors.toList())
             );
+            if (! navState.getFavoriteFolders().isEmpty())
+                navState.setSelectedParent(navState.getFavoriteFolders().get(0));
         });
     }
 
