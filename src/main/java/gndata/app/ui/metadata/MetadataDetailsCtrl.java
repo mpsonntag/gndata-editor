@@ -15,16 +15,22 @@ import javax.inject.Inject;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.TableView;
+import javafx.scene.web.WebView;
 
+import gndata.app.html.PageCtrl;
 import gndata.app.state.MetadataNavState;
-import gndata.app.ui.util.StatementTableItem;
+import gndata.app.ui.util.*;
 import gndata.lib.util.Resources;
 
 /**
  * Controller for the table to view metadata items.
  */
-public class MetadataDetailsCtrl implements Initializable {
+public class MetadataDetailsCtrl extends PageCtrl {
 
+    @FXML
+    private TogglePane togglePane;
+    @FXML
+    private WebView webView;
     @FXML
     private TableView<StatementTableItem> tableView;
 
@@ -37,19 +43,28 @@ public class MetadataDetailsCtrl implements Initializable {
         this.statements = FXCollections.observableList(new ArrayList<StatementTableItem>());
 
         metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
-            if (newVal == null)
+            getPage().applyModel(newVal);
+
+            if (newVal == null) {
                 statements.clear();
-            else
+            } else {
                 statements.setAll(
                         Resources.streamLiteralsFor(newVal.getResource())
-                                 .map(StatementTableItem::new)
-                                 .collect(Collectors.toList())
+                                .map(StatementTableItem::new)
+                                .collect(Collectors.toList())
                 );
+            }
         });
     }
 
     @Override
+    public WebView getWebView() {
+        return webView;
+    }
+
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        super.initialize(url, resourceBundle);
         tableView.setItems(statements);
     }
 

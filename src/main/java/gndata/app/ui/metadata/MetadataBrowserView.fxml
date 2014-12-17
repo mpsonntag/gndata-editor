@@ -30,7 +30,7 @@ LICENSE file in the root of the Project.
     <center>
         <SplitPane fx:id="splitPane" orientation="HORIZONTAL" dividerPositions="0.4">
             <fx:include source="MetadataListView.fxml"/>
-            <fx:include source="MetadtaDetailsView.fxml"/>
+            <fx:include source="MetadataDetailsView.fxml"/>
         </SplitPane>
     </center>
 
