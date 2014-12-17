@@ -75,6 +75,18 @@
             <version>8.0-r3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -158,6 +170,11 @@
                             <mainClass>gndata.App</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>META-INF/*.SF</exclude>
+                        <exclude>META-INF/*.DSA</exclude>
+                        <exclude>META-INF/*.RSA</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -182,12 +199,14 @@
         </plugins>
 
         <resources>
+
             <resource>
                 <directory>src/main/java</directory>
                 <targetPath>${project.build.directory}/classes</targetPath>
                 <includes>
                     <include>**/*.fxml</include>
                     <include>**/*.css</include>
+                    <include>**/*.vtl</include>
                 </includes>
             </resource>
 
@@ -201,6 +220,7 @@
                     <include>**/*.rdf</include>
                     <include>**/*.properties</include>
                     <include>**/*.png</include>
+                    <include>**/*.css</include>
                 </includes>
             </resource>
 

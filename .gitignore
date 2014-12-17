@@ -2,6 +2,9 @@
 .idea/
 *.iml
 
+# log files
+*.log
+
 # maven
 target/
 pom.xml.tag

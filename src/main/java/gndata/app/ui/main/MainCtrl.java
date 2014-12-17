@@ -17,6 +17,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 
 import gndata.app.ui.calendar.CalendarView;
+import gndata.app.ui.dash.DashboardView;
 import gndata.app.ui.filebrowser.FileBrowserView;
 import gndata.app.ui.metadata.MetadataBrowserView;
 import gndata.app.ui.notes.NotesView;
@@ -44,26 +45,25 @@ public class MainCtrl implements Initializable {
 
 
     private MenuView menuView;
-
     private MetadataBrowserView metadataView;
-
     private QueryView queryView;
-
-    private FileBrowserView fileBrowserView;
-
     private CalendarView calendarView;
-
+    private FileBrowserView fileBrowserView;
+    private DashboardView dashView;
     private NotesView notesView;
 
     @Inject
     public MainCtrl(MenuView menuView, MetadataBrowserView metadataView,
-                    QueryView queryView, FileBrowserView fileBrowserView,
-                    CalendarView calendarView, NotesView notesView) {
+                    QueryView queryView, CalendarView calendarView,
+                    FileBrowserView fileBrowserView, DashboardView dashView,
+                    NotesView notesView) {
+
         this.menuView = menuView;
         this.metadataView = metadataView;
         this.queryView = queryView;
-        this.fileBrowserView = fileBrowserView;
         this.calendarView = calendarView;
+        this.fileBrowserView = fileBrowserView;
+        this.dashView = dashView;
         this.notesView = notesView;
     }
 
@@ -77,11 +77,11 @@ public class MainCtrl implements Initializable {
             query.setContent(queryView.getScene());
             calendar.setContent(calendarView.getScene());
             files.setContent(fileBrowserView.getScene());
+            dashboard.setContent(dashView.getScene());
             notes.setContent(notesView.getScene());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
