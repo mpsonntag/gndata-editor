@@ -52,8 +52,6 @@ public class QueryCtrl implements Initializable {
         queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
                 queryState.setSelectedModel(runQuery()));
 
-        QueryPane qp = new QueryPane(queryState);
-
         ListPane lp = new ListPane(queryState);
         VBox.setVgrow(lp, Priority.ALWAYS);
 
@@ -61,7 +59,7 @@ public class QueryCtrl implements Initializable {
         ta.setEditable(false);
         ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
 
-        vBox.getChildren().addAll(qp, lp, ta);
+        vBox.getChildren().addAll(lp, ta);
 
         tableLikeView.setContent(new TablePane(queryState));
         textLikeView.setContent(TextPane.getInstance(queryState));
