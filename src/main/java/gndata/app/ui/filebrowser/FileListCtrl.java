@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.filebrowser;
 
 import java.net.URL;
@@ -16,7 +24,7 @@ import gndata.app.ui.util.*;
 import gndata.lib.srv.LocalFile;
 
 /**
- * Controller for {@link FileListView}
+ * Controller for FileList
  */
 public class FileListCtrl implements Initializable {
 
@@ -63,7 +71,7 @@ public class FileListCtrl implements Initializable {
         } else {
             unfilteredList.stream()
                     .filter(fa -> fa.getFileName().contains(filter))
-                    .forEach(fa -> filteredList.add(fa));
+                    .forEach(filteredList::add);
         }
     }
 

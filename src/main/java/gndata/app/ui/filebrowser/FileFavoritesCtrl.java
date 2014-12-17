@@ -19,7 +19,7 @@ import gndata.app.state.*;
 import gndata.lib.srv.LocalFile;
 
 /**
- * Controller for {@link FileFavoritesView}
+ * Controller for FileFavorites
  */
 public class FileFavoritesCtrl implements Initializable {
 
@@ -28,8 +28,8 @@ public class FileFavoritesCtrl implements Initializable {
     @FXML
     private Button openFileFavoriteHandling;
 
-    private final FileNavigationState navState;
     private final ProjectState projectState;
+    private final FileNavigationState navState;
 
     @Inject
     public FileFavoritesCtrl(ProjectState projectState, FileNavigationState navState) {
