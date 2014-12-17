@@ -65,10 +65,10 @@ public class FileListCtrl implements Initializable {
         }
     }
 
-    private class SelectedParentListener implements ChangeListener<FileAdapter> {
+    private class SelectedParentListener implements ChangeListener<LocalFile> {
 
         @Override
-        public void changed(ObservableValue<? extends FileAdapter> observable, FileAdapter oldValue, FileAdapter newValue) {
+        public void changed(ObservableValue<? extends LocalFile> observable, LocalFile oldValue, LocalFile newValue) {
             if (newValue == null || oldValue == newValue) {
                 return;
             }
@@ -92,7 +92,7 @@ public class FileListCtrl implements Initializable {
 
         @Override
         public void handleDoubleClick(MouseEvent mouseEvent) {
-            FileAdapter fa = fileList.getSelectionModel().getSelectedItem();
+            LocalFile fa = fileList.getSelectionModel().getSelectedItem();
             if (fa == null || ! fa.isDirectory()) {
                 return;
             }

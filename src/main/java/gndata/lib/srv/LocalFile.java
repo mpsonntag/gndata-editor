@@ -1,5 +1,12 @@
-package gndata.lib.srv;
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
+package gndata.lib.srv;
 
 import java.io.*;
 import java.nio.file.*;
@@ -29,12 +36,30 @@ public class LocalFile extends FileAdapter<LocalFile> {
         this(Paths.get(path));
     }
 
+    public boolean hasPath(String otherPath) {
+        return path.toString().equals(otherPath);
+    }
+
+    public boolean hasPath(Path otherPath) {
+        return hasPath(otherPath.toString());
+    }
+
+    public boolean isChildOfAbsolutePath(Path otherPath) {
+        return path.startsWith(otherPath.toAbsolutePath().normalize());
+    }
+
+    public boolean hasParent() {
+        if (parent == null) {
+            return path.getParent() == null ? false : true;
+        }
+        return false;
+    }
+
     @Override
     public Optional<LocalFile> getParent() {
         if (parent == null) {
             parent = path.getParent() == null ? Optional.empty() : Optional.of(new LocalFile(path.getParent()));
         }
-
         return parent;
     }
 
