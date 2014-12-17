@@ -36,23 +36,30 @@ public class LocalFile extends FileAdapter<LocalFile> {
         this(Paths.get(path));
     }
 
-    public boolean hasPath(String otherPath) {
-        return path.toString().equals(otherPath);
-    }
-
+    /**
+     * Method returns true, if the absolute path of the LocalFile
+     * is the same as the absolute path of another path
+     */
     public boolean hasPath(Path otherPath) {
-        return hasPath(otherPath.toString());
+        return path.equals(otherPath.toAbsolutePath().normalize());
     }
 
+    /**
+     * Method returns true, if the absolute path of the LocalFile
+     * starts with the absolute path of another path
+     */
     public boolean isChildOfAbsolutePath(Path otherPath) {
         return path.startsWith(otherPath.toAbsolutePath().normalize());
     }
 
-    public boolean hasParent() {
-        if (parent == null) {
-            return path.getParent() == null ? false : true;
-        }
-        return false;
+    /**
+     * Method returns true, if a folder or file is hidden
+     * To stay platform independent create a correct file from string and use
+     * isHidden method.
+     */
+    public boolean isHidden() {
+        File checkHidden = new File(path.toString());
+        return checkHidden.isHidden();
     }
 
     @Override

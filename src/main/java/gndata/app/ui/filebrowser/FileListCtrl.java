@@ -1,6 +1,7 @@
 package gndata.app.ui.filebrowser;
 
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.inject.Inject;
 import javafx.beans.property.*;
@@ -10,9 +11,9 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
-import gndata.app.state.FileNavigationState;
+import gndata.app.state.*;
 import gndata.app.ui.util.*;
-import gndata.lib.srv.*;
+import gndata.lib.srv.LocalFile;
 
 /**
  * Controller for {@link FileListView}
@@ -21,17 +22,18 @@ public class FileListCtrl implements Initializable {
 
     @FXML
     private ListView<LocalFile> fileList;
-
     @FXML
     private TextField fileFilter;
 
+    private final ProjectState projectState;
     private final FileNavigationState navState;
     private final StringProperty filter;
     private final ObservableList<LocalFile> filteredList;
     private final List<LocalFile> unfilteredList;
 
     @Inject
-    public FileListCtrl(FileNavigationState navState) {
+    public FileListCtrl(ProjectState projectState, FileNavigationState navState) {
+        this.projectState = projectState;
         this.navState = navState;
         filter = new SimpleStringProperty();
         filteredList = FXCollections.observableList(new ArrayList<>());
@@ -65,20 +67,33 @@ public class FileListCtrl implements Initializable {
         }
     }
 
+    /**
+     * If the selected parent of the navigation state has changed, the fileList
+     * has to be refreshed. The previous fileList is cleared and replaced
+     * by all files and folders that the current selected item contains.
+     * Excluded are hidden folders and files as well as the metadata
+     * folder containing rdf and ontology files.
+     * Any filters that have been set before are cleared.
+     */
     private class SelectedParentListener implements ChangeListener<LocalFile> {
 
         @Override
         public void changed(ObservableValue<? extends LocalFile> observable, LocalFile oldValue, LocalFile newValue) {
-            if (newValue == null || oldValue == newValue) {
+            if (newValue == null || oldValue == newValue || ! newValue.isDirectory())
                 return;
-            }
 
-            if (! newValue.isDirectory()) {
-                return;
-            }
             unfilteredList.clear();
-            unfilteredList.addAll(newValue.getChildren());
+            List<LocalFile> localList = new ArrayList<>();
+            localList.addAll(newValue.getChildren());
 
+            // filter hidden files and directories, exclude directory containing the actual metadata and ontology files
+            //unfilteredList.stream()
+            localList.stream()
+                    .filter(fa -> !fa.isHidden())
+                    .filter(fa -> !fa.hasPath(Paths.get(projectState.getConfig().getProjectPath(),"metadata")))
+                    .forEach(unfilteredList::add);
+
+            // reset filter
             String currentFilter = filter.get();
             if (currentFilter == null || currentFilter.equals("")) {
                 applyFilter("");

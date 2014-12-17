@@ -95,11 +95,12 @@ public class FileFavoritesCtrl implements Initializable {
      */
     private void iterateToProjectRoot(LocalFile currLocalFile) {
 
+        Path projectPath = Paths.get(projectState.getConfig().getProjectPath());
         // check if path of LocalFile is actually within the project path
-        if (currLocalFile.isChildOfAbsolutePath(Paths.get(projectState.getConfig().getProjectPath()))){
+        if (currLocalFile.isChildOfAbsolutePath(projectPath)){
 
             // check if the parent is the project root, if not start another iteration with the parent
-            if (!currLocalFile.hasPath(projectState.getConfig().getProjectPath())) {
+            if (!currLocalFile.hasPath(projectPath)) {
                 Optional<LocalFile> parent = currLocalFile.getParent();
                 if (parent.isPresent()) {
                     iterateToProjectRoot(parent.get());
