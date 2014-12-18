@@ -225,8 +225,18 @@
             </resource>
 
             <resource>
+                <directory>src/test/java</directory>
+                <targetPath>${project.build.directory}/test-classes</targetPath>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.css</include>
+                    <include>**/*.vtl</include>
+                </includes>
+            </resource>
+
+            <resource>
                 <directory>src/test/resources</directory>
-                <targetPath>${project.build.directory}/classes</targetPath>
+                <targetPath>${project.build.directory}/test-classes</targetPath>
                 <includes>
                     <include>**/*.json</include>
                     <include>**/*.xml</include>
