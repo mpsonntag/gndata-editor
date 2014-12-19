@@ -45,13 +45,13 @@ public class QueryCtrl implements Initializable {
     public QueryCtrl(ProjectState ps, QueryState qs) {
         this.projectState = ps;
         this.queryState = qs;
+
+        queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
+                queryState.setSelectedModel(runQuery()));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
-                queryState.setSelectedModel(runQuery()));
-
         ListPane lp = new ListPane(queryState);
         VBox.setVgrow(lp, Priority.ALWAYS);
 

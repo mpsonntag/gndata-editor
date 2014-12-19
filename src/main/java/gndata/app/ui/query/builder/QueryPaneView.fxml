@@ -25,14 +25,18 @@ LICENSE file in the root of the Project.
 
     <center>
         <VBox fx:id="vbox"/>
+
+        <!-- TODO make list -->
+        <!--<ListView fx:id="lv"/>-->
+
     </center>
 
-    <!-- buttons go to the bottom -->
+<!-- buttons go to the bottom -->
 
     <bottom>
         <HBox>
-            <Button fx:id="submit" text="Submit"/>
-            <Button fx:id="addMore" text="+"/>
+            <Button text="Submit" onAction="#submitQuery"/>
+            <Button text="+" onAction="#addRow"/>
         </HBox>
     </bottom>
 

@@ -33,10 +33,6 @@ import org.apache.jena.atlas.lib.StrUtils;
 public class QueryPaneCtrl implements Initializable {
 
     @FXML
-    private Button addMore;
-    @FXML
-    private Button submit;
-    @FXML
     private BorderPane queryPane;
     @FXML
     private VBox vbox;
@@ -57,14 +53,17 @@ public class QueryPaneCtrl implements Initializable {
                 (ListChangeListener.Change<? extends QueryRow> l) ->
                         vbox.getChildren().setAll(queryRows));
 
-        addMore.setOnAction(e -> {
-            QueryRow qr = new QueryRow("", "", "");
-            qr.onRemove(action -> queryRows.remove(qr));
-            queryRows.add(qr);
-        });
-        submit.setOnAction(e -> qs.setCurrentQuery(readQuery()));
-
         queryRows.add(new QueryRow("?x", "?y", "?z"));
+    }
+
+    public void addRow() {
+        QueryRow qr = new QueryRow("", "", "");
+        qr.onRemove(action -> queryRows.remove(qr));
+        queryRows.add(qr);
+    }
+
+    public void submitQuery() {
+        qs.setCurrentQuery(readQuery());
     }
 
     /**
