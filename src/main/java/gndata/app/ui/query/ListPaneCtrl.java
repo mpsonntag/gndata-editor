@@ -8,39 +8,44 @@
 
 package gndata.app.ui.query;
 
-import javafx.collections.*;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.fxml.*;
 import javafx.scene.control.ListView;
 
+import com.google.inject.Inject;
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.QueryState;
 import gndata.app.ui.util.TwoLineListCell;
 import gndata.lib.util.Resources;
 
 
-public class ListPane extends ListView<Statement> {
+public class ListPaneCtrl implements Initializable {
 
-    public ListPane(QueryState qs) {
-        super();
+    @FXML
+    private ListView<Statement> lv;
 
-        setCellFactory(view -> new QueryListCell());
+    private QueryState qs;
 
-        // update State when item is selected
-        getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) ->
-            qs.setSelectedStatement(newVal != null ? newVal : null)
+    @Inject
+    public ListPaneCtrl(QueryState qs) {
+        this.qs = qs;
+
+        qs.getSelectedModel().addListener((o, p, n) ->
+            lv.getItems().setAll(n == null ? FXCollections.observableArrayList() : n.listStatements().toList())
         );
-
-        // update list contents if the selection changed
-        qs.getSelectedModel().addListener((obs, odlVal, newVal) ->
-                updateSelection(qs.getSelectedModel().get()));
     }
 
-    private void updateSelection(Model selection) {
-        ObservableList<Statement> lst = FXCollections.observableArrayList();
-        if (selection != null) {
-            lst.setAll(selection.listStatements().toList());
-        }
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        lv.setCellFactory(view -> new QueryListCell());
 
-        getItems().setAll(lst);
+        lv.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, oldVal, newVal) ->
+                        qs.setSelectedStatement(newVal != null ? newVal : null)
+        );
     }
 
     private class QueryListCell extends TwoLineListCell<Statement> {

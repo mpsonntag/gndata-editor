@@ -52,14 +52,11 @@ public class QueryCtrl implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ListPane lp = new ListPane(queryState);
-        VBox.setVgrow(lp, Priority.ALWAYS);
-
         ta = new TextArea();
         ta.setEditable(false);
         ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
 
-        vBox.getChildren().addAll(lp, ta);
+        vBox.getChildren().addAll(ta);
 
         tableLikeView.setContent(new TablePane(queryState));
         textLikeView.setContent(TextPane.getInstance(queryState));
