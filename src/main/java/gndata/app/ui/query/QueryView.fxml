@@ -50,11 +50,10 @@ LICENSE file in the root of the Project.
 
     <center>
         <SplitPane orientation="HORIZONTAL">
-            <VBox fx:id="vBox" prefWidth="374.0">
-                <children>
-                    <fx:include source="builder/QueryPaneView.fxml"/>
-                    <fx:include source="ListPaneView.fxml"/>
-                </children>
+            <VBox prefWidth="374.0">
+                <fx:include source="builder/QueryPaneView.fxml"/>
+                <fx:include source="ListPaneView.fxml"/>
+                <TextArea fx:id="ta" editable="false"/>
             </VBox>
 
             <TabPane side="BOTTOM">

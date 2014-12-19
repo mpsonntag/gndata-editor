@@ -13,27 +13,22 @@ LICENSE file in the root of the Project.
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            fx:controller="gndata.app.ui.query.builder.QueryPaneCtrl"
-            fx:id="queryPane">
+            fx:controller="gndata.app.ui.query.builder.QueryPaneCtrl">
 
 
     <!-- prefix view goes to the top -->
 
     <!-- query rows go to the center -->
 
-    <center>
-        <ListView fx:id="lv"/>
-    </center>
+    <ListView fx:id="lv" VBox.vgrow="ALWAYS" prefHeight="150"/>
 
     <!-- buttons go to the bottom -->
 
-    <bottom>
-        <HBox>
-            <Button text="Submit" onAction="#submitQuery"/>
-            <Button text="+" onAction="#addRow"/>
-        </HBox>
-    </bottom>
+    <HBox>
+        <Button text="Submit" onAction="#submitQuery"/>
+        <Button text="+" onAction="#addRow"/>
+    </HBox>
 
-</BorderPane>
+</VBox>

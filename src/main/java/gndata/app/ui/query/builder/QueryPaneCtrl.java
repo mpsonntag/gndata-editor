@@ -33,8 +33,6 @@ import org.apache.jena.atlas.lib.StrUtils;
 public class QueryPaneCtrl implements Initializable {
 
     @FXML
-    private BorderPane queryPane;
-    @FXML
     private ListView<QueryRow> lv;
 
     private ObservableList<QueryRow> queryRows;

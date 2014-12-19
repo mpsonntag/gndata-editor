@@ -30,16 +30,14 @@ public class QueryCtrl implements Initializable {
     @FXML
     public BorderPane queryView;
     @FXML
-    private VBox vBox;
-    @FXML
     private Tab textLikeView;
     @FXML
     private Tab tableLikeView;
+    @FXML
+    private TextArea ta;
 
     private ProjectState projectState;
     private QueryState queryState;
-
-    private TextArea ta;
 
     @Inject
     public QueryCtrl(ProjectState ps, QueryState qs) {
@@ -52,11 +50,7 @@ public class QueryCtrl implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ta = new TextArea();
-        ta.setEditable(false);
         ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
-
-        vBox.getChildren().addAll(ta);
 
         tableLikeView.setContent(new TablePane(queryState));
         textLikeView.setContent(TextPane.getInstance(queryState));
