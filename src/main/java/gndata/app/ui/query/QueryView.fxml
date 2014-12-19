@@ -52,12 +52,13 @@ LICENSE file in the root of the Project.
         <SplitPane orientation="HORIZONTAL">
 
             <VBox prefWidth="374.0">
+                <TextArea fx:id="prefixArea" editable="false"/>
                 <fx:include source="builder/QueryPaneView.fxml"/>
                 <fx:include source="ListPaneView.fxml"/>
                 <TextArea fx:id="ta" editable="false"/>
             </VBox>
 
-            <fx:include source="QueryDetailsView.fxml"/>
+            <fx:include source="details/QueryDetailsView.fxml"/>
 
         </SplitPane>
     </center>

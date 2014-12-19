@@ -9,7 +9,8 @@
 package gndata.app.ui.query;
 
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javafx.fxml.*;
 import javafx.scene.control.*;
@@ -30,6 +31,8 @@ public class QueryCtrl implements Initializable {
     @FXML
     public BorderPane queryView;
     @FXML
+    private TextArea prefixArea;
+    @FXML
     private TextArea ta;
 
     private ProjectState projectState;
@@ -48,8 +51,20 @@ public class QueryCtrl implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ta.textProperty().bindBidirectional(queryState.currentQueryProperty());
 
-        //tableLikeView.setContent(new TablePane(queryState));
-        //textLikeView.setContent(TextPane.getInstance(queryState));
+        projectState.configProperty().addListener((o, p, n) -> {
+            if (projectState.isConfigured()) {
+                prefixArea.setText(
+                    StrUtils.strjoinNL(projectState
+                            .getMetadata()
+                            .getAnnotations()
+                            .getNsPrefixMap()
+                            .entrySet()
+                            .stream()
+                            .map(a -> a.getKey() + ": " + a.getValue())
+                            .collect(Collectors.toList()))
+                );
+            }
+        });
     }
 
     public Model runQuery() {
