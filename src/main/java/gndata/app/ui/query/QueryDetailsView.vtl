@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<!--
+Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted under the terms of the BSD License. See
+LICENSE file in the root of the Project.
+-->
+
+#* @vtlvariable name="model" type="gndata.lib.srv.ResourceAdapter" *#
+
+<html>
+<head>
+    <link rel="stylesheet" href="${bootstrap}">
+</head>
+
+<body>
+<div class="container-fluid">
+    #if($model)
+        <h3>$model.fileName</h3>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>Literals</h4>
+
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                        <th>Type</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($s in $model.literals)
+                            #set($obj = $s.object.asLiteral())
+                            #set($dt = $obj.getDatatype())
+                            <tr>
+                                <td>$s.predicate.localName</td>
+                                <td>$s.object.asLiteral().value.toString()</td>
+                                <td>#if($dt)$dt.javaClass.simpleName #else String #end</td>
+                            </tr>
+                        #end
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>Relations</h4>
+
+                #foreach($s in $model.children)
+                    <ul>
+                        <li>$s.fileName</li>
+                    </ul>
+                #end
+            </div>
+        </div>
+    #else
+        <h3>Nothing selected</h3>
+    #end
+</div>
+</body>
+</html>

@@ -30,10 +30,6 @@ public class QueryCtrl implements Initializable {
     @FXML
     public BorderPane queryView;
     @FXML
-    private Tab textLikeView;
-    @FXML
-    private Tab tableLikeView;
-    @FXML
     private TextArea ta;
 
     private ProjectState projectState;
@@ -44,16 +40,16 @@ public class QueryCtrl implements Initializable {
         this.projectState = ps;
         this.queryState = qs;
 
-        queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
+        queryState.currentQueryProperty().addListener((obs, odlVal, newVal) ->
                 queryState.setSelectedModel(runQuery()));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
+        ta.textProperty().bindBidirectional(queryState.currentQueryProperty());
 
-        tableLikeView.setContent(new TablePane(queryState));
-        textLikeView.setContent(TextPane.getInstance(queryState));
+        //tableLikeView.setContent(new TablePane(queryState));
+        //textLikeView.setContent(TextPane.getInstance(queryState));
     }
 
     public Model runQuery() {
@@ -66,7 +62,7 @@ public class QueryCtrl implements Initializable {
                 selection = projectState.getMetadata().CONSTRUCT(
                     StrUtils.strjoinNL(
                         MetadataService.stdPrefix,
-                        queryState.getCurrentQuery().get(),
+                        queryState.getCurrentQuery(),
                         "LIMIT " + maxResults
                     ));
 

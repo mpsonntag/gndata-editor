@@ -32,7 +32,7 @@ public class ListPaneCtrl implements Initializable {
     public ListPaneCtrl(QueryState qs) {
         this.qs = qs;
 
-        qs.getSelectedModel().addListener((o, p, n) ->
+        qs.selectedModelProperty().addListener((o, p, n) ->
             lv.getItems().setAll(n == null ? FXCollections.observableArrayList() : n.listStatements().toList())
         );
     }
@@ -56,7 +56,7 @@ public class ListPaneCtrl implements Initializable {
                 Resource node = stmt.getSubject();
 
                 lineOne.set(Resources.toNameString(node));
-                lineTwo.set(Resources.toInfoString(node));
+                lineTwo.set(Resources.toNameString(node));
             }
         }
     }

@@ -44,7 +44,7 @@ public class Resources {
                     type = "Thing";
                 }
 
-                String id = resource.getLocalName();
+                String id = resource.getLocalName() == null ? "" : resource.getLocalName();
                 id = id.length() < 8 ? id : id.substring(0, 7);
 
                 name = String.format("%s: %s", type, id);
