@@ -50,7 +50,12 @@ LICENSE file in the root of the Project.
 
     <center>
         <SplitPane orientation="HORIZONTAL">
-            <VBox fx:id="vBox" prefWidth="374.0"/>
+            <VBox fx:id="vBox" prefWidth="374.0">
+                <children>
+                    <fx:include source="builder/QueryPaneView.fxml"/>
+                </children>
+            </VBox>
+
             <TabPane side="BOTTOM">
                 <Tab closable="false" text="Text" fx:id="textLikeView"/>
                 <Tab closable="false" text="Table" fx:id="tableLikeView"/>
