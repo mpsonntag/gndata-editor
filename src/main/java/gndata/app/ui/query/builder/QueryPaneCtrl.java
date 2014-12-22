@@ -33,9 +33,7 @@ import org.apache.jena.atlas.lib.StrUtils;
 public class QueryPaneCtrl implements Initializable {
 
     @FXML
-    private BorderPane queryPane;
-    @FXML
-    private VBox vbox;
+    private ListView<QueryRow> lv;
 
     private ObservableList<QueryRow> queryRows;
     private QueryState qs;
@@ -49,9 +47,7 @@ public class QueryPaneCtrl implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        queryRows.addListener(
-                (ListChangeListener.Change<? extends QueryRow> l) ->
-                        vbox.getChildren().setAll(queryRows));
+        lv.setItems(queryRows);
 
         queryRows.add(new QueryRow("?x", "?y", "?z"));
     }
