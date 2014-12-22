@@ -36,7 +36,7 @@ public abstract class AbstractView {
      */
     public AbstractView() {
         extraStyles = new LinkedList<>();
-        loader = new FXMLLoader(getDefaultView());
+        loader = new FXMLLoader(NameConventions.fxmlResource(getClass()));
     }
 
     /**
@@ -50,9 +50,9 @@ public abstract class AbstractView {
     public Parent getScene() throws IOException {
         Parent p = loader.load();
 
-        URL styleURL = getDefaultStyle();
-        if (styleURL != null) {
-            p.getStylesheets().add(styleURL.toExternalForm());
+        Optional<URL> styleURL = NameConventions.optionalStyleResource(getClass());
+        if (styleURL.isPresent()) {
+            p.getStylesheets().add(styleURL.get().toExternalForm());
         }
 
         for (URL url : getExtraStyles()) {
@@ -89,27 +89,4 @@ public abstract class AbstractView {
         return loader;
     }
 
-    /**
-     * Get an URL that points to the default fxml file.
-     * The default view fxml file is derived from the canonical class name of the
-     * respective view.
-     *
-     * @return An URL to the fxml file.
-     */
-    public URL getDefaultView() {
-        String path = "/" + getClass().getCanonicalName().replace('.', '/') + ".fxml";
-        return getClass().getResource(path);
-    }
-
-    /**
-     * Get an URL that points to the default css file.
-     * The default style css file is derived from the canonical class name of the
-     * respective view.
-     *
-     * @return An URL to the css file.
-     */
-    public URL getDefaultStyle() {
-        String path = "/" + getClass().getCanonicalName().replace('.', '/') + ".css";
-        return getClass().getResource(path);
-    }
 }

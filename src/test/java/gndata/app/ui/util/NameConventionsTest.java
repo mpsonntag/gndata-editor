@@ -52,6 +52,25 @@ public class NameConventionsTest {
     }
 
     @Test
+    public void testStylePath() throws Exception {
+        for (Class c : classes) {
+            assertEquals("gndata/app/ui/util/TestFooView.css", stylePath(c));
+        }
+    }
+
+    @Test
+    public void testStyleResource() throws Exception {
+        for (Class c : classes) {
+            assertTrue(styleResource(c).toString().endsWith("gndata/app/ui/util/TestFooView.css"));
+            assertTrue(optionalStyleResource(c).isPresent());
+            assertTrue(optionalStyleResource(c).get().toString().endsWith("gndata/app/ui/util/TestFooView.css"));
+        }
+
+        assertThrows(() -> styleResource(getClass()), RuntimeException.class);
+        assertFalse(optionalStyleResource(getClass()).isPresent());
+    }
+
+    @Test
     public void testViewClassPath() throws Exception {
         for (Class c : classes) {
             assertEquals("gndata/app/ui/util/TestFooView", viewClassPath(c));

@@ -9,6 +9,7 @@
 package gndata.app.ui.util;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Optional;
 
 import javafx.scene.Scene;
@@ -34,8 +35,8 @@ public abstract class DialogView<T> extends AbstractView {
         this.controller = controller;
         getLoader().setControllerFactory(cls -> this.controller);
 
-        String path = "/" + DialogView.class.getCanonicalName().replace('.', '/') + ".css";
-        getExtraStyles().add(getClass().getResource(path));
+        URL path = NameConventions.styleResource(DialogView.class);
+        getExtraStyles().add(path);
     }
 
     /**
