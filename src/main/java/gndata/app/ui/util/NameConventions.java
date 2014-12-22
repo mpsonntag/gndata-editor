@@ -1,6 +1,7 @@
 package gndata.app.ui.util;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * Helper class for getting names for controllers, views, fxml files and templates
@@ -12,6 +13,7 @@ public class NameConventions {
     private static final String viewEnd = "View";
     private static final String fxmlExt = ".fxml";
     private static final String vtlExt  = ".vtl";
+    private static final String cssExt  = ".css";
     private static final String[] endings = {ctrlEnd, viewEnd};
 
 
@@ -91,6 +93,61 @@ public class NameConventions {
             throw new RuntimeException("Unable to find resource: " + path);
 
         return url;
+    }
+
+    /**
+     * Get the name of a css file for a certain class. The css file
+     * is determined using the following naming conventions. If the class is a inner
+     * class the name of the most outer class is used to determine the css file.
+     *
+     * <ol>
+     *     <li>foo.Foo --> foo/FooView.css</li>
+     *     <li>foo.FooView --> foo/FooView.css</li>
+     *     <li>foo.FooCtrl --> foo/FooView.css</li>
+     * </ol>
+     *
+     * @param cls   The class to get the css file for.
+     *
+     * @return The path to the css file.
+     */
+    public static String stylePath(Class cls) {
+        return viewClassPath(cls) + cssExt;
+    }
+
+    /**
+     * Get the resource of a css for a certain class.
+     *
+     * @param cls   The class to get the css resource for.
+     *
+     * @return The url to the css file.
+     *
+     * @throws RuntimeException If the resource does not exist.
+     * @see #fxmlPath(Class)
+     */
+    public static URL styleResource(Class cls) throws RuntimeException {
+        String path = stylePath(cls);
+        URL url = ClassLoader.getSystemResource(path);
+
+        if (url == null)
+            throw new RuntimeException("Unable to find resource: " + path);
+
+        return url;
+    }
+
+    /**
+     * Get the resource of a css for a certain class.
+     *
+     * @param cls   The class to get the css resource for.
+     *
+     * @return Optional url to the css resource.
+     *
+     * @see #fxmlPath(Class)
+     */
+    public static Optional<URL> optionalStyleResource(Class cls) throws RuntimeException {
+        String path = stylePath(cls);
+        URL url = ClassLoader.getSystemResource(path);
+
+        return Optional.ofNullable(url);
     }
 
     /**
