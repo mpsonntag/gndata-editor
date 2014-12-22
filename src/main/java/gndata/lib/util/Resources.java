@@ -44,6 +44,7 @@ public class Resources {
                     type = "Thing";
                 }
 
+                // TODO investigate why the check for null is necessary (because it shouldn't)
                 String id = resource.getLocalName() == null ? "" : resource.getLocalName();
                 id = id.length() < 8 ? id : id.substring(0, 7);
 
