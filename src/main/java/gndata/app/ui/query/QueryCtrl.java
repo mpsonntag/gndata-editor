@@ -9,7 +9,8 @@
 package gndata.app.ui.query;
 
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javafx.fxml.*;
 import javafx.scene.control.*;
@@ -30,41 +31,40 @@ public class QueryCtrl implements Initializable {
     @FXML
     public BorderPane queryView;
     @FXML
-    private VBox vBox;
+    private TextArea prefixArea;
     @FXML
-    private Tab textLikeView;
-    @FXML
-    private Tab tableLikeView;
+    private TextArea ta;
 
     private ProjectState projectState;
     private QueryState queryState;
-
-    private TextArea ta;
 
     @Inject
     public QueryCtrl(ProjectState ps, QueryState qs) {
         this.projectState = ps;
         this.queryState = qs;
+
+        queryState.currentQueryProperty().addListener((obs, odlVal, newVal) ->
+                queryState.setSelectedModel(runQuery()));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        queryState.getCurrentQuery().addListener((obs, odlVal, newVal) ->
-                queryState.setSelectedModel(runQuery()));
+        ta.textProperty().bindBidirectional(queryState.currentQueryProperty());
 
-        QueryPane qp = new QueryPane(queryState);
-
-        ListPane lp = new ListPane(queryState);
-        VBox.setVgrow(lp, Priority.ALWAYS);
-
-        ta = new TextArea();
-        ta.setEditable(false);
-        ta.textProperty().bindBidirectional(queryState.getCurrentQuery());
-
-        vBox.getChildren().addAll(qp, lp, ta);
-
-        tableLikeView.setContent(new TablePane(queryState));
-        textLikeView.setContent(TextPane.getInstance(queryState));
+        projectState.configProperty().addListener((o, p, n) -> {
+            if (projectState.isConfigured()) {
+                prefixArea.setText(
+                    StrUtils.strjoinNL(projectState
+                            .getMetadata()
+                            .getAnnotations()
+                            .getNsPrefixMap()
+                            .entrySet()
+                            .stream()
+                            .map(a -> a.getKey() + ": " + a.getValue())
+                            .collect(Collectors.toList()))
+                );
+            }
+        });
     }
 
     public Model runQuery() {
@@ -77,7 +77,7 @@ public class QueryCtrl implements Initializable {
                 selection = projectState.getMetadata().CONSTRUCT(
                     StrUtils.strjoinNL(
                         MetadataService.stdPrefix,
-                        queryState.getCurrentQuery().get(),
+                        queryState.getCurrentQuery(),
                         "LIMIT " + maxResults
                     ));
 

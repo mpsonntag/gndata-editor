@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted under the terms of the BSD License. See
+LICENSE file in the root of the Project.
+-->
+
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8"
+            fx:controller="gndata.app.ui.query.details.QueryDetailsCtrl">
+
+    <center>
+        <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Text">
+                <WebView fx:id="webView"
+                         AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                         AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0"/>
+            </Tab>
+            <Tab text="Table">
+                <TableView fx:id="tableView">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn text="Property">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="predicate"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Value">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="literal"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Type">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="type"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

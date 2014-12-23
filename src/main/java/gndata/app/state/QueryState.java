@@ -21,27 +21,22 @@ import com.hp.hpl.jena.rdf.model.*;
 @Singleton
 public class QueryState {
 
+    private StringProperty currentQuery;
     private ObjectProperty<Statement> selectedStatement;
-    private ObjectProperty<String> currentQuery;
     private ObjectProperty<Model> selectedModel;
 
     private ObservableList<String> queryHistory;  // mockup for the future <-->
 
     public QueryState() {
+        currentQuery = new SimpleStringProperty();
         selectedStatement = new SimpleObjectProperty<>();
-        currentQuery = new SimpleObjectProperty<>();
         selectedModel = new SimpleObjectProperty<>();
     }
 
-    public ObjectProperty<Statement> getSelectedStatement() {
-        return selectedStatement;
+    public String getCurrentQuery() {
+        return currentQuery.get();
     }
-
-    public void setSelectedStatement(Statement selectedStatement) {
-        this.selectedStatement.set(selectedStatement);
-    }
-
-    public ObjectProperty<String> getCurrentQuery() {
+    public StringProperty currentQueryProperty() {
         return currentQuery;
     }
 
@@ -49,7 +44,23 @@ public class QueryState {
         this.currentQuery.set(query);
     }
 
-    public ObjectProperty<Model> getSelectedModel() {
+    public Statement getSelectedStatement() {
+        return selectedStatement.get();
+    }
+
+    public ObjectProperty<Statement> selectedStatementProperty() {
+        return selectedStatement;
+    }
+
+    public void setSelectedStatement(Statement selectedStatement) {
+        this.selectedStatement.set(selectedStatement);
+    }
+
+    public Model getSelectedModel() {
+        return selectedModel.get();
+    }
+
+    public ObjectProperty<Model> selectedModelProperty() {
         return selectedModel;
     }
 

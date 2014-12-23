@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.scene.web.WebView;
 
+import gndata.app.ui.util.NameConventions;
+
 /**
  * A controller that initializes a page.
  */
@@ -33,20 +35,10 @@ public abstract class  PageCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            page = Page.create(getWebView(), getDefaultTemplate());
+            page = Page.create(getWebView(), NameConventions.templatePath(getClass()));
             page.applyController(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String getDefaultTemplate() {
-        String path = "" + getClass().getCanonicalName().replace('.', '/');
-
-        if (path.endsWith("Ctrl")) {
-            path = path.substring(0, path.length() - 4);
-        }
-
-        return path + "View.vtl";
     }
 }
