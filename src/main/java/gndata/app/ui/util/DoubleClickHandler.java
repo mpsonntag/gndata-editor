@@ -9,9 +9,13 @@ import javafx.scene.input.*;
 public abstract class DoubleClickHandler implements EventHandler<MouseEvent> {
 
     private final static long DEFAULT_CLICK_INTERVAL = 500;
+    private final static long DEFAULT_MOUSE_MOVEMENT = 6;
 
     private final long interval;
     private long lastClick;
+    private double lastX;
+    private double lastY;
+    private double checkMovement;
 
     public DoubleClickHandler() {
         this(DEFAULT_CLICK_INTERVAL);
@@ -20,6 +24,7 @@ public abstract class DoubleClickHandler implements EventHandler<MouseEvent> {
     public DoubleClickHandler(long interval) {
         this.interval = interval;
         lastClick = 0;
+        checkMovement = 0;
     }
 
     @Override
@@ -27,10 +32,17 @@ public abstract class DoubleClickHandler implements EventHandler<MouseEvent> {
         if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
             long diff = System.currentTimeMillis() - lastClick;
             if (diff < interval) {
-                handleDoubleClick(mouseEvent);
+                checkMovement = Math.abs(lastX - mouseEvent.getX())+Math.abs(lastY - mouseEvent.getY());
+                // make sure mouse has not moved too far
+                if(checkMovement < DEFAULT_MOUSE_MOVEMENT) {
+                    handleDoubleClick(mouseEvent);
+                }
                 lastClick = 0;
+                checkMovement = 0;
             } else {
                 lastClick = System.currentTimeMillis();
+                lastX = mouseEvent.getX();
+                lastY = mouseEvent.getY();
             }
         }
     }
