@@ -45,6 +45,11 @@ public class LocalFile extends FileAdapter<LocalFile> {
     }
 
     /**
+     * Method returns path of the current LocalFile
+     */
+    public Path getPath() { return path; }
+
+    /**
      * Method returns true, if the absolute path of the LocalFile
      * starts with the absolute path of another path
      */
@@ -121,6 +126,18 @@ public class LocalFile extends FileAdapter<LocalFile> {
         } catch (IOException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    /**
+     * Returns the size of the current LocalFile in readable form
+     * if it is not a directory.
+     */
+    public String getSizeReadable() {
+        if (!this.isDirectory()) {
+            return humanReadableByteCount(this.getSizeInBytes(), true);
+        } else {
+            return "Directory";
         }
     }
 
