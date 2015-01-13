@@ -54,7 +54,7 @@ public class QueryPaneCtrl implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         lv.setItems(queryRows);
 
-        queryRows.add(new QueryRow("?x", "?y", "?z"));
+        queryRows.add(new QueryRow("?x", "rdf:type", "thomas:AnalogSignal"));
 
         Integer LIST_CELL_HEIGHT = 35;
 
@@ -106,10 +106,9 @@ public class QueryPaneCtrl implements Initializable {
                 .collect(Collectors.toList());
 
         return StrUtils.strjoinNL(
-                "CONSTRUCT {",
-                String.join(" ", selectors),
-                "} WHERE { ",
-                String.join(" . ", conditions),
+                "SELECT " + String.join(" ", selectors),
+                "WHERE { ",
+                String.join(" .\n", conditions) + ".",
                 "}"
         );
     }
