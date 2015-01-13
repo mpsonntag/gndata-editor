@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 import com.hp.hpl.jena.rdf.model.Resource;
+import gndata.lib.util.Resources;
 
 
 public class ResourceEvent implements EventAdapter {
@@ -20,8 +21,8 @@ public class ResourceEvent implements EventAdapter {
 
         Random generator = new Random();
         Integer day_of_month = LocalDateTime.now().getDayOfMonth() - 2 + generator.nextInt(6);
-        Integer start_hour = generator.nextInt(5) + 8;
-        Integer end_hour = generator.nextInt(7) + start_hour;
+        Integer start_hour = generator.nextInt(5) + 4;
+        Integer end_hour = generator.nextInt(12) + start_hour;
 
         start = LocalDateTime.now();
         start = start.withDayOfMonth(day_of_month);
@@ -41,8 +42,11 @@ public class ResourceEvent implements EventAdapter {
     }
 
     public String getSummary() {
-        //return Resources.toNameString(res);
-        return res.getLocalName();
+        String name = Resources.toNameString(res);
+
+        return name.length() < 8 ? name : name.substring(0, 7);
+
+        //return res.getLocalName();
     }
 
     public String getDescription() {
