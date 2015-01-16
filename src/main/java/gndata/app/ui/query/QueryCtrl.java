@@ -16,8 +16,8 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.state.*;
 import gndata.lib.srv.MetadataService;
 import org.apache.jena.atlas.lib.StrUtils;
@@ -53,16 +53,7 @@ public class QueryCtrl implements Initializable {
 
         projectState.configProperty().addListener((o, p, n) -> {
             if (projectState.isConfigured()) {
-                prefixArea.setText(
-                    StrUtils.strjoinNL(projectState
-                            .getMetadata()
-                            .getAnnotations()
-                            .getNsPrefixMap()
-                            .entrySet()
-                            .stream()
-                            .map(a -> a.getKey() + ": " + a.getValue())
-                            .collect(Collectors.toList()))
-                );
+                prefixArea.setText(projectState.getMetadata().getPrefixHeader());
             }
         });
     }
@@ -70,16 +61,39 @@ public class QueryCtrl implements Initializable {
     public Model runQuery() {
         String maxResults = "100";
 
-        Model selection = null;
+        Model selection = ModelFactory.createDefaultModel();
 
         if (projectState.isConfigured()) {
             try {
-                selection = projectState.getMetadata().CONSTRUCT(
+                ResultSet results = projectState.getMetadata().SELECT(
                     StrUtils.strjoinNL(
-                        MetadataService.stdPrefix,
+                        projectState.getMetadata().getPrefixHeader(),
                         queryState.getCurrentQuery(),
                         "LIMIT " + maxResults
                     ));
+
+
+                List<Statement> lst = new ArrayList<>();
+
+                // this simply parses the result set and creates a model
+                // containing all the statements from it
+                results.forEachRemaining(soln -> {
+                    results.getResultVars().forEach(var -> {
+                        RDFNode n = soln.get(var);
+
+                        if (n.isResource()) {
+                            StmtIterator iter = projectState.getMetadata()
+                                    .getAnnotations()
+                                    .listStatements((Resource) n, null, (RDFNode) null);
+
+                            if (iter.hasNext()) {
+                                lst.addAll(iter.toList());
+                            }
+                        }
+                    });
+                });
+
+                selection = selection.add(lst);
 
             } catch (QueryParseException e) {
                 ta.setText(e.getMessage());
