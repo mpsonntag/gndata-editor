@@ -43,6 +43,21 @@ public class MetadataService {
     }
 
     /**
+     * Provides a string with available PREFIX'es. May be used to build queries
+     * against current service.
+     *
+     * @return  String with prefixes
+     */
+    public String getPrefixHeader() {
+        return StrUtils.strjoinNL(getAnnotations()
+                    .getNsPrefixMap()
+                    .entrySet()
+                    .stream()
+                    .map(a -> "PREFIX " + a.getKey() + ": " + "<" + a.getValue() + ">")
+                    .collect(Collectors.toList()));
+    }
+
+    /**
      * Returns a Ontology RDF Model instance to access default and
      * custom ontology terms.
      *
@@ -160,11 +175,11 @@ public class MetadataService {
                 .collect(Collectors.toList());
     }
 
-    public Model SELECT(String queryString) {
+    public ResultSet SELECT(String queryString) {
         Query query = QueryFactory.create(queryString);
         QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());
 
-        Model resultModel = ResultSetFormatter.toModel(qexec.execSelect());
+        ResultSet resultModel = ResultSetFactory.copyResults(qexec.execSelect());
         qexec.close();
 
         return resultModel;

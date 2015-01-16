@@ -15,6 +15,7 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
+            fx:id="vbox"
             fx:controller="gndata.app.ui.query.builder.QueryPaneCtrl">
 
 
@@ -22,7 +23,7 @@ LICENSE file in the root of the Project.
 
     <!-- query rows go to the center -->
 
-    <ListView fx:id="lv" VBox.vgrow="ALWAYS" prefHeight="150"/>
+    <ListView fx:id="lv" VBox.vgrow="ALWAYS"/>
 
     <!-- buttons go to the bottom -->
 

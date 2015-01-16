@@ -17,7 +17,6 @@ LICENSE file in the root of the Project.
 
 <HBox xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/8"
-      prefHeight="35.0"
       BorderPane.alignment="CENTER">
 
     <TextField fx:id="subject">""</TextField>

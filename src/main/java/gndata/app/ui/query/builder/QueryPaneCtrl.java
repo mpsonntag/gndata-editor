@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 import gndata.lib.srv.ResourceEvent;
+
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -35,6 +37,9 @@ public class QueryPaneCtrl implements Initializable {
     @FXML
     private ListView<QueryRow> lv;
 
+    @FXML
+    private VBox vbox;
+
     private ObservableList<QueryRow> queryRows;
     private QueryState qs;
 
@@ -49,7 +54,13 @@ public class QueryPaneCtrl implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         lv.setItems(queryRows);
 
-        queryRows.add(new QueryRow("?x", "?y", "?z"));
+        queryRows.add(new QueryRow("?x", "rdf:type", "thomas:AnalogSignal"));
+
+        Integer LIST_CELL_HEIGHT = 35;
+
+        lv.minHeightProperty().bind(Bindings.size(lv.getItems()).multiply(LIST_CELL_HEIGHT));
+        vbox.minHeightProperty().bind(lv.minHeightProperty().add(LIST_CELL_HEIGHT));
+        vbox.prefHeightProperty().bind(vbox.minHeightProperty());
     }
 
     public void addRow() {
@@ -95,10 +106,9 @@ public class QueryPaneCtrl implements Initializable {
                 .collect(Collectors.toList());
 
         return StrUtils.strjoinNL(
-                "CONSTRUCT {",
-                String.join(" ", selectors),
-                "} WHERE { ",
-                String.join(" . ", conditions),
+                "SELECT " + String.join(" ", selectors),
+                "WHERE { ",
+                String.join(" .\n", conditions) + ".",
                 "}"
         );
     }
