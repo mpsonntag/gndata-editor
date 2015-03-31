@@ -198,7 +198,36 @@ public class MetadataService {
     public void importMetadata(String path) {
         Model newData =  RDFDataMgr.loadModel(path);
         annotations.add(newData);
+
+        Model foo = ModelFactory.createDefaultModel();
     }
+
+    /*
+    New API methods
+     */
+
+    public void createEntity(Model m) {
+        // model should have an RDF.type
+
+        // validate model against OWL
+
+        // add to annotations
+
+        // save changes (optional)
+    }
+
+    public void deleteEntity(Resource res) {
+        // delete all literals
+
+        // delete all subject-to-res relations
+
+        // delete all res-to-object entities that have no other references
+    }
+
+    public void updateDataProperty(Resource res, Property p, String value) {
+        // convert and validate from string using OWL
+    }
+
 
     /**
      * Creates a new Metadata Service using a given path. Combines existing
