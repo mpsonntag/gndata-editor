@@ -1,9 +1,21 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.lib.srv;
 
-
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.*;
+import java.nio.file.attribute.*;
 import java.util.*;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 
 import org.apache.tika.config.TikaConfig;
@@ -29,12 +41,42 @@ public class LocalFile extends FileAdapter<LocalFile> {
         this(Paths.get(path));
     }
 
+    /**
+     * Method returns true, if the absolute path of the LocalFile
+     * is the same as the absolute path of another path
+     */
+    public boolean hasPath(Path otherPath) {
+        return path.equals(otherPath.toAbsolutePath().normalize());
+    }
+
+    /**
+     * Method returns path of the current LocalFile
+     */
+    public Path getPath() { return path; }
+
+    /**
+     * Method returns true, if the absolute path of the LocalFile
+     * starts with the absolute path of another path
+     */
+    public boolean isChildOfAbsolutePath(Path otherPath) {
+        return path.startsWith(otherPath.toAbsolutePath().normalize());
+    }
+
+    /**
+     * Method returns true, if a folder or file is hidden
+     * To stay platform independent create a correct file from string and use
+     * isHidden method.
+     */
+    public boolean isHidden() {
+        File checkHidden = new File(path.toString());
+        return checkHidden.isHidden();
+    }
+
     @Override
     public Optional<LocalFile> getParent() {
         if (parent == null) {
             parent = path.getParent() == null ? Optional.empty() : Optional.of(new LocalFile(path.getParent()));
         }
-
         return parent;
     }
 
@@ -89,6 +131,18 @@ public class LocalFile extends FileAdapter<LocalFile> {
         } catch (IOException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    /**
+     * Returns the size of the current LocalFile in readable form
+     * if it is not a directory.
+     */
+    public String getSizeReadable() {
+        if (!this.isDirectory()) {
+            return humanReadableByteCount(this.getSizeInBytes(), true);
+        } else {
+            return "Directory";
         }
     }
 
@@ -162,18 +216,67 @@ public class LocalFile extends FileAdapter<LocalFile> {
     }
 
     /**
+     * This method adds information like like mime type, last access, etc, to an
+     * observable list and returns it, if the current item is a file.
+     */
+    public List<String> getFileInfoList() {
+
+        List<String> currList = new ArrayList<>();
+
+        if (! this.isDirectory()) {
+            try {
+                // think about including additional information when accessing a file
+                // e.g. XMP (com.snowtide.PDF) or EXIF for images (drewnoakes.com/code/exif/ or
+                // maven.thebuzzmedia.com)
+
+                currList.add(String.format("File name: %s", this.getFileName()));
+                currList.add(String.format("Mime type: %s", this.getMimeType()));
+                currList.add(String.format("Size: %s", this.getSizeReadable()));
+
+                // get path of selected file to access attributes
+                Path p = Paths.get(this.getPath().toString());
+
+                // add basic file attributes
+                BasicFileAttributes bfa = Files.readAttributes(p, BasicFileAttributes.class);
+                currList.add(String.format("Time created: %s", bfa.creationTime()));
+                currList.add(String.format("Last accessed: %s", bfa.lastAccessTime()));
+                currList.add(String.format("Last modified: %s", bfa.lastModifiedTime()));
+
+                // add existing user defined attributes
+                UserDefinedFileAttributeView usrAttr = Files.getFileAttributeView(p, UserDefinedFileAttributeView.class);
+                if (usrAttr.list().size() > 0) {
+                    usrAttr.list().stream()
+                            .forEach(ua -> {
+                                try {
+                                    ByteBuffer buf = ByteBuffer.allocate(usrAttr.size(ua));
+                                    usrAttr.read(ua, buf);
+                                    buf.flip();
+                                    currList.add(String.format("%s: %s", ua, Charset.defaultCharset().decode(buf).toString()));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return currList;
+    }
+
+    /**
      * This method returns different images dependent on whether the current item is a file or a directory
      */
     public Image getIcon() {
         String selectIcon;
 
         if (this.isDirectory()){
-            selectIcon = "folder.png";
+            selectIcon = "icons/folder.png";
         } else {
-            selectIcon = "txt.png";
+            selectIcon = "icons/txt.png";
         }
 
-        return new Image(ClassLoader.getSystemResource(new File("icons", selectIcon).toString()).toString());
+        return new Image(ClassLoader.getSystemResource(selectIcon).toString());
     }
 
     /**

@@ -21,9 +21,11 @@ LICENSE file in the root of the Project.
     <top>
         <VBox>
             <children>
-                <Label styleClass="fav-header" text="Favorites"><font><Font size="18.0"/></font></Label>
+                <Label styleClass="fav-header" text="Favorites">
+                    <font><Font size="18.0"/></font>
+                </Label>
 
-                <ListView fx:id="fileFavorites" />
+                <ListView styleClass="fav-list" fx:id="fileFavorites" />
             </children>
         </VBox>
     </top>
