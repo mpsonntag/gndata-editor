@@ -8,12 +8,7 @@
 
 package gndata.app.ui.filebrowser;
 
-import java.io.IOException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.*;
-import java.nio.file.attribute.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.beans.value.*;
@@ -105,46 +100,11 @@ public class FileDetailsCtrl implements Initializable{
                 fileDetails.clear();
                 fileDetailsList.getItems().clear();
 
-                try {
-                    // think about including additional information when accessing a file
-                    // e.g. XMP (com.snowtide.PDF) or EXIF for images (drewnoakes.com/code/exif/ or
-                    // maven.thebuzzmedia.com)
+                newValue.getFileInfoList().stream()
+                        .forEach(fileDetails::add);
 
-                    fileDetails.add(String.format("File name: %s", newValue.getFileName()));
-                    fileDetails.add(String.format("Mime type: %s", newValue.getMimeType()));
-                    fileDetails.add(String.format("Size: %s", newValue.getSizeReadable()));
-
-                    // get path of selected file to access attributes
-                    Path p = Paths.get(newValue.getPath().toString());
-
-                    // add basic file attributes
-                    BasicFileAttributes bfa = Files.readAttributes(p, BasicFileAttributes.class);
-                    fileDetails.add(String.format("Time created: %s", bfa.creationTime()));
-                    fileDetails.add(String.format("Last accessed: %s", bfa.lastAccessTime()));
-                    fileDetails.add(String.format("Last modified: %s", bfa.lastModifiedTime()));
-
-                    // add existing user defined attributes
-                    UserDefinedFileAttributeView usrAttr = Files.getFileAttributeView(p, UserDefinedFileAttributeView.class);
-                    if (usrAttr.list().size() > 0) {
-                        usrAttr.list().stream()
-                                .forEach(ua -> {
-                                    try {
-                                        ByteBuffer buf = ByteBuffer.allocate(usrAttr.size(ua));
-                                        usrAttr.read(ua, buf);
-                                        buf.flip();
-                                        fileDetails.add(String.format("%s: %s", ua, Charset.defaultCharset().decode(buf).toString()));
-                                    } catch(IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
-                    }
-
-                    // add list of file attributes to ListView
-                    fileDetailsList.getItems().addAll(fileDetails);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // add list of file attributes to ListView
+                fileDetailsList.getItems().addAll(fileDetails);
             }
         }
     }

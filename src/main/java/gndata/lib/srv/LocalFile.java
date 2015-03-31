@@ -9,8 +9,13 @@
 package gndata.lib.srv;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.*;
+import java.nio.file.attribute.*;
 import java.util.*;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 
 import org.apache.tika.config.TikaConfig;
@@ -208,6 +213,55 @@ public class LocalFile extends FileAdapter<LocalFile> {
             info = this.getMimeType() +" "+ humanReadableByteCount(this.getSizeInBytes(), true);
         }
         return info;
+    }
+
+    /**
+     * This method adds information like like mime type, last access, etc, to an
+     * observable list and returns it, if the current item is a file.
+     */
+    public List<String> getFileInfoList() {
+
+        List<String> currList = new ArrayList<>();
+
+        if (! this.isDirectory()) {
+            try {
+                // think about including additional information when accessing a file
+                // e.g. XMP (com.snowtide.PDF) or EXIF for images (drewnoakes.com/code/exif/ or
+                // maven.thebuzzmedia.com)
+
+                currList.add(String.format("File name: %s", this.getFileName()));
+                currList.add(String.format("Mime type: %s", this.getMimeType()));
+                currList.add(String.format("Size: %s", this.getSizeReadable()));
+
+                // get path of selected file to access attributes
+                Path p = Paths.get(this.getPath().toString());
+
+                // add basic file attributes
+                BasicFileAttributes bfa = Files.readAttributes(p, BasicFileAttributes.class);
+                currList.add(String.format("Time created: %s", bfa.creationTime()));
+                currList.add(String.format("Last accessed: %s", bfa.lastAccessTime()));
+                currList.add(String.format("Last modified: %s", bfa.lastModifiedTime()));
+
+                // add existing user defined attributes
+                UserDefinedFileAttributeView usrAttr = Files.getFileAttributeView(p, UserDefinedFileAttributeView.class);
+                if (usrAttr.list().size() > 0) {
+                    usrAttr.list().stream()
+                            .forEach(ua -> {
+                                try {
+                                    ByteBuffer buf = ByteBuffer.allocate(usrAttr.size(ua));
+                                    usrAttr.read(ua, buf);
+                                    buf.flip();
+                                    currList.add(String.format("%s: %s", ua, Charset.defaultCharset().decode(buf).toString()));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return currList;
     }
 
     /**
