@@ -13,7 +13,7 @@ import org.apache.velocity.*;
  */
 public class Page {
 
-    private static final String BOOTSTRAP = "META-INF/resources/webjars/bootstrap/3.1.0/css/bootstrap.min.css";
+    private static final String BOOTSTRAP = "META-INF/resources/webjars/bootstrap/3.3.0/css/bootstrap.min.css";
     private static final String ICONS = "icons";
 
     private final WebView webView;
