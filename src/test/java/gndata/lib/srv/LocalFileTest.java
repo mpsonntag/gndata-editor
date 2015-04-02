@@ -12,47 +12,42 @@ import java.io.File;
 import java.nio.file.*;
 import java.util.*;
 
-import org.apache.commons.io.FileUtils;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class LocalFileTest {
 
-    private static String tmpRoot;
-    private static String testFolderName;
-    private static String testFileFolder;
-    private static String testParallelFolder;
-    private static String testFileFolderChild;
-    private static String testFileName;
-    private static Path testLocalFilePath;
+    private static final String tmpRoot = System.getProperty("java.io.tmpdir");
+    private static final String testFolderName = "localfiletest";
+    private static final String testFileName = "test.txt";
+
+    private static final Path testFileFolder = Paths.get(tmpRoot, testFolderName);
+    private static final Path testParallelFolder = Paths.get(tmpRoot, "parallel");
+    private static final Path testFileFolderChild = testFileFolder.resolve("childdir");
+    private static final Path testLocalFilePath = testFileFolder.resolve(testFileName);
+
+
     LocalFile localFile;
     LocalFile localHiddenFile;
     LocalFile localDir;
 
     @Before
     public void setUp() throws Exception {
-        tmpRoot = "tmpdir";
-        testFolderName = "localfiletest";
-        testFileFolder = tmpRoot + File.separator + testFolderName;
-        testFileFolderChild = testFileFolder + File.separator + "childdir";
-        testParallelFolder = tmpRoot + File.separator + "parallel";
-
         // create directories
-        File testDirs = new File(testFileFolderChild);
+        File testDirs = testFileFolderChild.toFile();
         FileUtils.forceMkdir(testDirs);
-        File parallelDir = new File(testParallelFolder);
+        File parallelDir = testParallelFolder.toFile();
         FileUtils.forceMkdir(parallelDir);
 
         // create testfiles
-        testFileName = "test.txt";
-        File testFile = new File(testFileFolder + File.separator + testFileName);
+        File testFile = testFileFolder.resolve(testFileName).toFile();
         FileUtils.write(testFile, "This is a normal test file");
 
-        File testHiddenFile = new File(testFileFolder + File.separator +"."+ testFileName);
+        File testHiddenFile = testFileFolder.resolve("." + testFileName).toFile();
         FileUtils.write(testHiddenFile, "This is a hidden test file");
 
         //Set hidden attribute for Win OS systems
@@ -60,18 +55,17 @@ public class LocalFileTest {
             Files.setAttribute(Paths.get(testHiddenFile.getPath()), "dos:hidden", true);
         }
 
-        testLocalFilePath = Paths.get(testFileFolder + File.separator + testFileName);
         localFile = new LocalFile(testLocalFilePath);
 
-        localHiddenFile = new LocalFile(Paths.get(testFileFolder + File.separator +"."+ testFileName));
+        localHiddenFile = new LocalFile(testFileFolder.resolve("." + testFileName));
 
-        localDir = new LocalFile(Paths.get(testFileFolder));
+        localDir = new LocalFile(testFileFolder);
     }
 
     @After
     public void tearDown() throws Exception {
-        if (Files.exists(Paths.get(tmpRoot))) {
-            FileUtils.deleteDirectory(Paths.get(tmpRoot).toFile());
+        if (Files.exists(testFileFolder)) {
+            FileUtils.deleteDirectory(testFileFolder.toFile());
         }
     }
 
@@ -84,18 +78,14 @@ public class LocalFileTest {
 
     @Test
     public void testHasPath()throws Exception {
-        Path isPath = testLocalFilePath.toAbsolutePath().normalize();
-        Path isNotPath = Paths.get(testFileFolderChild);
-        assertThat(localFile.hasPath(isPath));
-        assertThat(!localFile.hasPath(isNotPath));
+        assertThat(localFile.hasPath(testLocalFilePath));
+        assertThat(!localFile.hasPath(testFileFolderChild));
     }
 
     @Test
     public void testIsChildOfAbsolutePath() throws Exception {
-        Path parentPath = Paths.get(testFileFolder);
-        Path notParentPath = Paths.get(testParallelFolder);
-        assertThat(localFile.isChildOfAbsolutePath(parentPath));
-        assertThat(!localFile.isChildOfAbsolutePath(notParentPath));
+        assertThat(localFile.isChildOfAbsolutePath(testFileFolder));
+        assertThat(!localFile.isChildOfAbsolutePath(testParallelFolder));
     }
 
     //TODO test under windows
@@ -109,7 +99,7 @@ public class LocalFileTest {
     public void testGetParent() throws Exception {
         Optional<LocalFile> currParent = localFile.getParent();
         assertThat(currParent.isPresent());
-        assertThat(currParent.get().hasPath(Paths.get(testFileFolder)));
+        assertThat(currParent.get().hasPath(testFileFolder));
     }
 
     @Test
@@ -117,7 +107,7 @@ public class LocalFileTest {
         List<LocalFile> currChildren = localDir.getChildren();
         assertThat(currChildren.size()).isEqualTo(3);
 
-        assertThat(currChildren.get(0).hasPath(Paths.get(testFileFolderChild)));
+        assertThat(currChildren.get(0).hasPath(testFileFolderChild));
     }
 
     @Test
@@ -128,9 +118,9 @@ public class LocalFileTest {
 
     @Test
     public void testEquals() throws Exception {
-        LocalFile isEqualFile = new LocalFile(testFileFolder + File.separator + testFileName);
-        assertThat(!localFile.equals(isEqualFile));
-        assertThat(!localFile.equals(localHiddenFile));
+        LocalFile isEqualFile = new LocalFile(testFileFolder.resolve(testFileName));
+        assertThat(localFile).isEqualTo(isEqualFile);
+        assertThat(localFile).isNotEqualTo(localHiddenFile);
     }
 
     @Test
@@ -176,6 +166,9 @@ public class LocalFileTest {
 
     @Test
     public void testGetIcon() throws Exception {
-        //TODO implement test
+        // Image blub = localFile.getIcon();
+        // causes: java.lang.RuntimeException: Internal graphics not initialized yet
+
+        // TODO initialize javafx
     }
 }
