@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocalFileTest {
 
     private static String tmpRoot;
+    private static String testFolderName;
     private static String testFileFolder;
     private static String testParallelFolder;
     private static String testFileFolderChild;
@@ -34,7 +35,8 @@ public class LocalFileTest {
     @Before
     public void setUp() throws Exception {
         tmpRoot = "tmpdir";
-        testFileFolder = tmpRoot + File.separator + "localfiletest";
+        testFolderName = "localfiletest";
+        testFileFolder = tmpRoot + File.separator + testFolderName;
         testFileFolderChild = testFileFolder + File.separator + "childdir";
         testParallelFolder = tmpRoot + File.separator + "parallel";
 
@@ -47,12 +49,13 @@ public class LocalFileTest {
         // create testfiles
         testFileName = "test.txt";
         File testFile = new File(testFileFolder + File.separator + testFileName);
-        FileUtils.write(testFile, "This is a normal testfile");
+        FileUtils.write(testFile, "This is a normal test file");
 
         File testHiddenFile = new File(testFileFolder + File.separator +"."+ testFileName);
-        FileUtils.write(testHiddenFile, "This is a hidden testfile");
+        FileUtils.write(testHiddenFile, "This is a hidden test file");
 
-        //TODO implement hidden testfile for win
+        //Set hidden attribute for Win OS systems
+        Files.setAttribute(Paths.get(testHiddenFile.getPath()), "dos:hidden", true);
 
         testLocalFilePath = Paths.get(testFileFolder + File.separator + testFileName);
         localFile = new LocalFile(testLocalFilePath);
@@ -92,6 +95,7 @@ public class LocalFileTest {
         assertThat(!localFile.isChildOfAbsolutePath(notParentPath));
     }
 
+    //TODO test under windows
     @Test
     public void testIsHidden() throws Exception {
         assertThat(!localFile.isHidden());
@@ -109,14 +113,14 @@ public class LocalFileTest {
     public void testGetChildren() throws Exception {
         List<LocalFile> currChildren = localDir.getChildren();
         assertThat(currChildren.size()).isEqualTo(3);
-        //TODO not sure if the next assertion will be always correct...
+
         assertThat(currChildren.get(0).hasPath(Paths.get(testFileFolderChild)));
     }
 
     @Test
     public void testGetFileName() throws Exception {
         assertThat(localFile.getFileName().equals(testFileName));
-        assertThat(localDir.getFileName().equals("localfiletest"));
+        assertThat(localDir.getFileName().equals(testFolderName));
     }
 
     @Test
@@ -133,42 +137,42 @@ public class LocalFileTest {
 
     @Test
     public void testGetSizeInBytes() throws Exception {
-        assertThat(localFile.getSizeInBytes()).isEqualTo(25);
+        assertThat(localFile.getSizeInBytes()).isEqualTo(26);
     }
 
     @Test
     public void testGetSizeReadable() throws Exception {
-        assertThat(localFile.getSizeReadable().equals("25 B"));
-        assertThat(localDir.getSizeReadable().equals("Directory"));
+        assertThat(localFile.getSizeReadable().contentEquals("26 B"));
+        assertThat(localDir.getSizeReadable().contentEquals("Directory"));
     }
 
     @Test
     public void testGetFolderContent() throws Exception {
-        assertThat(localDir.getFolderContent()).containsSequence("Directories: 1, Files: 2");
-        assertThat(localFile.getFolderContent()).containsSequence("Directories: 0, Files: 0");
+        assertThat(localDir.getFolderContent().contentEquals("Directories: 1, Files: 2"));
+        assertThat(localFile.getFolderContent().contentEquals("Directories: 0, Files: 0"));
     }
 
     @Test
     public void testGetMimeType() throws Exception {
-        assertThat(localFile.getMimeType()).containsSequence("text/plain");
+        assertThat(localFile.getMimeType().contentEquals("text/plain"));
     }
 
     @Test
     public void testGetInfo() throws Exception {
-        assertThat(localDir.getInfo()).containsSequence("Directories: 1, Files: 2");
-        assertThat(localFile.getInfo()).containsSequence("text/plain 25 B");
+        assertThat(localDir.getInfo().contentEquals("Directories: 1, Files: 2"));
+        assertThat(localFile.getInfo().contentEquals("text/plain 26 B"));
     }
 
     @Test
     public void testGetFileInfoList() throws Exception {
         assertThat(localFile.getFileInfoList().size()).isEqualTo(6);
-        assertThat(localFile.getFileInfoList().get(0)).containsSequence("File name: test.txt");
+        assertThat(localFile.getFileInfoList().get(0)).containsSequence(testFileName);
 
         assertThat(localDir.getFileInfoList()).isEmpty();
     }
 
     @Test
     public void testGetIcon() throws Exception {
-        //TODO cannot test this at the moment
+        //TODO implement test
     }
 }
