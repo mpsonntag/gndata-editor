@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +56,9 @@ public class LocalFileTest {
         FileUtils.write(testHiddenFile, "This is a hidden test file");
 
         //Set hidden attribute for Win OS systems
-        Files.setAttribute(Paths.get(testHiddenFile.getPath()), "dos:hidden", true);
+        if ( SystemUtils.IS_OS_WINDOWS ) {
+            Files.setAttribute(Paths.get(testHiddenFile.getPath()), "dos:hidden", true);
+        }
 
         testLocalFilePath = Paths.get(testFileFolder + File.separator + testFileName);
         localFile = new LocalFile(testLocalFilePath);
