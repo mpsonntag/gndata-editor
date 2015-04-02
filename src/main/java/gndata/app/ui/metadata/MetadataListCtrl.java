@@ -121,7 +121,7 @@ public class MetadataListCtrl implements Initializable {
             if (ms != null) {
                 unfilteredList.clear();
                 unfilteredList.addAll(
-                        ms.streamSearchResults(navState.getSearchString())
+                        ms.query.streamSearchResults(navState.getSearchString())
                             .map(r -> new ResourceAdapter(r, null))
                             .collect(Collectors.toList())
                 );
