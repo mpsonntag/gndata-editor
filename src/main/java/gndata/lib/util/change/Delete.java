@@ -8,6 +8,7 @@ import com.hp.hpl.jena.rdf.model.*;
 public class Delete implements Change {
 
     private Resource res;
+    private boolean applied = false;
 
     public Delete(Resource res) {
         this.res = res;
@@ -27,5 +28,9 @@ public class Delete implements Change {
 
     public void undoFrom(Model m) {
         // TODO add logic
+    }
+
+    public boolean applied() {
+        return applied;
     }
 }

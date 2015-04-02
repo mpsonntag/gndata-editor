@@ -10,4 +10,6 @@ public interface Change {
     public void applyTo(Model m);
 
     public void undoFrom(Model m);
+
+    public boolean applied();
 }
