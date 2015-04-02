@@ -20,7 +20,7 @@ import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;
 import com.hp.hpl.jena.vocabulary.*;
-import gndata.lib.util.QueryHelper;
+import gndata.lib.util.*;
 import org.apache.jena.atlas.lib.StrUtils;
 import org.apache.jena.riot.RDFDataMgr;
 
@@ -29,13 +29,8 @@ import org.apache.jena.riot.RDFDataMgr;
  */
 public class MetadataService {
 
-    public static final String stdPrefix = StrUtils.strjoinNL(
-            "PREFIX rdf: <" + RDF.getURI() + ">",
-            "PREFIX rdfs: <" + RDFS.getURI() + ">",
-            "PREFIX owl: <" + OWL.getURI() + ">"
-    );
-
     public QueryHelper query;
+    public ChangeHelper change;
 
     private OntModel schema;    // union model for all imported ontology files
     private Model annotations;  // model for data annotations
@@ -43,9 +38,10 @@ public class MetadataService {
     public MetadataService(OntModel schema, Model annotations) {
         this.schema = schema;
         this.annotations = annotations;
-        this.query = new QueryHelper(annotations);
-    }
 
+        this.query = new QueryHelper(annotations);
+        this.change = new ChangeHelper(annotations, schema);
+    }
 
     /**
      * Returns a Ontology RDF Model instance to access default and
@@ -88,7 +84,7 @@ public class MetadataService {
                     ")}"
             );
 
-            return query.ExecConstruct(stdPrefix + "\n" + qs);
+            return query.ExecConstruct(QueryHelper.stdPrefix + "\n" + qs);
         } else {
             return getAnnotations();
         }
@@ -130,36 +126,7 @@ public class MetadataService {
     public void importMetadata(String path) {
         Model newData =  RDFDataMgr.loadModel(path);
         annotations.add(newData);
-
-        Model foo = ModelFactory.createDefaultModel();
     }
-
-    /*
-    New API methods
-     */
-
-    public void createEntity(Model m) {
-        // model should have an RDF.type
-
-        // validate model against OWL
-
-        // add to annotations
-
-        // save changes (optional)
-    }
-
-    public void deleteEntity(Resource res) {
-        // delete all literals
-
-        // delete all subject-to-res relations
-
-        // delete all res-to-object entities that have no other references
-    }
-
-    public void updateDataProperty(Resource res, Property p, String value) {
-        // convert and validate from string using OWL
-    }
-
 
     /**
      * Creates a new Metadata Service using a given path. Combines existing
