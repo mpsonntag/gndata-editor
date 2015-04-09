@@ -53,7 +53,7 @@ public class QueryCtrl implements Initializable {
 
         projectState.configProperty().addListener((o, p, n) -> {
             if (projectState.isConfigured()) {
-                prefixArea.setText(projectState.getMetadata().getPrefixHeader());
+                prefixArea.setText(projectState.getMetadata().query.getPrefixHeader());
             }
         });
     }
@@ -65,9 +65,9 @@ public class QueryCtrl implements Initializable {
 
         if (projectState.isConfigured()) {
             try {
-                ResultSet results = projectState.getMetadata().SELECT(
+                ResultSet results = projectState.getMetadata().query.ExecSelect(
                     StrUtils.strjoinNL(
-                        projectState.getMetadata().getPrefixHeader(),
+                        projectState.getMetadata().query.getPrefixHeader(),
                         queryState.getCurrentQuery(),
                         "LIMIT " + maxResults
                     ));

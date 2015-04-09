@@ -20,6 +20,7 @@ import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;
 import com.hp.hpl.jena.vocabulary.*;
+import gndata.lib.util.*;
 import org.apache.jena.atlas.lib.StrUtils;
 import org.apache.jena.riot.RDFDataMgr;
 
@@ -28,11 +29,8 @@ import org.apache.jena.riot.RDFDataMgr;
  */
 public class MetadataService {
 
-    public static final String stdPrefix = StrUtils.strjoinNL(
-            "PREFIX rdf: <" + RDF.getURI() + ">",
-            "PREFIX rdfs: <" + RDFS.getURI() + ">",
-            "PREFIX owl: <" + OWL.getURI() + ">"
-    );
+    public QueryHelper query;
+    public ChangeHelper change;
 
     private OntModel schema;    // union model for all imported ontology files
     private Model annotations;  // model for data annotations
@@ -40,21 +38,9 @@ public class MetadataService {
     public MetadataService(OntModel schema, Model annotations) {
         this.schema = schema;
         this.annotations = annotations;
-    }
 
-    /**
-     * Provides a string with available PREFIX'es. May be used to build queries
-     * against current service.
-     *
-     * @return  String with prefixes
-     */
-    public String getPrefixHeader() {
-        return StrUtils.strjoinNL(getAnnotations()
-                    .getNsPrefixMap()
-                    .entrySet()
-                    .stream()
-                    .map(a -> "PREFIX " + a.getKey() + ": " + "<" + a.getValue() + ">")
-                    .collect(Collectors.toList()));
+        this.query = new QueryHelper(annotations);
+        this.change = new ChangeHelper(annotations, schema);
     }
 
     /**
@@ -98,48 +84,10 @@ public class MetadataService {
                     ")}"
             );
 
-            return CONSTRUCT(stdPrefix + "\n" + qs);
+            return query.ExecConstruct(QueryHelper.stdPrefix + "\n" + qs);
         } else {
             return getAnnotations();
         }
-    }
-
-    /**
-     * Fulltext search on literal values inside the metadata model.
-     *
-     * @param search The search parameter.
-     *
-     * @return A stream of resources with a property having a part of the
-     *         search string as literal value.
-     */
-    public Stream<Resource> streamSearchResults(String search) {
-        String qs = StrUtils.strjoin("",
-                "SELECT DISTINCT ?s ",
-                "WHERE {",
-                "  ?s ?p ?o ",
-                "  FILTER regex(?o, '", search, "', 'i')}"
-        );
-
-        Query query = QueryFactory.create(qs);
-        ResultSet rs = QueryExecutionFactory.create(query, getAnnotations()).execSelect();
-
-        String var = rs.getResultVars().get(0);
-        Stream<QuerySolution> stream =StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(rs, NONNULL | IMMUTABLE | DISTINCT), false);
-
-        return stream.map(sol -> sol.getResource(var));
-    }
-
-    /**
-     * Fulltext search on literal values inside the metadata model.
-     *
-     * @param search The search parameter.
-     *
-     * @return A stream of resources with a property having a part of the
-     *         search string as literal value.
-     */
-    public List<Resource> listSearchResults(String search) {
-        return streamSearchResults(search).collect(Collectors.toList());
     }
 
     /**
@@ -175,26 +123,6 @@ public class MetadataService {
                 .collect(Collectors.toList());
     }
 
-    public ResultSet SELECT(String queryString) {
-        Query query = QueryFactory.create(queryString);
-        QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());
-
-        ResultSet resultModel = ResultSetFactory.copyResults(qexec.execSelect());
-        qexec.close();
-
-        return resultModel;
-    }
-
-    public Model CONSTRUCT(String queryString) {
-        Query query = QueryFactory.create(queryString);
-        QueryExecution qexec = QueryExecutionFactory.create(query, getAnnotations());
-
-        Model resultModel = qexec.execConstruct();
-        qexec.close();
-
-        return resultModel;
-    }
-
     public void importMetadata(String path) {
         Model newData =  RDFDataMgr.loadModel(path);
         annotations.add(newData);
@@ -225,4 +153,5 @@ public class MetadataService {
 
         return new MetadataService(schema, data);
     }
+
 }
