@@ -10,6 +10,9 @@ package gndata.app.ui.dia;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,14 +26,11 @@ import gndata.lib.config.ProjectConfig;
  */
 public class ProjectConfigCtrl extends DialogController<ProjectConfig> implements Initializable {
 
-    final ProjectConfig config;
+    private final ProjectConfig config;
 
-    @FXML
-    private BorderPane view;
-    @FXML
-    private TextField nameInput;
-    @FXML
-    private TextArea descriptionInput;
+    @FXML public BorderPane view;
+    @FXML public StringProperty name;
+    @FXML public StringProperty description;
 
     /**
      * Constructor.
@@ -48,8 +48,8 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        nameInput.textProperty().bindBidirectional(config.nameProperty());
-        descriptionInput.textProperty().bindBidirectional(config.descriptionProperty());
+        name.bindBidirectional(config.nameProperty());
+        description.bindBidirectional(config.descriptionProperty());
     }
 
     /**
@@ -68,5 +68,5 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     public Node getView() {
         return view;
     }
-
+    
 }

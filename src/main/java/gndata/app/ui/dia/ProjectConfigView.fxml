@@ -13,6 +13,7 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.beans.property.SimpleStringProperty?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="gndata.app.ui.dia.ProjectConfigCtrl"
             fx:id="view">
@@ -29,19 +30,29 @@ LICENSE file in the root of the Project.
 
     <!-- form -->
     <center>
+
+        <fx:define>
+            <SimpleStringProperty fx:id="name"/>
+            <SimpleStringProperty fx:id="description"/>
+        </fx:define>
+
         <GridPane styleClass="dialog-form">
 
             <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
                 Name:
             </Label>
 
-            <TextField  fx:id="nameInput" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3">
+                <text>
+                    <fx:reference source="name" />
+                </text>
+            </TextField>
 
             <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
                 Description:
             </Label>
 
-            <TextArea fx:id="descriptionInput" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
+            <TextArea GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" text="$description"/>
         </GridPane>
     </center>
 

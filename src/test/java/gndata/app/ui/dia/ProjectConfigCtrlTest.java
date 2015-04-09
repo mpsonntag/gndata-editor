@@ -1,8 +1,9 @@
 package gndata.app.ui.dia;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import gndata.lib.config.ProjectConfig;
+import javafx.beans.property.SimpleStringProperty;
 import org.junit.*;
 
 public class ProjectConfigCtrlTest {
@@ -16,27 +17,46 @@ public class ProjectConfigCtrlTest {
         config.setName("MyName");
         config.setDescription("MyDescription");
         ctrl = new ProjectConfigCtrl(config);
+
+        ctrl.name = new SimpleStringProperty();
+        ctrl.description =  new SimpleStringProperty();
+
+        ctrl.initialize(null, null);
     }
 
     @Test
     public void testCancel() throws Exception {
         ctrl.setCancelled(false);
         ctrl.cancel();
-        assertTrue(ctrl.isCancelled());
+        assertThat(ctrl.isCancelled()).isTrue();
     }
 
     @Test
     public void testOk() throws Exception {
         ctrl.setCancelled(true);
         ctrl.ok();
-        assertFalse(ctrl.isCancelled());
+        assertThat(ctrl.isCancelled()).isFalse();
+    }
+
+    @Test
+    public void testNameBinding() {
+        ctrl.name.set("Changed");
+        assertThat(ctrl.getValue().getName()).isEqualTo("Changed");
+    }
+
+    @Test
+    public void testDescriptionBinding() {
+        ctrl.description.set("Changed");
+        assertThat(ctrl.getValue().getDescription()).isEqualTo("Changed");
     }
 
     @Test
     public void testGetResult() throws Exception {
         ProjectConfig result = ctrl.getValue();
-        assertEquals("MyName", result.getName());
-        assertEquals("MyDescription", result.getDescription());
-        assertNotEquals(result, config);
+
+        assertThat(result.getName()).isEqualTo("MyName");
+        assertThat(result.getDescription()).isEqualTo("MyDescription");
+
+        assertThat(result).isNotEqualTo(config);
     }
 }
