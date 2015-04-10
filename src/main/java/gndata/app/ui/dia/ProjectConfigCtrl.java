@@ -26,11 +26,11 @@ import gndata.lib.config.ProjectConfig;
  */
 public class ProjectConfigCtrl extends DialogController<ProjectConfig> implements Initializable {
 
-    private final ProjectConfig config;
+    @FXML private BorderPane view;
 
-    @FXML public BorderPane view;
-    @FXML public StringProperty name;
-    @FXML public StringProperty description;
+    private final ProjectConfig config;
+    private final StringProperty name;
+    private final StringProperty description;
 
     /**
      * Constructor.
@@ -39,6 +39,8 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      */
     public ProjectConfigCtrl(ProjectConfig config) {
         this.config = new ProjectConfig(config);
+        name = new SimpleStringProperty();
+        description = new SimpleStringProperty();
     }
 
     /**
@@ -68,5 +70,12 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
     public Node getView() {
         return view;
     }
-    
+
+    public StringProperty nameProperty() {
+        return name;
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
 }

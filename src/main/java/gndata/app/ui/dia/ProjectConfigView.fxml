@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?language javascript?>
+
 
 <!--
 Copyright (c) 2014, German Neuroinformatics Node (G-Node)
@@ -13,7 +15,6 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.beans.property.SimpleStringProperty?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="gndata.app.ui.dia.ProjectConfigCtrl"
             fx:id="view">
@@ -30,30 +31,25 @@ LICENSE file in the root of the Project.
 
     <!-- form -->
     <center>
-
-        <fx:define>
-            <SimpleStringProperty fx:id="name"/>
-            <SimpleStringProperty fx:id="description"/>
-        </fx:define>
-
         <GridPane styleClass="dialog-form">
 
             <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
                 Name:
             </Label>
 
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3">
-                <text>
-                    <fx:reference source="name" />
-                </text>
-            </TextField>
+            <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" />
 
             <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
                 Description:
             </Label>
 
-            <TextArea GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" text="$description"/>
+            <TextArea fx:id="descriptionField" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
         </GridPane>
+
+        <fx:script>
+            nameField.textProperty().bindBidirectional(nameProperty())
+            descriptionField.textProperty().bindBidirectional(descriptionProperty())
+        </fx:script>
     </center>
 
     <!-- buttons -->

@@ -18,9 +18,6 @@ public class ProjectConfigCtrlTest {
         config.setDescription("MyDescription");
         ctrl = new ProjectConfigCtrl(config);
 
-        ctrl.name = new SimpleStringProperty();
-        ctrl.description =  new SimpleStringProperty();
-
         ctrl.initialize(null, null);
     }
 
@@ -40,13 +37,13 @@ public class ProjectConfigCtrlTest {
 
     @Test
     public void testNameBinding() {
-        ctrl.name.set("Changed");
+        ctrl.nameProperty().set("Changed");
         assertThat(ctrl.getValue().getName()).isEqualTo("Changed");
     }
 
     @Test
     public void testDescriptionBinding() {
-        ctrl.description.set("Changed");
+        ctrl.descriptionProperty().set("Changed");
         assertThat(ctrl.getValue().getDescription()).isEqualTo("Changed");
     }
 
