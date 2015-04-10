@@ -2,11 +2,12 @@ package gndata.app.ui.util;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
 import static gndata.app.ui.util.NameConventions.*;
-import static gndata.test.TestUtils.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import gndata.test.ThrowableAssert;
 import org.junit.*;
+
 
 public class NameConventionsTest {
 
@@ -22,86 +23,88 @@ public class NameConventionsTest {
     @Test
     public void testTemplatePath() throws Exception {
         for (Class c : classes) {
-            assertEquals("gndata/app/ui/util/TestFooView.vtl", templatePath(c));
+            assertThat(templatePath(c)).isEqualTo("gndata/app/ui/util/TestFooView.vtl");
         }
     }
 
     @Test
     public void testTemplateResource() throws Exception {
         for (Class c : classes) {
-            assertTrue(templateResource(c).toString().endsWith("gndata/app/ui/util/TestFooView.vtl"));
+            assertThat(templateResource(c).toString())
+                    .endsWith("gndata/app/ui/util/TestFooView.vtl");
         }
 
-        assertThrows(() -> templateResource(getClass()), RuntimeException.class);
+        ThrowableAssert.assertThat(() -> templateResource(getClass()))
+                .wasThrowing(RuntimeException.class);
     }
 
     @Test
     public void testFxmlPath() throws Exception {
         for (Class c : classes) {
-            assertEquals("gndata/app/ui/util/TestFooView.fxml", fxmlPath(c));
+            assertThat(fxmlPath(c)).isEqualTo("gndata/app/ui/util/TestFooView.fxml");
         }
     }
 
     @Test
     public void testFxmlResource() throws Exception {
         for (Class c : classes) {
-            assertTrue(fxmlResource(c).toString().endsWith("gndata/app/ui/util/TestFooView.fxml"));
+            assertThat(fxmlResource(c).toString())
+                    .endsWith("gndata/app/ui/util/TestFooView.fxml");
         }
 
-        assertThrows(() -> fxmlResource(getClass()), RuntimeException.class);
+        ThrowableAssert.assertThat(() -> fxmlResource(getClass()))
+                .wasThrowing(RuntimeException.class);
     }
 
     @Test
     public void testStylePath() throws Exception {
         for (Class c : classes) {
-            assertEquals("gndata/app/ui/util/TestFooView.css", stylePath(c));
+            assertThat(stylePath(c)).isEqualTo("gndata/app/ui/util/TestFooView.css");
         }
     }
 
     @Test
     public void testStyleResource() throws Exception {
         for (Class c : classes) {
-            assertTrue(styleResource(c).toString().endsWith("gndata/app/ui/util/TestFooView.css"));
-            assertTrue(optionalStyleResource(c).isPresent());
-            assertTrue(optionalStyleResource(c).get().toString().endsWith("gndata/app/ui/util/TestFooView.css"));
+            assertThat(styleResource(c).toString()).endsWith("gndata/app/ui/util/TestFooView.css");
+
+            assertThat(optionalStyleResource(c).isPresent()).isTrue();
+            assertThat(optionalStyleResource(c).get().toString()).endsWith("gndata/app/ui/util/TestFooView.css");
         }
 
-        assertThrows(() -> styleResource(getClass()), RuntimeException.class);
-        assertFalse(optionalStyleResource(getClass()).isPresent());
+        ThrowableAssert.assertThat(() -> styleResource(getClass())).wasThrowing(RuntimeException.class);
     }
 
     @Test
     public void testViewClassPath() throws Exception {
         for (Class c : classes) {
-            assertEquals("gndata/app/ui/util/TestFooView", viewClassPath(c));
+            assertThat(viewClassPath(c)).isEqualTo("gndata/app/ui/util/TestFooView");
         }
     }
 
     @Test
     public void testViewClass() throws Exception {
         for (Class c : classes) {
-            Class cv = viewClass(c);
-            assertEquals(TestFooView.class, cv);
+            assertThat(viewClass(c)).isEqualTo(TestFooView.class);
         }
 
-        assertThrows(() -> viewClass(getClass()), ClassNotFoundException.class);
+        ThrowableAssert.assertThat(() -> viewClass(getClass())).wasThrowing(ClassNotFoundException.class);
     }
 
     @Test
     public void testCtrlClassPath() throws Exception {
         for (Class c : classes) {
-            assertEquals("gndata/app/ui/util/TestFooCtrl", ctrlClassPath(c));
+            assertThat(ctrlClassPath(c)).isEqualTo("gndata/app/ui/util/TestFooCtrl");
         }
     }
 
     @Test
     public void testCtrlClass() throws Exception {
         for (Class c : classes) {
-            Class cc = ctrlClass(c);
-            assertEquals(TestFooCtrl.class, cc);
+            assertThat(ctrlClass(c)).isEqualTo(TestFooCtrl.class);
         }
 
-        assertThrows(() -> ctrlClass(getClass()), ClassNotFoundException.class);
+        ThrowableAssert.assertThat(() -> ctrlClass(getClass())).wasThrowing(ClassNotFoundException.class);
     }
 }
 
