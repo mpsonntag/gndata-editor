@@ -28,12 +28,12 @@ public class ChangeHelper {
     /*   Public interface   */
 
     public void create(Model new_object) {
-        Change ch = new Create(new_object, ontology);
+        Change ch = new Merge(new_object, ontology);
         applyChange(ch);
     }
 
     public void delete(Resource res) {
-        Change ch = new Delete(res);
+        Change ch = new Delete(res, true);
         applyChange(ch);
     }
 
