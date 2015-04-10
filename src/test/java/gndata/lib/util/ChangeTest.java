@@ -1,10 +1,13 @@
 package gndata.lib.util;
 
 
+import static gndata.app.ui.util.NameConventions.templateResource;
+
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;
-import gndata.lib.util.change.Merge;
+import gndata.lib.util.change.*;
+import gndata.test.ThrowableAssert;
 import org.junit.*;
 
 public class ChangeTest {
@@ -40,13 +43,19 @@ public class ChangeTest {
 
         // merge incorrect
         Model bar = FakeRDFModel.createInstance("NONEXIST", "name", "foo@bar.com");
-
         Merge op2 = new Merge(bar, ontology);
-        op2.applyTo(model);
+
+        ThrowableAssert.assertThat(() -> op2.applyTo(model))
+                .wasThrowing(AssertionError.class);
+        assert(!op2.applied());
     }
 
     @Test
     public void testDelete() throws Exception {
-        // TODO implement
+        Change op1 = new Delete(FakeRDFModel.rhm, true);
+        op1.applyTo(model);
+
+        assert(op1.applied());
+        assert(!model.containsResource(model.getResource(FakeRDFModel.rhm)));
     }
 }

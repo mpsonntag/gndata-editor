@@ -10,14 +10,14 @@ import com.hp.hpl.jena.rdf.model.*;
  */
 public class Delete implements Change {
 
-    private Resource res;
+    private String id;
     private boolean isRecursive = true;
     private boolean applied = false;
 
     private Model changes = ModelFactory.createDefaultModel();
 
-    public Delete(Resource res, boolean isRecursive) {
-        this.res = res;
+    public Delete(String id, boolean isRecursive) {
+        this.id = id;
         this.isRecursive = isRecursive;
     }
 
@@ -31,7 +31,12 @@ public class Delete implements Change {
                     .map(RDFNode::asResource).collect(Collectors.toSet());
 
             // delete all properties
-            from.removeAll(res, null, null);
+            from.listStatements().toList().forEach(st -> {
+                if (st.getSubject().equals(res) ||
+                        (st.getObject().isResource() && st.getObject().asResource().equals(res))) {
+                    from.remove(st);
+                }
+            });
 
             // record changes
             changes.add(from.difference(tmp));
@@ -50,7 +55,7 @@ public class Delete implements Change {
     }
 
     public void applyTo(Model m) {
-        deleteSingle(res, m);
+        deleteSingle(m.getResource(id), m);
         applied = true;
     }
 

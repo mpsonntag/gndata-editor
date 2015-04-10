@@ -33,7 +33,7 @@ public class ChangeHelper {
     }
 
     public void delete(Resource res) {
-        Change ch = new Delete(res, true);
+        Change ch = new Delete(res.getURI(), true);
         applyChange(ch);
     }
 
