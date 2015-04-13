@@ -23,10 +23,8 @@ public class Delete implements Change {
 
     private void deleteSingle(Resource res, Model from) {
         if (from.containsResource(res)) {
-            List<Statement> lhs = from.listStatements(res, null, (RDFNode)null).toList();
-            List<Statement> rhs = from.listStatements(null, null, res).toList();
-
-            changes.add(lhs).add(rhs);
+            changes.add(from.listStatements(res, null, (RDFNode)null));
+            changes.add(from.listStatements(null, null, res));
 
             from.remove(changes.listStatements());
 
