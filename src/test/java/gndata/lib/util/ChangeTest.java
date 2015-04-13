@@ -1,8 +1,6 @@
 package gndata.lib.util;
 
 
-import static gndata.app.ui.util.NameConventions.templateResource;
-
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;

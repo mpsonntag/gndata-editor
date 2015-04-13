@@ -1,6 +1,6 @@
 package gndata.lib.util.change;
 
-import java.util.*;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.hp.hpl.jena.rdf.model.*;
