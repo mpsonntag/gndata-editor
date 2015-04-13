@@ -1,6 +1,6 @@
 package gndata.lib.util.change;
 
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.hp.hpl.jena.rdf.model.*;
@@ -23,25 +23,17 @@ public class Delete implements Change {
 
     private void deleteSingle(Resource res, Model from) {
         if (from.containsResource(res)) {
-            Model tmp = ModelFactory.createDefaultModel();
-            tmp.add(from);
+            List<Statement> lhs = from.listStatements(res, null, (RDFNode)null).toList();
+            List<Statement> rhs = from.listStatements(null, null, res).toList();
 
-            Set<Resource> related = from.listObjectsOfProperty(res, null).toList()
-                    .stream().filter(r -> r.isResource())
-                    .map(RDFNode::asResource).collect(Collectors.toSet());
+            changes.add(lhs).add(rhs);
 
-            // delete all properties
-            from.listStatements().toList().forEach(st -> {
-                if (st.getSubject().equals(res) ||
-                        (st.getObject().isResource() && st.getObject().asResource().equals(res))) {
-                    from.remove(st);
-                }
-            });
+            from.remove(changes.listStatements());
 
-            // record changes
-            changes.add(from.difference(tmp));
-
+            /*
             // delete all res-to-object entities that have no other references
+            // is subject for further discussion
+
             if (isRecursive) {
                 related.forEach(r -> {
                     if (from.listSubjectsWithProperty(null, r.getURI())
@@ -50,6 +42,7 @@ public class Delete implements Change {
                     }
                 });
             }
+             */
         }
 
     }
