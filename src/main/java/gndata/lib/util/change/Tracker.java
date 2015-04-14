@@ -2,6 +2,7 @@ package gndata.lib.util.change;
 
 import java.util.*;
 
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**
@@ -30,9 +31,9 @@ public class Tracker {
         position -= 1;
     }
 
-    public void redo(Model m) {
+    public void redo(Model m, OntModel o) {
         if (position < changes.size() - 1) {
-            changes.get(position).applyTo(m);
+            changes.get(position).applyTo(m, o);
             position += 1;
         }
     }

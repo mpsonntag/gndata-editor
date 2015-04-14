@@ -1,36 +1,50 @@
 package gndata.lib.util.change;
 
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.*;
 
 /**
  * Class that knows how to delete Metadata entities.
  */
-public class Delete implements Change {
+public class Delete extends AbstractChange {
 
-    private Resource res;
-    private boolean applied = false;
+    private String uri;
 
-    public Delete(Resource res) {
-        this.res = res;
+    public Delete(String uri) {
+        this.uri = uri;
     }
 
-    public void applyTo(Model m) {
-        // TODO add logic
+    private void deleteSingle(Resource res, Model from) {
+        if (from.containsResource(res)) {
+            Model toRemove = ModelFactory.createDefaultModel();
+            toRemove.add(from.listStatements(res, null, (RDFNode) null));
+            toRemove.add(from.listStatements(null, null, res));
 
-        if (!m.containsResource(res)) {
-            // delete all literals
+            from.remove(toRemove);
+            addRemoved(toRemove);
 
-            // delete all subject-to-res relations
-
+            /*
             // delete all res-to-object entities that have no other references
+            // is subject for further discussion
+
+            if (isRecursive) {
+                related.forEach(r -> {
+                    if (from.listSubjectsWithProperty(null, r.getURI())
+                            .toList().isEmpty()) {
+                        deleteSingle(r, from);
+                    }
+                });
+            }
+             */
         }
+
     }
 
-    public void undoFrom(Model m) {
-        // TODO add logic
-    }
+    public void applyTo(Model m, OntModel o) throws IllegalStateException {
+        if (hasChanges()) {
+            throw new IllegalStateException("Changes already applied");
+        }
 
-    public boolean applied() {
-        return applied;
+        deleteSingle(m.getResource(uri), m);
     }
 }

@@ -2,6 +2,7 @@ package gndata.lib.util;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.reasoner.*;
 import gndata.lib.util.change.*;
 
 /**
@@ -12,28 +13,43 @@ public class ChangeHelper {
     private Model model;
     private OntModel ontology;
     private Tracker tracker;
+    private Reasoner reasoner;
 
     public ChangeHelper(Model m, OntModel ont) {
         this.model = m;
         this.ontology = ont;
         this.tracker = new Tracker();
+
+        this.reasoner = ReasonerRegistry.getOWLReasoner();
+        reasoner.bindSchema(ontology);
     }
 
     private void applyChange(Change ch) {
-        ch.applyTo(model);
+        ch.applyTo(model, ontology);
 
-        tracker.logChange(ch);
+        InfModel infm = ModelFactory.createInfModel(reasoner, model);
+
+        if (infm.validate().isValid()) {
+            tracker.logChange(ch);
+        } else {
+            ch.undoFrom(model);
+        }
     }
 
     /*   Public interface   */
 
-    public void create(Model new_object) {
-        Change ch = new Create(new_object, ontology);
+    public void create(Model NewObject) {
+        Change ch = new Insert(NewObject);
         applyChange(ch);
     }
 
-    public void delete(Resource res) {
-        Change ch = new Delete(res);
+    public void update(Model newObject) {
+        Change ch = new Insert(newObject);
+        applyChange(ch);
+    }
+
+    public void delete(String uri) {
+        Change ch = new Delete(uri);
         applyChange(ch);
     }
 

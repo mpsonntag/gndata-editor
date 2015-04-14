@@ -1,5 +1,6 @@
 package gndata.lib.util.change;
 
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**
@@ -7,9 +8,9 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public interface Change {
 
-    public void applyTo(Model m);
+    public void applyTo(Model m, OntModel o) throws IllegalStateException;
 
-    public void undoFrom(Model m);
+    public void undoFrom(Model m) throws IllegalStateException;
 
-    public boolean applied();
+    public boolean hasChanges();
 }
