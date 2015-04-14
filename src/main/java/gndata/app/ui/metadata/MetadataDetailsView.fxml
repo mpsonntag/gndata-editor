@@ -31,7 +31,7 @@ LICENSE file in the root of the Project.
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
-                    <columns>
+                    <!--<columns>
                         <TableColumn text="Property">
                             <cellValueFactory>
                                 <PropertyValueFactory property="predicate"/>
@@ -47,7 +47,7 @@ LICENSE file in the root of the Project.
                                 <PropertyValueFactory property="type"/>
                             </cellValueFactory>
                         </TableColumn>
-                    </columns>
+                    </columns>-->
                 </TableView>
             </Tab>
         </TabPane>
