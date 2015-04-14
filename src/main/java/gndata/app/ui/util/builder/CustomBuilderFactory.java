@@ -7,7 +7,9 @@ import javafx.util.Builder;
 import javafx.util.BuilderFactory;
 
 /**
- * Created by stoewer on 01.04.15.
+ * Builder factory used for customized creation of fxml controls.
+ *
+ * TODO this class is not used at the moment
  */
 public class CustomBuilderFactory implements BuilderFactory {
 
