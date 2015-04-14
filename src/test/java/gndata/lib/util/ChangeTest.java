@@ -26,10 +26,10 @@ public class ChangeTest {
         Model foo = FakeRDFModel.createInstance("Person", "name", "foo@bar.com");
 
         // merge correct
-        Merge op1 = new Merge(foo, ontology);
-        op1.applyTo(model);
+        Insert op1 = new Insert(foo);
+        op1.applyTo(model, ontology);
 
-        assert(op1.applied());
+        assert(op1.hasChanges());
         assert(model.containsAll(foo));
 
         // validation with reasoner
@@ -39,21 +39,25 @@ public class ChangeTest {
 
         assert(infm.validate().isValid());
 
+        // merge empty
+        Insert op2 = new Insert(ModelFactory.createDefaultModel());
+
+        ThrowableAssert.assertThat(() -> op2.applyTo(model, ontology))
+                .wasThrowing(IllegalStateException.class);
+        assert(!op2.hasChanges());
+
         // merge incorrect
         Model bar = FakeRDFModel.createInstance("NONEXIST", "name", "foo@bar.com");
-        Merge op2 = new Merge(bar, ontology);
 
-        ThrowableAssert.assertThat(() -> op2.applyTo(model))
-                .wasThrowing(AssertionError.class);
-        assert(!op2.applied());
+        // TODO when validations implemented
     }
 
     @Test
     public void testDelete() throws Exception {
-        Change op1 = new Delete(FakeRDFModel.rhm, true);
-        op1.applyTo(model);
+        Change op1 = new Delete(FakeRDFModel.rhm);
+        op1.applyTo(model, ontology);
 
-        assert(op1.applied());
+        assert(op1.hasChanges());
         assert(!model.containsResource(model.getResource(FakeRDFModel.rhm)));
     }
 }

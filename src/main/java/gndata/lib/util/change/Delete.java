@@ -1,32 +1,27 @@
 package gndata.lib.util.change;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.*;
 
 /**
  * Class that knows how to delete Metadata entities.
  */
-public class Delete implements Change {
+public class Delete extends AbstractChange {
 
-    private String id;
-    private boolean isRecursive = true;
-    private boolean applied = false;
+    private String uri;
 
-    private Model changes = ModelFactory.createDefaultModel();
-
-    public Delete(String id, boolean isRecursive) {
-        this.id = id;
-        this.isRecursive = isRecursive;
+    public Delete(String uri) {
+        this.uri = uri;
     }
 
     private void deleteSingle(Resource res, Model from) {
         if (from.containsResource(res)) {
-            changes.add(from.listStatements(res, null, (RDFNode)null));
-            changes.add(from.listStatements(null, null, res));
+            Model toRemove = ModelFactory.createDefaultModel();
+            toRemove.add(from.listStatements(res, null, (RDFNode) null));
+            toRemove.add(from.listStatements(null, null, res));
 
-            from.remove(changes.listStatements());
+            from.remove(toRemove);
+            addRemoved(toRemove);
 
             /*
             // delete all res-to-object entities that have no other references
@@ -45,16 +40,11 @@ public class Delete implements Change {
 
     }
 
-    public void applyTo(Model m) {
-        deleteSingle(m.getResource(id), m);
-        applied = true;
-    }
+    public void applyTo(Model m, OntModel o) throws IllegalStateException {
+        if (hasChanges()) {
+            throw new IllegalStateException("Changes already applied");
+        }
 
-    public void undoFrom(Model m) {
-        // TODO add logic
-    }
-
-    public boolean applied() {
-        return applied;
+        deleteSingle(m.getResource(uri), m);
     }
 }

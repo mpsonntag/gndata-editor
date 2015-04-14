@@ -25,7 +25,7 @@ public class ChangeHelper {
     }
 
     private void applyChange(Change ch) {
-        ch.applyTo(model);
+        ch.applyTo(model, ontology);
 
         InfModel infm = ModelFactory.createInfModel(reasoner, model);
 
@@ -38,18 +38,18 @@ public class ChangeHelper {
 
     /*   Public interface   */
 
-    public void create(Model new_object) {
-        Change ch = new Merge(new_object, ontology);
+    public void create(Model NewObject) {
+        Change ch = new Insert(NewObject);
         applyChange(ch);
     }
 
-    public void update(Model new_object) {
-        Change ch = new Merge(new_object, ontology);
+    public void update(Model newObject) {
+        Change ch = new Insert(newObject);
         applyChange(ch);
     }
 
-    public void delete(Resource res) {
-        Change ch = new Delete(res.getURI(), true);
+    public void delete(String uri) {
+        Change ch = new Delete(uri);
         applyChange(ch);
     }
 
