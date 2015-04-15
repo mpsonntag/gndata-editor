@@ -8,32 +8,28 @@
 
 package gndata.app.ui.util;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.rdf.model.*;
-import gndata.lib.util.Resources;
+import gndata.lib.srv.StatementAdapter;
+import gndata.lib.srv.StatementAdapter.Action;
 
 /**
  * Class that implements rendering of table items with RDF literals.
  */
 public class DataPropertyTableItem {
 
-    private final Statement originalStatement;
-    private Statement currentStatement;
+    private StatementAdapter saItem;
 
     public DataPropertyTableItem(Statement statement) {
-        this.originalStatement = statement;
-        this.currentStatement = statement;
+        this.saItem = new StatementAdapter(statement);
     }
 
     public String getPredicate() {
-        return currentStatement.getPredicate().getLocalName();
+        return saItem.getOriginalStatement().getPredicate().getLocalName();
     }
 
     public String getLiteral() {
-        RDFNode object = currentStatement.getObject();
+        RDFNode object = saItem.getModifiedObject();
         if (object.isLiteral()) {
             return object.asLiteral().getValue().toString();
         } else {
@@ -43,17 +39,14 @@ public class DataPropertyTableItem {
 
     public DataPropertyTableItem setLiteral(String oldVal, String newVal) {
         if(!oldVal.equals(newVal)) {
-            Statement newStatement = ResourceFactory.createStatement(
-                    currentStatement.getSubject(),
-                    currentStatement.getPredicate(),
-                    ResourceFactory.createPlainLiteral(newVal));
-            this.currentStatement = newStatement;
+            this.saItem.setModifiedObject(ResourceFactory.createPlainLiteral(newVal));
+            this.saItem.setAction(Action.UPDATE);
         }
         return this;
     }
 
     public String getType() {
-        RDFNode object = currentStatement.getObject();
+        RDFNode object = saItem.getOriginalStatement().getObject();
         if (object.isLiteral()) {
             RDFDatatype dt = object.asLiteral().getDatatype();
             return dt != null ? dt.getJavaClass().getSimpleName() : "String";
@@ -62,14 +55,12 @@ public class DataPropertyTableItem {
         }
     }
 
-    @Deprecated // because can be easily replaced using Resources.streamLiteralsFor
-    public static List<StatementTableItem> buildTableItems(RDFNode node) {
-        if (node == null || !node.isResource())
-            return new ArrayList<>();
+    // TODO return proper icon
+    public String getIcon() {
+        return "x";
+    }
 
-        return Resources.streamLiteralsFor(node.asResource())
-                .map(StatementTableItem::new)
-                .collect(Collectors.toList());
-
+    public StatementAdapter getStatementAdapter(){
+        return this.saItem;
     }
 }

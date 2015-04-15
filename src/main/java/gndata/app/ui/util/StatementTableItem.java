@@ -26,6 +26,8 @@ public class StatementTableItem {
         this.statement = statement;
     }
 
+    public Statement getStatement() { return statement; }
+
     public String getPredicate() {
         return statement.getPredicate().getLocalName();
     }
@@ -37,6 +39,22 @@ public class StatementTableItem {
         } else {
             return "";
         }
+    }
+
+    public Statement withLiteral(String oldVal, String newVal) {
+
+        Statement returnStatement;
+        if(!oldVal.equals(newVal)) {
+            Resource subj = statement.getSubject();
+            Property pred = statement.getPredicate();
+            RDFNode obj = ResourceFactory.createPlainLiteral(newVal);
+
+            returnStatement = ResourceFactory.createStatement(subj, pred, obj);
+
+        } else {
+            returnStatement = statement;
+        }
+        return returnStatement;
     }
 
     public String getType() {

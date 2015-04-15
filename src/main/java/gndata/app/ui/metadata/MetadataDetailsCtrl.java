@@ -19,12 +19,16 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
+import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.html.PageCtrl;
 import gndata.app.state.MetadataNavState;
 import gndata.app.ui.util.*;
+import gndata.lib.srv.StatementAdapter;
+import gndata.lib.srv.StatementAdapter.Action;
 import gndata.lib.util.Resources;
 
 /**
@@ -38,18 +42,29 @@ public class MetadataDetailsCtrl extends PageCtrl {
     private WebView webView;
     @FXML
     private TableView<DataPropertyTableItem> tableView;
+    @FXML
+    private ComboBox<String> addProperty;
+    @FXML
+    private TextField addPropertyValue;
 
     private MetadataNavState metadataState;
     private ObservableList<DataPropertyTableItem> statements;
+
+    private ObservableList<StatementAdapter> modelChangeList;
+
+    private ObservableList<String> availableProperties;
 
     @Inject
     public MetadataDetailsCtrl(MetadataNavState metadataState) {
         this.metadataState = metadataState;
         this.statements = FXCollections.observableList(new ArrayList<DataPropertyTableItem>());
+        this.modelChangeList = FXCollections.observableList(new ArrayList<StatementAdapter>());
+        this.availableProperties = FXCollections.observableList(new ArrayList<String>());
 
         metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
             getPage().applyModel(newVal);
 
+            availableProperties.clear();
             if (newVal == null) {
                 statements.clear();
             } else {
@@ -58,6 +73,14 @@ public class MetadataDetailsCtrl extends PageCtrl {
                                 .map(DataPropertyTableItem::new)
                                 .collect(Collectors.toList())
                 );
+
+                //Todo implement here: get all available predicates for the selected resource
+                // from the metadata service layer
+
+                System.out.println("Get literals for " + newVal.getResource().getLocalName() + "\n");
+
+                Resources.streamLiteralsFor(newVal.getResource())
+                        .forEach(r -> availableProperties.add(r.getPredicate().getLocalName()));
             }
         });
     }
@@ -73,14 +96,19 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
         tableView.setEditable(true);
         Callback<TableColumn, TableCell> cellFactory =
-            new Callback<TableColumn, TableCell>() {
-                public TableCell call(TableColumn p) {
-                    return new EditingCell();
-                }
-            };
+                p -> new EditingCell();
+
+        // add listener to delete cell, adding the StatementAdapter corresponding
+        // to the selected item to the modelchangelist
+        // immediately applying the change for the moment
+        Callback<TableColumn, TableCell> delCellFactory =
+                p -> new DeleteCell();
+
+        // add table columns
 
         TableColumn prop = new TableColumn("Property");
         prop.setCellValueFactory(new PropertyValueFactory<DataPropertyTableItem, String>("predicate"));
+
         TableColumn val = new TableColumn("Value");
         val.setCellValueFactory(new PropertyValueFactory<DataPropertyTableItem, String>("literal"));
         val.setCellFactory(cellFactory);
@@ -88,24 +116,123 @@ public class MetadataDetailsCtrl extends PageCtrl {
                 new EventHandler<CellEditEvent<DataPropertyTableItem, String>>() {
                     @Override
                     public void handle(CellEditEvent<DataPropertyTableItem, String> event) {
-                        ((DataPropertyTableItem) event.getTableView().getItems().get(
-                                event.getTablePosition().getRow())).setLiteral(event.getOldValue(), event.getNewValue());
+
+                        // TODO here will be a problem, if changes are not immediately persisted:
+                        // if we mark a StatementAdapter for delete, and we try to
+                        // change the value afterwards, it will probably overwrite the
+                        // "delete" action with an "update" action.
+                        // this has to be avoided somehow.
+
+                        String oldVal = event.getOldValue();
+                        String newVal = event.getNewValue();
+
+                        (event.getTableView().getItems().get(
+                                event.getTablePosition().getRow())).setLiteral(oldVal, newVal);
+
+                        if (!oldVal.equals(newVal)) {
+                            // get updated statementadapter
+                            StatementAdapter updateItem =
+                                    (event.getTableView().getItems().get(
+                                            event.getTablePosition().getRow())).getStatementAdapter();
+                            // add last change to the changelist
+                            modelChangeList.add(updateItem);
+                            // apply changes to the model immediately
+                            integrateModelChanges();
+                        }
                     }
                 }
         );
 
         TableColumn type = new TableColumn("Type");
         type.setCellValueFactory(new PropertyValueFactory<DataPropertyTableItem, String>("type"));
-        TableColumn edit = new TableColumn("Delete");
-        //edit.setCellFactory(cellDelFactory);
 
-        //edit.setCellValueFactory(new PropertyValueFactory<DataPropertyTableItem, String>("icon"));
+        TableColumn del = new TableColumn("Delete");
+        del.setCellValueFactory(new PropertyValueFactory<DataPropertyTableItem, String>("icon"));
+        del.setCellFactory(delCellFactory);
 
         tableView.setItems(statements);
-        tableView.getColumns().addAll(prop, val, type, edit);
+        tableView.getColumns().addAll(prop, val, type, del);
+
+        // add available properties to combo box
+        addProperty.setItems(availableProperties);
+        System.out.println("blub: " + availableProperties.size() +"\n");
+        addProperty.getSelectionModel().selectFirst();
+
+        addPropertyValue.clear();
     }
 
-    class EditingCell extends TableCell<DataPropertyTableItem, String> {
+    // maybe this should be move to the metadata service layer
+    public void createNewPredicate() {
+
+        if (addProperty.getSelectionModel().getSelectedItem() != null && !addPropertyValue.getText().isEmpty()) {
+
+            // create Subject Resource
+            Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
+
+            // create Predicate
+            //TODO get correct property namespace
+            String propNamespace = "getMyProperNamespace#";
+            String propLocalName = addProperty.getSelectionModel().getSelectedItem();
+            Property p = ResourceFactory.createProperty(propNamespace, propLocalName);
+
+            // create Literal value
+            RDFNode o = ResourceFactory.createPlainLiteral(addPropertyValue.getText());
+
+            Statement s = ResourceFactory.createStatement(parentResource, p, o);
+
+            StatementAdapter sli = new StatementAdapter(s);
+            sli.setAction(Action.ADD);
+
+            modelChangeList.add(sli);
+
+            integrateModelChanges();
+        }
+    }
+
+    // forward all not integrated changes to the model and integrate them there
+    private void integrateModelChanges() {
+        System.out.println("Integrate model changes:\n");
+        // TODO hand over StatementAdapter to the ChangeHelper to integrate Changes
+        // into the actual DataModel
+
+        modelChangeList.stream().forEach(
+                sli -> System.out.println(
+                        "Predicate: "+ sli.getOriginalStatement().getPredicate().toString() +" Action: "+ sli.getAction() +"\n"));
+
+        // clear ChangeList after changes have been integrated into model
+        modelChangeList.clear();
+    }
+
+    // Cell class required to delete an existing DataProperty
+    private class DeleteCell extends TableCell<DataPropertyTableItem, String> {
+
+        public DeleteCell(){
+            this.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    // get index of clicked cell
+                    TableCell c = (TableCell) event.getSource();
+
+                    // check if an actual existing row has been selected
+                    if (!c.isEmpty()) {
+                        // retrieve corresponding StatementAdapter
+                        StatementAdapter currItem = tableView.getItems().get(c.getIndex()).getStatementAdapter();
+                        // mark corresponding StatementAdapter for delete
+                        currItem.setAction(Action.DELETE);
+
+                        // add item to change list
+                        modelChangeList.add(currItem);
+                        // apply changes immediately to the data model for now
+                        integrateModelChanges();
+                    }
+                }
+            });
+        }
+
+    }
+
+    // cell class to update the value of an existing DataProperty
+    private class EditingCell extends TableCell<DataPropertyTableItem, String> {
 
         private TextField textField;
 
