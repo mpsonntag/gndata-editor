@@ -6,28 +6,24 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.util;
+package gndata.lib.srv;
 
 import com.hp.hpl.jena.rdf.model.*;
 
 
 /**
- * Class that implements rendering of table items with RDF literals.
+ * Class that provides a link from statements to UI components.
  */
-public class StatementListItem {
+public class StatementAdapter {
 
     private final Statement originalStatement;
     private RDFNode modifiedObject;
-    private String action;
+    private Action action;
 
-    public final String add = "Add";
-    public final String delete = "Delete";
-    public final String update = "Update";
-
-    public StatementListItem(Statement statement) {
+    public StatementAdapter(Statement statement) {
         this.originalStatement = statement;
         this.modifiedObject = statement.getObject();
-        this.action = this.update;
+        this.action = Action.UPDATE;
     }
 
     public Statement getOriginalStatement() {
@@ -38,15 +34,17 @@ public class StatementListItem {
         return this.modifiedObject;
     }
 
-    public void setModifiedObject(RDFNode r) {
-        this.modifiedObject = r;
-    }
+    public void setModifiedObject(RDFNode r) { this.modifiedObject = r; }
 
-    public String getAction() {
+    public Action getAction() {
         return this.action;
     }
 
-    public void setAction(String s) {
-        this.action = s;
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public enum Action {
+        ADD, DELETE, UPDATE
     }
 }

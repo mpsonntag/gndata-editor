@@ -10,11 +10,12 @@ modification, are permitted under the terms of the BSD License. See
 LICENSE file in the root of the Project.
 -->
 
-<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.collections.FXCollections?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataDetailsCtrl">
@@ -27,28 +28,33 @@ LICENSE file in the root of the Project.
                          AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0"/>
             </Tab>
             <Tab text="Table">
-                <TableView fx:id="tableView">
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                    </columnResizePolicy>
-                    <!--<columns>
-                        <TableColumn text="Property">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="predicate"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Value">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="literal"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Type">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="type"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                    </columns>-->
-                </TableView>
+                <BorderPane>
+                    <center>
+                        <fx:define>
+                            <TableColumn fx:id="valueColumn" text="Value">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="literal"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                        </fx:define>
+
+                        <TableView fx:id="tableView">
+
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                        </TableView>
+                    </center>
+                    <bottom>
+                        <HBox>
+                            <children>
+                                <ComboBox fx:id="addProperty" />
+                                <TextField fx:id="addPropertyValue" promptText="enter value" />
+                                <Button onAction="#createNewPredicate">Add Property</Button>
+                            </children>
+                        </HBox>
+                    </bottom>
+                </BorderPane>
             </Tab>
         </TabPane>
     </center>
