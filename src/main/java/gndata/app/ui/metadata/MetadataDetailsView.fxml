@@ -13,9 +13,9 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
-
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.collections.FXCollections?>
+
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataDetailsCtrl">
@@ -29,16 +29,19 @@ LICENSE file in the root of the Project.
             </Tab>
             <Tab text="Table">
                 <BorderPane>
+                    <top>
+                        <Label fx:id="messageLabel" minHeight="50" onMouseClicked="#clearLabel"></Label>
+                    </top>
                     <center>
-                        <fx:define>
+                        <!--<fx:define>
                             <TableColumn fx:id="valueColumn" text="Value">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="literal"/>
                                 </cellValueFactory>
                             </TableColumn>
-                        </fx:define>
+                        </fx:define>-->
 
-                        <TableView fx:id="tableView">
+                        <TableView fx:id="tableView" >
 
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
@@ -46,11 +49,14 @@ LICENSE file in the root of the Project.
                         </TableView>
                     </center>
                     <bottom>
-                        <HBox>
+                        <HBox alignment="CENTER_RIGHT">
                             <children>
+                                <Label text="Add new DataProperty:">
+                                    <padding><Insets right="25" /></padding>
+                                </Label>
                                 <ComboBox fx:id="addProperty" />
                                 <TextField fx:id="addPropertyValue" promptText="enter value" />
-                                <Button onAction="#createNewPredicate">Add Property</Button>
+                                <Button onAction="#addDataProperty" text="Add" />
                             </children>
                         </HBox>
                     </bottom>
