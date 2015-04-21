@@ -34,27 +34,26 @@ public class StatementTableItem {
 
     public String getLiteral() {
         RDFNode object = statement.getObject();
-        if (object.isLiteral()) {
-            return object.asLiteral().getValue().toString();
-        } else {
-            return "";
-        }
+
+        return object.isLiteral() ? object.asLiteral().getValue().toString() : "";
     }
 
-    public Statement withLiteral(String oldVal, String newVal) {
+    public StatementTableItem withLiteral(String val) {
 
-        Statement returnStatement;
-        if(!oldVal.equals(newVal)) {
-            Resource subj = statement.getSubject();
-            Property pred = statement.getPredicate();
-            RDFNode obj = ResourceFactory.createPlainLiteral(newVal);
+        Resource subj = statement.getSubject();
+        Property pred = statement.getPredicate();
+        RDFNode obj = ResourceFactory.createPlainLiteral(val);
 
-            returnStatement = ResourceFactory.createStatement(subj, pred, obj);
+        return new StatementTableItem(ResourceFactory.createStatement(subj, pred, obj));
+    }
 
-        } else {
-            returnStatement = statement;
-        }
-        return returnStatement;
+    public StatementTableItem withLiteral(String val, RDFDatatype type) {
+
+        Resource subj = statement.getSubject();
+        Property pred = statement.getPredicate();
+        RDFNode obj = ResourceFactory.createTypedLiteral(val, type);
+
+        return new StatementTableItem(ResourceFactory.createStatement(subj, pred, obj));
     }
 
     public String getType() {
