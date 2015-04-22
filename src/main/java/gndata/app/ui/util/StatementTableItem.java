@@ -14,7 +14,7 @@ import com.hp.hpl.jena.rdf.model.*;
 /**
  * Class that implements rendering of table items with RDF literals.
  */
-public class StatementTableItem {
+public final class StatementTableItem {
 
     private final Statement statement;
 

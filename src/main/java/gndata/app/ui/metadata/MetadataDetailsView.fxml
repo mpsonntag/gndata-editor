@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?language javascript?>
 
 <!--
 Copyright (c) 2014, German Neuroinformatics Node (G-Node)
@@ -13,9 +14,9 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 
-<?import javafx.geometry.Insets?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataDetailsCtrl">
@@ -30,7 +31,10 @@ LICENSE file in the root of the Project.
             <Tab text="Table">
                 <BorderPane>
                     <top>
-                        <Label fx:id="messageLabel" minHeight="50" onMouseClicked="#clearLabel"></Label>
+                        <Label fx:id="messageLabel" minHeight="50" onMouseClicked="#clearLabel" />
+                        <fx:script>
+                            messageLabel.textProperty().bindBidirectional(controller.messageProperty())
+                        </fx:script>
                     </top>
                     <center>
                         <!--<fx:define>
@@ -41,8 +45,7 @@ LICENSE file in the root of the Project.
                             </TableColumn>
                         </fx:define>-->
 
-                        <TableView fx:id="tableView" >
-
+                        <TableView fx:id="tableView">
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                             </columnResizePolicy>
@@ -54,9 +57,14 @@ LICENSE file in the root of the Project.
                                 <Label text="Add new DataProperty:">
                                     <padding><Insets right="25" /></padding>
                                 </Label>
-                                <ComboBox fx:id="addProperty" />
-                                <TextField fx:id="addPropertyValue" promptText="enter value" />
+                                <ComboBox fx:id="newPredicate" />
+                                <TextField fx:id="newPredicateValue" promptText="enter value" />
                                 <Button onAction="#addDataProperty" text="Add" />
+
+                                <fx:script>
+                                    <!--newPredicate.itemsProperty().bindBidirectional(controller.newPredicateProperty())-->
+                                    newPredicateValue.textProperty().bindBidirectional(controller.newPredicateValueProperty())
+                                </fx:script>
                             </children>
                         </HBox>
                     </bottom>
