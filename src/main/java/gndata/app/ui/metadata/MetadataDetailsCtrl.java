@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -25,6 +26,7 @@ import javafx.util.*;
 import com.hp.hpl.jena.datatypes.*;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Property;
 import gndata.app.html.PageCtrl;
 import gndata.app.state.MetadataNavState;
 import gndata.app.ui.util.*;
@@ -35,7 +37,7 @@ import gndata.lib.util.Resources;
  */
 public class MetadataDetailsCtrl extends PageCtrl {
 
-    // TODO move as much of this to the fxml as possible
+    // TODO move as much of this to fxml as possible
 
     @FXML
     private TogglePane togglePane;
@@ -44,11 +46,11 @@ public class MetadataDetailsCtrl extends PageCtrl {
     @FXML
     private TableView<StatementTableItem> tableView;
     @FXML
-    private ComboBox<Property> addProperty;
-    @FXML
-    private TextField addPropertyValue;
-    @FXML
-    private Label messageLabel;
+    private ComboBox<Property> newPredicate;
+
+    private final StringProperty message;
+    //private final ObjectProperty<ObservableList<Property>> newDataProperty;
+    private final StringProperty newDataPropertyValue;
 
     private MetadataNavState metadataState;
     private ObservableList<StatementTableItem> statementList;
@@ -60,6 +62,10 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
     @Inject
     public MetadataDetailsCtrl(MetadataNavState metadataState) {
+
+        message = new SimpleStringProperty();
+        //newDataProperty = new SimpleObjectProperty<>();
+        newDataPropertyValue = new SimpleStringProperty();
 
         this.metadataState = metadataState;
 
@@ -87,9 +93,8 @@ public class MetadataDetailsCtrl extends PageCtrl {
                                 .collect(Collectors.toList())
                 );
 
-                // TODO implement here: get all available predicates for the selected resource
-                // from the metadata service layer
-
+                // TODO implement here: get all available predicates
+                // for the selected resource from the metadata service layer
                 Resources.streamLiteralsFor(newVal.getResource())
                         .forEach(r -> availableProperties.add(r.getPredicate()));
             }
@@ -100,7 +105,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
             // TODO implement pretty messageLabel
             // TODO implement messageLabel logic properly
             // clear message label text
-            this.messageLabel.setText("");
+            message.set("");
 
         });
     }
@@ -138,22 +143,25 @@ public class MetadataDetailsCtrl extends PageCtrl {
         // will extend to outside of the screen; this seems to be a java8u40 bug:
         // http://stackoverflow.com/questions/29127272/javafx-combobox-dropdown-go-out-from-the-edges-of-the-screen
 
-        // manage the addProperty combo box
+        // manage the newPredicate combo box
         // add available properties to combo box; add actual properties, display local name in box
-        addProperty.setCellFactory(cell -> new PropertyListCell());
-
+        newPredicate.setCellFactory(cell -> new PropertyListCell());
         // manage which text from the property is shown when a combo box item has been selected
-        addProperty.setConverter(new PropertyStringConverter());
-        addProperty.setItems(availableProperties);
-        addProperty.getSelectionModel().selectFirst();
+        newPredicate.setConverter(new PropertyStringConverter());
+        newPredicate.setItems(availableProperties);
+        newPredicate.getSelectionModel().selectFirst();
 
-        addPropertyValue.clear();
+        newDataPropertyValue.set("");
     }
+
+    public StringProperty messageProperty() { return message; }
+//    public ObjectProperty newPredicateProperty() { return newDataProperty; };
+    public StringProperty newPredicateValueProperty() { return newDataPropertyValue; }
 
     // method for creating and adding a new DataProperty to an existing Resource
     public void addDataProperty() {
 
-        if (addProperty.getSelectionModel().getSelectedItem() != null && !addPropertyValue.getText().isEmpty()) {
+        if (newPredicate.getSelectionModel().getSelectedItem() != null && !newDataPropertyValue.getValue().isEmpty()) {
 
             // fetch parent resource
             Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
@@ -162,7 +170,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
             // requires model.createTypedLiteral(Object) for now all new entries have to be of type double
             RDFDatatype dt = TypeMapper.getInstance().getTypeByName(XSDDatatype.XSDdouble.getURI());
 
-            if (dt.isValid(addPropertyValue.getText())) {
+            if (dt.isValid(newDataPropertyValue.getValue())) {
 
                 System.out.println("Current resource:");
                 System.out.println("  URI: "+ parentResource.getURI());
@@ -171,23 +179,24 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
                 StatementTableItem newSTI = new StatementTableItem(
                         getDataPropertyStatement(parentResource,
-                                addProperty.getSelectionModel().getSelectedItem(),
-                                addPropertyValue.getText(),
+                                newPredicate.getSelectionModel().getSelectedItem(),
+                                newDataPropertyValue.getValue(),
                                 dt));
 
                 statementList.add(newSTI);
             } else {
 
-                String warningMsg = "Cannot add property! " + addPropertyValue.getText()
+                String warningMsg = "Cannot add property! " + newDataPropertyValue.getValue()
                         + " is not of required type "+ dt.getJavaClass().getSimpleName() +".";
 
                 // display Warning Message PopOver
-                CreatePopOver.createPopOver(warningMsg, addProperty, -100);
+                CreatePopOver.createPopOver(warningMsg, newPredicate, -100);
 
-                messageLabel.setText(warningMsg);
+                message.set(warningMsg);
             }
         }
-        addPropertyValue.clear();
+
+        newDataPropertyValue.set("");
     }
 
     // TODO part of the logic of this method should probably be move to the metadata service layer
@@ -203,7 +212,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
     // clear message label text when clicked
     public void clearLabel() {
-        messageLabel.setText("");
+        message.set("");
     }
 
 
@@ -397,8 +406,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         @Override
         public void handle(CellEditEvent<StatementTableItem, String> event) {
 
-            System.out.println("Edit event type: "+ event.getEventType().toString());
-
             // here will be a problem, if changes are not immediately persisted:
             // if we mark a Statement for delete, and we try to
             // change the value afterwards, it will probably overwrite the
@@ -415,14 +422,16 @@ public class MetadataDetailsCtrl extends PageCtrl {
                 StatementTableItem oldSTI = (event.getTableView().getItems().get(
                         event.getTablePosition().getRow()));
 
-                // check correct DataType, if available
+                // if available, check correct DataType
                 StatementTableItem newSTI = null;
                 RDFDatatype dt = oldSTI.getStatement().getLiteral().getDatatype();
                 if (dt != null) {
                     if (dt.isValid(newVal)) {
                         newSTI = oldSTI.withLiteral(newVal, dt);
                     } else if(newVal.isEmpty()) {
-                        messageLabel.setText("Empty values are not allowed.");
+                        String emptyMsg = "Empty values are not allowed.";
+                        CreatePopOver.createPopOver(emptyMsg, tableView, 200);
+                        message.set(emptyMsg);
                         validUpdateDataType = false;
                     } else {
 
@@ -431,8 +440,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
                         // TODO get the proper cell to hover over
                         CreatePopOver.createPopOver(warningMsg, tableView, 200);
-
-                        messageLabel.setText(warningMsg);
+                        message.set(warningMsg);
                         validUpdateDataType = false;
                     }
 
