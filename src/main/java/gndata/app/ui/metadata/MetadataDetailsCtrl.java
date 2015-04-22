@@ -35,6 +35,8 @@ import gndata.lib.util.Resources;
  */
 public class MetadataDetailsCtrl extends PageCtrl {
 
+    // TODO move as much of this to the fxml as possible
+
     @FXML
     private TogglePane togglePane;
     @FXML
@@ -52,6 +54,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
     private ObservableList<StatementTableItem> statementList;
     private ChangeStatementListListener listListener;
     private ObservableList<Property> availableProperties;
+
     // check correct data type when a property is updated
     private boolean validUpdateDataType;
 
@@ -122,12 +125,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         val.setCellFactory(cell -> new EditingCell());
         val.setOnEditCommit(new EditCellHandler());
 
-        // TODO see if TextFieldTableCells can be implemented, otherwise remove next lines
-        //TableColumn addVal = new TableColumn("Value2");
-        //addVal.setCellValueFactory(new PropertyValueFactory<StatementTableItem, String>("literal"));
-        //addVal.setCellFactory(TextFieldTableCell.forTableColumn());
-        //addVal.setOnEditCommit(new EditCellHandler());
-
         TableColumn type = new TableColumn("Type");
         type.setCellValueFactory(new PropertyValueFactory<StatementTableItem, String>("type"));
 
@@ -135,7 +132,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         del.setCellFactory(cell -> new DeleteButtonCell());
 
         tableView.setItems(statementList);
-        //tableView.getColumns().addAll(prop, val, addVal, type, del);
         tableView.getColumns().addAll(prop, val, type, del);
 
         // TODO ComboBox bug: when the window is maximized, the ComboBox dropdown
@@ -163,8 +159,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
             Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
 
             // TODO add value consistency checks e.g. entered value is actually required BigInteger etc.
-            // requires model.createTypedLiteral(Object)
-            // for now all new entries have to be of type double
+            // requires model.createTypedLiteral(Object) for now all new entries have to be of type double
             RDFDatatype dt = TypeMapper.getInstance().getTypeByName(XSDDatatype.XSDdouble.getURI());
 
             if (dt.isValid(addPropertyValue.getText())) {
@@ -182,8 +177,14 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
                 statementList.add(newSTI);
             } else {
-                messageLabel.setText("Cannot add property! " + addPropertyValue.getText()
-                        + " is not of required type "+ dt.getJavaClass().getSimpleName() +".");
+
+                String warningMsg = "Cannot add property! " + addPropertyValue.getText()
+                        + " is not of required type "+ dt.getJavaClass().getSimpleName() +".";
+
+                // display Warning Message PopOver
+                CreatePopOver.createPopOver(warningMsg, addProperty, -100);
+
+                messageLabel.setText(warningMsg);
             }
         }
         addPropertyValue.clear();
@@ -226,7 +227,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
-//                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                 setGraphic(delButton);
             } else {
                 setGraphic(null);
@@ -336,24 +336,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         }
     }
 
-    // TODO remove, if TextFieldTableCell is not implemented
-    /*
-    private class StatementStringConverter extends StringConverter<StatementTableItem> {
-
-        public StatementStringConverter() {}
-
-        @Override
-        public String toString(StatementTableItem stmt) {
-            return stmt != null ? stmt.getLiteral() : null;
-        }
-
-        @Override
-        public StatementTableItem fromString(String str) {
-            return null;
-        }
-    }
-*/
-
     // -----------------------------------------
     // Custom Listeners and Event handlers
     // -----------------------------------------
@@ -424,7 +406,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
             // this has to be avoided somehow.
 
             // TODO implement DataType checks before creating the new statement
-            // implement handing over the correct DataType for the value
+            // implement handing over the correct DataType in respect to the value
 
             String oldVal = event.getOldValue();
             String newVal = event.getNewValue();
@@ -443,8 +425,14 @@ public class MetadataDetailsCtrl extends PageCtrl {
                         messageLabel.setText("Empty values are not allowed.");
                         validUpdateDataType = false;
                     } else {
-                        messageLabel.setText("Invalid datatype used! " + newVal + " is not type "
-                                + dt.getJavaClass().getSimpleName() + ".");
+
+                        String warningMsg = "Invalid datatype used! " + newVal + " is not of type "
+                                + dt.getJavaClass().getSimpleName() + ".";
+
+                        // TODO get the proper cell to hover over
+                        CreatePopOver.createPopOver(warningMsg, tableView, 200);
+
+                        messageLabel.setText(warningMsg);
                         validUpdateDataType = false;
                     }
 
