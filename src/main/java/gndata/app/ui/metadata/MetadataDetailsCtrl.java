@@ -14,14 +14,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.event.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.cell.*;
 import javafx.scene.web.WebView;
-import javafx.util.*;
 
 import com.hp.hpl.jena.datatypes.*;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -43,47 +37,59 @@ public class MetadataDetailsCtrl extends PageCtrl {
     private TogglePane togglePane;
     @FXML
     private WebView webView;
-    @FXML
-    private TableView<StatementTableItem> tableView;
-    @FXML
-    private ComboBox<Property> newPredicate;
 
-    private final StringProperty message;
-    //private final ObjectProperty<ObservableList<Property>> newDataProperty;
-    private final StringProperty newDataPropertyValue;
+    private ObjectProperty<XSDDatatype> testDT;
+
+    private StringProperty promptText;
 
     private MetadataNavState metadataState;
+
+    private final StringProperty message;
+
+    private ObjectProperty<ObservableList<StatementTableItem>> existingPredicates;
+
+    private final StringProperty newDataPropertyValue;
+
     private ObservableList<StatementTableItem> statementList;
     private ChangeStatementListListener listListener;
-    private ObservableList<Property> availableProperties;
 
-    // check correct data type when a property is updated
-    private boolean validUpdateDataType;
+    private ObservableList<Property> availablePredicates;
+    private ObjectProperty<ObservableList<Property>> availPredList;
+
+    private ObjectProperty<Property> selectedPredicate;
+
 
     @Inject
     public MetadataDetailsCtrl(MetadataNavState metadataState) {
 
-        message = new SimpleStringProperty();
-        //newDataProperty = new SimpleObjectProperty<>();
-        newDataPropertyValue = new SimpleStringProperty();
-
         this.metadataState = metadataState;
 
-        this.statementList = FXCollections.observableList(new ArrayList<>());
-        this.listListener = new ChangeStatementListListener();
-        this.statementList.addListener(this.listListener);
+        testDT = new SimpleObjectProperty<>();
 
-        this.availableProperties = FXCollections.observableList(new ArrayList<>());
-        this.validUpdateDataType = true;
+        promptText = new SimpleStringProperty();
+
+        message = new SimpleStringProperty();
+        newDataPropertyValue = new SimpleStringProperty();
+
+        existingPredicates = new SimpleObjectProperty<>();
+
+        availPredList = new SimpleObjectProperty<>();
+        selectedPredicate = new SimpleObjectProperty<>();
+
+        statementList = FXCollections.observableList(new ArrayList<>());
+        listListener = new ChangeStatementListListener();
+        statementList.addListener(listListener);
+
+        availablePredicates = FXCollections.observableList(new ArrayList<>());
 
         metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
             getPage().applyModel(newVal);
 
-            // disable statement listener when statement list is
-            // replaced by new resource
-            this.listListener.setDisabled();
+            // disable statement listener when statement list is replaced
+            // after selection of new parent resource
+            listListener.setDisabled();
 
-            availableProperties.clear();
+            availablePredicates.clear();
             if (newVal == null) {
                 statementList.clear();
             } else {
@@ -96,10 +102,10 @@ public class MetadataDetailsCtrl extends PageCtrl {
                 // TODO implement here: get all available predicates
                 // for the selected resource from the metadata service layer
                 Resources.streamLiteralsFor(newVal.getResource())
-                        .forEach(r -> availableProperties.add(r.getPredicate()));
+                        .forEach(r -> availablePredicates.add(r.getPredicate()));
             }
 
-            this.listListener.setEnabled();
+            listListener.setEnabled();
 
             // TODO at some point replace messageLabel with Popup text bubble
             // TODO implement pretty messageLabel
@@ -119,56 +125,60 @@ public class MetadataDetailsCtrl extends PageCtrl {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         super.initialize(url, resourceBundle);
 
-        tableView.setEditable(true);
-
-        // add table columns
-        TableColumn prop = new TableColumn("Property");
-        prop.setCellValueFactory(new PropertyValueFactory<StatementTableItem, String>("predicate"));
-
-        TableColumn val = new TableColumn("Value");
-        val.setCellValueFactory(new PropertyValueFactory<StatementTableItem, String>("literal"));
-        val.setCellFactory(cell -> new EditingCell());
-        val.setOnEditCommit(new EditCellHandler());
-
-        TableColumn type = new TableColumn("Type");
-        type.setCellValueFactory(new PropertyValueFactory<StatementTableItem, String>("type"));
-
-        TableColumn del = new TableColumn("Delete");
-        del.setCellFactory(cell -> new DeleteButtonCell());
-
-        tableView.setItems(statementList);
-        tableView.getColumns().addAll(prop, val, type, del);
-
         // TODO ComboBox bug: when the window is maximized, the ComboBox dropdown
         // will extend to outside of the screen; this seems to be a java8u40 bug:
         // http://stackoverflow.com/questions/29127272/javafx-combobox-dropdown-go-out-from-the-edges-of-the-screen
 
-        // manage the newPredicate combo box
-        // add available properties to combo box; add actual properties, display local name in box
-        newPredicate.setCellFactory(cell -> new PropertyListCell());
-        // manage which text from the property is shown when a combo box item has been selected
-        newPredicate.setConverter(new PropertyStringConverter());
-        newPredicate.setItems(availableProperties);
-        newPredicate.getSelectionModel().selectFirst();
+        availPredList.set(availablePredicates);
+
+        existingPredicates.set(statementList);
 
         newDataPropertyValue.set("");
+
+        //TODO: the combobox now requires a property wrapper which includes the property and the corresponding data type...
+
+        XSDDatatype dt = XSDDatatype.XSDdecimal;
+
+        testDT.set(dt);
+
+        promptText.set("Enter "+ (dt == null ? "String" : dt.getJavaClass().getSimpleName()) +" value");
+
     }
 
-    public StringProperty messageProperty() { return message; }
-//    public ObjectProperty newPredicateProperty() { return newDataProperty; };
-    public StringProperty newPredicateValueProperty() { return newDataPropertyValue; }
+    // -----------------------------------------
+    // Properties
+    // -----------------------------------------
 
-    // method for creating and adding a new DataProperty to an existing Resource
+    public final StringProperty messageProperty() { return message; }
+
+    public final ObjectProperty<ObservableList<StatementTableItem>> existingPredicatesProperty() { return existingPredicates; }
+
+    public final StringProperty newPredicateValueProperty() { return newDataPropertyValue; }
+
+    public final ObjectProperty<ObservableList<Property>> availablePredicatesProperty() { return availPredList; }
+
+    public final ObjectProperty<Property> selectedPredicateProperty() { return selectedPredicate; }
+
+    public final ObjectProperty<XSDDatatype> testDTProperty() { return testDT; }
+
+    public final StringProperty promptTextProperty() { return promptText; }
+
+    // -----------------------------------------
+    // Methods
+    // -----------------------------------------
+
+    // Method for creating and adding a new DataProperty to an existing Resource
     public void addDataProperty() {
 
-        if (newPredicate.getSelectionModel().getSelectedItem() != null && !newDataPropertyValue.getValue().isEmpty()) {
+        if (selectedPredicate.get() != null && !newDataPropertyValue.getValue().isEmpty()) {
 
             // fetch parent resource
             Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
 
             // TODO add value consistency checks e.g. entered value is actually required BigInteger etc.
             // requires model.createTypedLiteral(Object) for now all new entries have to be of type double
-            RDFDatatype dt = TypeMapper.getInstance().getTypeByName(XSDDatatype.XSDdouble.getURI());
+            //RDFDatatype dt = TypeMapper.getInstance().getTypeByName(XSDDatatype.XSDdouble.getURI());
+            RDFDatatype dt = XSDDatatype.XSDdouble;
 
             if (dt.isValid(newDataPropertyValue.getValue())) {
 
@@ -179,7 +189,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
                 StatementTableItem newSTI = new StatementTableItem(
                         getDataPropertyStatement(parentResource,
-                                newPredicate.getSelectionModel().getSelectedItem(),
+                                selectedPredicate.get(),
                                 newDataPropertyValue.getValue(),
                                 dt));
 
@@ -190,7 +200,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
                         + " is not of required type "+ dt.getJavaClass().getSimpleName() +".";
 
                 // display Warning Message PopOver
-                CreatePopOver.createPopOver(warningMsg, newPredicate, -100);
+                //CreatePopOver.createPopOver(warningMsg, newPredicate, -100);
 
                 message.set(warningMsg);
             }
@@ -215,135 +225,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         message.set("");
     }
 
-
-    // -----------------------------------------
-    // Custom view classes
-    // -----------------------------------------
-
-    private class DeleteButtonCell extends TableCell<StatementTableItem, String> {
-
-        final Button delButton = new Button("x");
-
-        public DeleteButtonCell() {
-            delButton.setPadding(new Insets(1));
-            delButton.setOnAction(actionEvent -> {
-                // retrieve and remove corresponding StatementTableItem
-                statementList.remove(tableView.getItems().get(getTableRow().getIndex()));
-            });
-        }
-
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            if (!empty) {
-                setGraphic(delButton);
-            } else {
-                setGraphic(null);
-            }
-        }
-
-    }
-
-    // TableCell class required for value updates of an existing DataProperty
-    private class EditingCell extends TableCell<StatementTableItem, String> {
-
-        private TextField textField;
-
-        public EditingCell(){}
-
-        @Override
-        public void startEdit() {
-            if(!isEmpty()) {
-                super.startEdit();
-                createTextField();
-                setText(null);
-                setGraphic(textField);
-                textField.selectAll();
-            }
-        }
-
-        @Override
-        public void cancelEdit() {
-            super.cancelEdit();
-
-            setText(getItem());
-            setGraphic(null);
-        }
-
-        @Override
-        public void updateItem(String item, boolean empty) {
-
-            if(validUpdateDataType) {
-                super.updateItem(item, empty);
-
-                if (empty) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    if (isEditing()) {
-                        if (textField != null) {
-                            textField.setText(getContent());
-                        }
-                        setText(null);
-                        setGraphic(textField);
-                    } else {
-                        setText(getContent());
-                        setGraphic(null);
-                    }
-                }
-            } else {
-                this.cancelEdit();
-                validUpdateDataType = true;
-            }
-        }
-
-        private void createTextField() {
-            textField = new TextField(getContent());
-            textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (!newValue) {
-                    commitEdit(textField.getText());
-                }
-            });
-        }
-
-        private String getContent() {
-            return getItem() == null ? "" : getItem();
-        }
-
-    }
-
-    // class handling combo box list cells required to a add a new DataProperty
-    private class PropertyListCell extends ListCell<Property> {
-
-        public PropertyListCell() {}
-
-        @Override
-        protected void updateItem(Property item, boolean empty) {
-            super.updateItem(item, empty);
-            if (item == null || empty) {
-                setGraphic(null);
-            } else {
-                setText(item.getLocalName());
-            }
-        }
-    }
-
-    // class handling which text is displayed when an item from the
-    // add new DataProperty combo box has been selected
-    private class PropertyStringConverter extends StringConverter<Property> {
-
-        public PropertyStringConverter() {}
-
-        @Override
-        public String toString(Property prop) {
-            return prop != null ? prop.getLocalName() : null;
-        }
-
-        @Override
-        public Property fromString(String str) {
-            return null;
-        }
-    }
 
     // -----------------------------------------
     // Custom Listeners and Event handlers
@@ -398,68 +279,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
         public void setEnabled() { this.enabled = true; }
 
         public void setDisabled() { this.enabled = false; }
-    }
-
-    // Event handler class processing StatementTableItem literal value updates
-    private class EditCellHandler implements EventHandler<CellEditEvent<StatementTableItem, String>> {
-
-        @Override
-        public void handle(CellEditEvent<StatementTableItem, String> event) {
-
-            // here will be a problem, if changes are not immediately persisted:
-            // if we mark a Statement for delete, and we try to
-            // change the value afterwards, it will probably overwrite the
-            // "delete" action with an "update" action.
-            // this has to be avoided somehow.
-
-            // TODO implement DataType checks before creating the new statement
-            // implement handing over the correct DataType in respect to the value
-
-            String oldVal = event.getOldValue();
-            String newVal = event.getNewValue();
-
-            if (!oldVal.equals(newVal)) {
-                StatementTableItem oldSTI = (event.getTableView().getItems().get(
-                        event.getTablePosition().getRow()));
-
-                // if available, check correct DataType
-                StatementTableItem newSTI = null;
-                RDFDatatype dt = oldSTI.getStatement().getLiteral().getDatatype();
-                if (dt != null) {
-                    if (dt.isValid(newVal)) {
-                        newSTI = oldSTI.withLiteral(newVal, dt);
-                    } else if(newVal.isEmpty()) {
-                        String emptyMsg = "Empty values are not allowed.";
-                        CreatePopOver.createPopOver(emptyMsg, tableView, 200);
-                        message.set(emptyMsg);
-                        validUpdateDataType = false;
-                    } else {
-
-                        String warningMsg = "Invalid datatype used! " + newVal + " is not of type "
-                                + dt.getJavaClass().getSimpleName() + ".";
-
-                        // TODO get the proper cell to hover over
-                        CreatePopOver.createPopOver(warningMsg, tableView, 200);
-                        message.set(warningMsg);
-                        validUpdateDataType = false;
-                    }
-
-                } else {
-                    newSTI = oldSTI.withLiteral(newVal);
-                }
-
-                // a problem could arise, if we do not immediately add changes to the
-                // data model: if an instance may only have one instance of a
-                // specific data property and this data property is added,
-                // the user could possibly add the same data property twice, if
-                // no checks with the ontology in the UI are performed
-                // to prohibit the second addition.
-
-                if (newSTI != null) {
-                    statementList.set(statementList.indexOf(oldSTI), newSTI);
-                }
-            }
-        }
     }
 
 }

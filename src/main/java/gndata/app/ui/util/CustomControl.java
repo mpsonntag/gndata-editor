@@ -34,7 +34,7 @@ public abstract class CustomControl extends Region {
      */
     public CustomControl(List<URL> extraStyles) {
 
-        FXMLLoader loader = new FXMLLoader(NameConventions.fxmlResource(getClass()), null, null);
+        FXMLLoader loader = new FXMLLoader(NameConventions.fxmlResource(getClass()), null, new CustomBuilderFactory());
 
         loader.setRoot(this);
         loader.setController(this);

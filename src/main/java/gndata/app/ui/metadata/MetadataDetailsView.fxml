@@ -15,8 +15,20 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 
+<?import gndata.app.ui.util.converter.PropertyStringConverter?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import gndata.app.ui.util.EditPredicateCellFactory?>
+
+
+<?import javafx.beans.property.ObjectProperty?>
+<?import gndata.app.ui.util.converter.LiteralConverter?>
+<?import gndata.app.ui.util.filter.LiteralFilter?>
+
+<?import javafx.beans.property.SimpleObjectProperty?>
+<?import com.hp.hpl.jena.datatypes.xsd.XSDDatatype.*?>
+<?import gndata.app.ui.util.DeleteButtonCellFactory?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataDetailsCtrl">
@@ -37,33 +49,75 @@ LICENSE file in the root of the Project.
                         </fx:script>
                     </top>
                     <center>
-                        <!--<fx:define>
-                            <TableColumn fx:id="valueColumn" text="Value">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="literal"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                        </fx:define>-->
-
-                        <TableView fx:id="tableView">
+                        <TableView fx:id="tableView" editable="true">
                             <columnResizePolicy>
-                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY">
+                                </TableView>
                             </columnResizePolicy>
+                            <columns>
+                                <TableColumn fx:id="predColumn" text="Property">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="predicate"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn fx:id="valueColumn" text="Value">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="literal"/>
+                                    </cellValueFactory>
+                                    <cellFactory>
+                                        <EditPredicateCellFactory/>
+                                    </cellFactory>
+                                </TableColumn>
+                                <TableColumn fx:id="typeColumn" text="DataType">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="type"/>
+                                    </cellValueFactory>
+                                </TableColumn>
+                                <TableColumn fx:id="deleteColumn" text="Delete">
+                                    <cellValueFactory>
+                                        <PropertyValueFactory property="type"/>
+                                    </cellValueFactory>
+                                    <cellFactory>
+                                        <DeleteButtonCellFactory/>
+                                    </cellFactory>
+                                </TableColumn>
+                            </columns>
                         </TableView>
+                        <fx:script>
+                            tableView.itemsProperty().bindBidirectional(controller.existingPredicatesProperty())
+                        </fx:script>
                     </center>
                     <bottom>
                         <HBox alignment="CENTER_RIGHT">
                             <children>
+                                <fx:define>
+                                    <LiteralFilter fx:id="litFilter" />
+                                    <LiteralConverter fx:id="litConv" />
+                                </fx:define>
+
                                 <Label text="Add new DataProperty:">
                                     <padding><Insets right="25" /></padding>
                                 </Label>
-                                <ComboBox fx:id="newPredicate" />
-                                <TextField fx:id="newPredicateValue" promptText="enter value" />
+                                <ComboBox fx:id="newPredicate">
+                                    <converter>
+                                        <PropertyStringConverter/>
+                                    </converter>
+                                </ComboBox>
+                                <TextField fx:id="newPredicateValue">
+                                    <textFormatter>
+                                        <TextFormatter valueConverter="$litConv" filter="$litFilter" />
+                                    </textFormatter>
+                                </TextField>
                                 <Button onAction="#addDataProperty" text="Add" />
 
                                 <fx:script>
-                                    <!--newPredicate.itemsProperty().bindBidirectional(controller.newPredicateProperty())-->
+                                    newPredicate.itemsProperty().bindBidirectional(controller.availablePredicatesProperty())
+                                    controller.selectedPredicateProperty().bind(newPredicate.getSelectionModel().selectedItemProperty())
+
+                                    litFilter.typeProperty().bindBidirectional(controller.testDTProperty())
+                                    litConv.typeProperty().bindBidirectional(controller.testDTProperty())
                                     newPredicateValue.textProperty().bindBidirectional(controller.newPredicateValueProperty())
+                                    newPredicateValue.promptTextProperty().bind(controller.promptTextProperty())
                                 </fx:script>
                             </children>
                         </HBox>
