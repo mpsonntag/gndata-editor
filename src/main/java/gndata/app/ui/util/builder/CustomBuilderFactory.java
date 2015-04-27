@@ -1,8 +1,7 @@
 package gndata.app.ui.util.builder;
 
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Builder;
 import javafx.util.BuilderFactory;
 
@@ -21,10 +20,8 @@ public class CustomBuilderFactory implements BuilderFactory {
 
     @Override
     public Builder<?> getBuilder(Class<?> cls) {
-        if (cls == TextField.class) {
-            return new TextFieldBuilder();
-        } else if (cls == TextArea.class) {
-            return new TextAreaBuilder();
+        if (cls == TextFormatter.class) {
+            return new TextFormatterBuilder<>();
         } else {
             return defaultFactory.getBuilder(cls);
         }

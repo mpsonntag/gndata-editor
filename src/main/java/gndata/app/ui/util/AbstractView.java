@@ -38,7 +38,7 @@ public abstract class AbstractView {
      */
     public AbstractView() {
         extraStyles = new LinkedList<>();
-        loader = new FXMLLoader(NameConventions.fxmlResource(getClass()), null, null);
+        loader = new FXMLLoader(NameConventions.fxmlResource(getClass()), null, new CustomBuilderFactory());
     }
 
     /**
