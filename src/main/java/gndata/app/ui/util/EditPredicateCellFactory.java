@@ -1,9 +1,20 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.util;
 
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.*;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import gndata.app.ui.util.converter.LiteralConverter;
+import gndata.app.ui.util.filter.LiteralFilter;
 
 /**
  * TableCell class required for value updates of an existing DataProperty
@@ -15,7 +26,7 @@ public class EditPredicateCellFactory
 
     @Override
     public TableCell<StatementTableItem, String> call (TableColumn<StatementTableItem, String> p) {
-        TableCell<StatementTableItem, String> cell = new TableCell<StatementTableItem, String>() {
+        return new TableCell<StatementTableItem, String>() {
 
             @Override
             public void startEdit() {
@@ -59,10 +70,18 @@ public class EditPredicateCellFactory
             }
 
             private void createTextField() {
+
                 textField = new TextField(getContent());
+
+                // set textformatter to control textinput dependent on the RDF DataType of the selected Predicate
+                RDFDatatype dt = getTableView().getSelectionModel().getSelectedItem().getStatement().getLiteral().getDatatype();
+                if (dt == null) { dt = XSDDatatype.XSDstring; }
+                textField.setTextFormatter(new TextFormatter(new LiteralConverter(dt), null, new LiteralFilter(dt)));
+                textField.setPromptText((dt == null ? "String" : dt.getJavaClass().getSimpleName()) + " value");
+
                 textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (!newValue) {
-                        doValidCommit();
+                        validatedCommit();
                     }
                 });
             }
@@ -71,20 +90,11 @@ public class EditPredicateCellFactory
                 return getItem() == null ? "" : getItem();
             }
 
-            private void doValidCommit() {
-
-                // here will be a problem, if changes are not immediately persisted:
-                // if we mark a Statement for delete, and we try to
-                // change the value afterwards, it will probably overwrite the
-                // "delete" action with an "update" action.
-                // this has to be avoided somehow.
-
-                // TODO implement DataType checks before creating the new statement
-                // implement handing over the correct DataType in respect to the value
+            // TODO this is actually controller logic. Check whether and how this should be moved somewhere else
+            private void validatedCommit() {
 
                 String oldVal = getContent();
                 String newVal = textField.getText();
-                String message = "";
 
                 if (!oldVal.equals(newVal)) {
                     StatementTableItem oldSTI = this.getTableView().getItems().get(getTableRow().getIndex());
@@ -95,36 +105,27 @@ public class EditPredicateCellFactory
                     if (dt != null) {
                         if (dt.isValid(newVal)) {
                             newSTI = oldSTI.withLiteral(newVal, dt);
-                        } else if(newVal.isEmpty()) {
-                            message = "Empty values are not allowed.";
-                        } else {
-
-                            message = "Invalid datatype used! " + newVal + " is not of type "
-                                    + dt.getJavaClass().getSimpleName() + ".";
                         }
                     } else {
                         newSTI = oldSTI.withLiteral(newVal);
                     }
 
-                    // a problem could arise, if we do not immediately add changes to the
-                    // data model: if an instance may only have one instance of a
+                    // a problem could arise, if changes are not immediately transferred to the
+                    // RDF data model: if an instance may only have one instance of a
                     // specific data property and this data property is added,
                     // the user could possibly add the same data property twice, if
-                    // no checks with the ontology in the UI are performed
+                    // no checks with the ontology are performed at UI level
                     // to prohibit the second addition.
 
                     if (newSTI != null) {
                         this.getTableView().getItems().set(this.getTableView().getItems().indexOf(oldSTI), newSTI);
                         commitEdit(textField.getText());
                     } else {
-                        // TODO PopOver contains the message but does not display it properly
-                        CreatePopOver.createPopOver(message, textField.getParent());
                         cancelEdit();
                     }
                 }
             }
-
         };
-        return cell;
     }
+
 }
