@@ -15,20 +15,14 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 
 <?import gndata.app.ui.util.converter.PropertyStringConverter?>
-
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import gndata.app.ui.util.EditPredicateCellFactory?>
-
-
-<?import javafx.beans.property.ObjectProperty?>
 <?import gndata.app.ui.util.converter.LiteralConverter?>
 <?import gndata.app.ui.util.filter.LiteralFilter?>
-
-<?import javafx.beans.property.SimpleObjectProperty?>
-<?import com.hp.hpl.jena.datatypes.xsd.XSDDatatype.*?>
+<?import gndata.app.ui.util.EditPredicateCellFactory?>
 <?import gndata.app.ui.util.DeleteButtonCellFactory?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataDetailsCtrl">
@@ -45,7 +39,7 @@ LICENSE file in the root of the Project.
                     <top>
                         <Label fx:id="messageLabel" minHeight="50" onMouseClicked="#clearLabel" />
                         <fx:script>
-                            messageLabel.textProperty().bindBidirectional(controller.messageProperty())
+                            messageLabel.textProperty().bindBidirectional(controller.notificationMsgProperty())
                         </fx:script>
                     </top>
                     <center>
@@ -98,6 +92,11 @@ LICENSE file in the root of the Project.
                                 <Label text="Add new DataProperty:">
                                     <padding><Insets right="25" /></padding>
                                 </Label>
+                                <!--
+                                // TODO ComboBox bug: when the window is maximized, the ComboBox dropdown
+                                // will extend to outside of the screen; this seems to be a java8u40 bug:
+                                // http://stackoverflow.com/questions/29127272/javafx-combobox-dropdown-go-out-from-the-edges-of-the-screen
+                                -->
                                 <ComboBox fx:id="newPredicate">
                                     <converter>
                                         <PropertyStringConverter/>
@@ -114,10 +113,10 @@ LICENSE file in the root of the Project.
                                     newPredicate.itemsProperty().bindBidirectional(controller.availablePredicatesProperty())
                                     controller.selectedPredicateProperty().bind(newPredicate.getSelectionModel().selectedItemProperty())
 
-                                    litFilter.typeProperty().bindBidirectional(controller.testDTProperty())
-                                    litConv.typeProperty().bindBidirectional(controller.testDTProperty())
-                                    newPredicateValue.textProperty().bindBidirectional(controller.newPredicateValueProperty())
-                                    newPredicateValue.promptTextProperty().bind(controller.promptTextProperty())
+                                    litFilter.typeProperty().bindBidirectional(controller.newPredTypeProperty())
+                                    litConv.typeProperty().bindBidirectional(controller.newPredTypeProperty())
+                                    newPredicateValue.textProperty().bindBidirectional(controller.newPredValueProperty())
+                                    newPredicateValue.promptTextProperty().bind(controller.newPredPromptTextProperty())
                                 </fx:script>
                             </children>
                         </HBox>

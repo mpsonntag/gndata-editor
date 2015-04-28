@@ -31,88 +31,94 @@ import gndata.lib.util.Resources;
  */
 public class MetadataDetailsCtrl extends PageCtrl {
 
-    // TODO move as much of this to fxml as possible
-
     @FXML
     private TogglePane togglePane;
     @FXML
     private WebView webView;
 
-    private ObjectProperty<XSDDatatype> testDT;
-
-    private StringProperty promptText;
-
     private MetadataNavState metadataState;
 
-    private final StringProperty message;
-
-    private ObjectProperty<ObservableList<StatementTableItem>> existingPredicates;
-
-    private final StringProperty newDataPropertyValue;
+    private final StringProperty notificationMsg;
 
     private ObservableList<StatementTableItem> statementList;
     private ChangeStatementListListener listListener;
+
+    private final StringProperty newPredValue;
+    private ObjectProperty<RDFDatatype> newPredType;
+    private StringProperty newPredPromptText;
+
+    private ObjectProperty<ObservableList<StatementTableItem>> existingPredicates;
 
     private ObservableList<Property> availablePredicates;
     private ObjectProperty<ObservableList<Property>> availPredList;
 
     private ObjectProperty<Property> selectedPredicate;
 
-
     @Inject
     public MetadataDetailsCtrl(MetadataNavState metadataState) {
 
         this.metadataState = metadataState;
 
-        testDT = new SimpleObjectProperty<>();
+        // TODO proper messageLabel implementation
+        // notification messages
+        notificationMsg = new SimpleStringProperty();
 
-        promptText = new SimpleStringProperty();
-
-        message = new SimpleStringProperty();
-        newDataPropertyValue = new SimpleStringProperty();
-
-        existingPredicates = new SimpleObjectProperty<>();
-
-        availPredList = new SimpleObjectProperty<>();
-        selectedPredicate = new SimpleObjectProperty<>();
-
+        // existing DataProperties
         statementList = FXCollections.observableList(new ArrayList<>());
         listListener = new ChangeStatementListListener();
         statementList.addListener(listListener);
 
-        availablePredicates = FXCollections.observableList(new ArrayList<>());
+        existingPredicates = new SimpleObjectProperty<>();
 
+        // adding new DataProperties
+        newPredValue = new SimpleStringProperty();
+        newPredType = new SimpleObjectProperty<>();
+        newPredPromptText = new SimpleStringProperty();
+        availablePredicates = FXCollections.observableList(new ArrayList<>());
+        availPredList = new SimpleObjectProperty<>();
+        selectedPredicate = new SimpleObjectProperty<>();
+
+        // listen on the selected new predicate and set corresponding RDF DataType accordingly
+        selectedPredicate.addListener((observable, oldValue, newValue) -> {
+            newPredPromptText.set("");
+            if (observable != null && newValue != null) {
+                RDFDatatype dt = fetchRDFDataType(observable.getValue().getURI());
+                newPredType.set(dt);
+                newPredPromptText.set("Enter " + (dt == null ? "String" : dt.getJavaClass().getSimpleName()) + " value");
+            }
+        });
+
+        // listen on changes of the selected parent RDF Resource and update
+        // lists of existing and adding new DataProperties accordingly.
         metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
             getPage().applyModel(newVal);
 
             // disable statement listener when statement list is replaced
-            // after selection of new parent resource
+            // by the selection of a new parent RDF Resource
             listListener.setDisabled();
 
             availablePredicates.clear();
             if (newVal == null) {
                 statementList.clear();
             } else {
+                // fetch and set up all existing DataProperties
                 statementList.setAll(
                         Resources.streamLiteralsFor(newVal.getResource())
                                 .map(StatementTableItem::new)
                                 .collect(Collectors.toList())
                 );
 
-                // TODO implement here: get all available predicates
-                // for the selected resource from the metadata service layer
+                // TODO implementation get all available predicates
+                // TODO for the selected resource from the metadata service layer
+                // fetch and set up all available Predicates to add new DataProperties
                 Resources.streamLiteralsFor(newVal.getResource())
                         .forEach(r -> availablePredicates.add(r.getPredicate()));
             }
 
             listListener.setEnabled();
 
-            // TODO at some point replace messageLabel with Popup text bubble
-            // TODO implement pretty messageLabel
-            // TODO implement messageLabel logic properly
-            // clear message label text
-            message.set("");
-
+            // reset notificationMsg label text
+            notificationMsg.set("Double click property value to edit the content");
         });
     }
 
@@ -125,43 +131,27 @@ public class MetadataDetailsCtrl extends PageCtrl {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         super.initialize(url, resourceBundle);
 
-        // TODO ComboBox bug: when the window is maximized, the ComboBox dropdown
-        // will extend to outside of the screen; this seems to be a java8u40 bug:
-        // http://stackoverflow.com/questions/29127272/javafx-combobox-dropdown-go-out-from-the-edges-of-the-screen
-
-        availPredList.set(availablePredicates);
-
+        // initialize list of existing DataProperties
         existingPredicates.set(statementList);
 
-        newDataPropertyValue.set("");
-
-        //TODO: the combobox now requires a property wrapper which includes the property and the corresponding data type...
-
-        XSDDatatype dt = XSDDatatype.XSDdecimal;
-
-        testDT.set(dt);
-
-        promptText.set("Enter "+ (dt == null ? "String" : dt.getJavaClass().getSimpleName()) +" value");
-
+        // initialize add new DataProperty components
+        availPredList.set(availablePredicates);
+        newPredValue.set("");
     }
 
     // -----------------------------------------
     // Properties
     // -----------------------------------------
 
-    public final StringProperty messageProperty() { return message; }
+    public final StringProperty notificationMsgProperty() { return notificationMsg; }
 
     public final ObjectProperty<ObservableList<StatementTableItem>> existingPredicatesProperty() { return existingPredicates; }
 
-    public final StringProperty newPredicateValueProperty() { return newDataPropertyValue; }
-
     public final ObjectProperty<ObservableList<Property>> availablePredicatesProperty() { return availPredList; }
-
     public final ObjectProperty<Property> selectedPredicateProperty() { return selectedPredicate; }
-
-    public final ObjectProperty<XSDDatatype> testDTProperty() { return testDT; }
-
-    public final StringProperty promptTextProperty() { return promptText; }
+    public final StringProperty newPredValueProperty() { return newPredValue; }
+    public final ObjectProperty<RDFDatatype> newPredTypeProperty() { return newPredType; }
+    public final StringProperty newPredPromptTextProperty() { return newPredPromptText; }
 
     // -----------------------------------------
     // Methods
@@ -170,47 +160,43 @@ public class MetadataDetailsCtrl extends PageCtrl {
     // Method for creating and adding a new DataProperty to an existing Resource
     public void addDataProperty() {
 
-        if (selectedPredicate.get() != null && !newDataPropertyValue.getValue().isEmpty()) {
+        if (selectedPredicate.get() != null && !newPredValue.getValue().isEmpty()) {
 
             // fetch parent resource
             Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
 
             // TODO add value consistency checks e.g. entered value is actually required BigInteger etc.
             // requires model.createTypedLiteral(Object) for now all new entries have to be of type double
-            //RDFDatatype dt = TypeMapper.getInstance().getTypeByName(XSDDatatype.XSDdouble.getURI());
-            RDFDatatype dt = XSDDatatype.XSDdouble;
+            RDFDatatype dt = fetchRDFDataType(selectedPredicate.get().getURI());
 
-            if (dt.isValid(newDataPropertyValue.getValue())) {
-
-                System.out.println("Current resource:");
-                System.out.println("  URI: "+ parentResource.getURI());
-                System.out.println("  NameSpace: "+ parentResource.getNameSpace());
-                System.out.println("  LocalName: " + parentResource.getLocalName() + "\n");
+            if (dt.isValid(newPredValue.getValue())) {
 
                 StatementTableItem newSTI = new StatementTableItem(
                         getDataPropertyStatement(parentResource,
                                 selectedPredicate.get(),
-                                newDataPropertyValue.getValue(),
+                                newPredValue.getValue(),
                                 dt));
 
                 statementList.add(newSTI);
             } else {
 
-                String warningMsg = "Cannot add property! " + newDataPropertyValue.getValue()
+                String warningMsg = "Cannot add property! " + newPredValue.getValue()
                         + " is not of required type "+ dt.getJavaClass().getSimpleName() +".";
 
-                // display Warning Message PopOver
-                //CreatePopOver.createPopOver(warningMsg, newPredicate, -100);
-
-                message.set(warningMsg);
+                notificationMsg.set(warningMsg);
             }
         }
 
-        newDataPropertyValue.set("");
+        newPredValue.set("");
+    }
+
+    // clear notificationMsg label text when clicked
+    public void clearLabel() {
+        notificationMsg.set("");
     }
 
     // TODO part of the logic of this method should probably be move to the metadata service layer
-    // create a new DataProperty for an existing resource
+    // TODO create a new DataProperty for an existing resource
     // return the new DataProperty as Statement
     private Statement getDataPropertyStatement(Resource parentResource, Property selProp, String value, RDFDatatype dt) {
         Property p = ResourceFactory.createProperty(selProp.getNameSpace(), selProp.getLocalName());
@@ -220,14 +206,19 @@ public class MetadataDetailsCtrl extends PageCtrl {
         return ResourceFactory.createStatement(parentResource, p, o);
     }
 
-    // clear message label text when clicked
-    public void clearLabel() {
-        message.set("");
+    // TODO replace with actual call to the metadata service layer
+    private RDFDatatype fetchRDFDataType(String uri){
+        XSDDatatype dt;
+        if (uri.equals("http://g-node.org/thomas#hasAuthor")) {
+            dt = XSDDatatype.XSDstring;
+        } else {
+            dt = XSDDatatype.XSDfloat;
+        }
+        return dt;
     }
 
-
     // -----------------------------------------
-    // Custom Listeners and Event handlers
+    // Custom Listeners
     // -----------------------------------------
 
     // Listener class handling any changes to the list of DataProperty Statements

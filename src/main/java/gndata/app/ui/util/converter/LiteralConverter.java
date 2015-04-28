@@ -1,39 +1,48 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.util.converter;
 
 import javafx.beans.property.*;
 import javafx.util.StringConverter;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.rdf.model.*;
 
 /**
- * Created by msonntag on 24.04.15.
+ * Converter class handling the allowed text entry of an RDF literal value
+ * dependent on a provided XSDDatatype.
  */
 public final class LiteralConverter extends StringConverter<Literal> {
 
-    public final ObjectProperty<XSDDatatype> type;
+    public final ObjectProperty<RDFDatatype> type;
 
     public LiteralConverter() {
-        this((XSDDatatype) null);
+        this((RDFDatatype) null);
     }
 
-    public LiteralConverter(ObjectProperty<XSDDatatype> type) {
+    public LiteralConverter(ObjectProperty<RDFDatatype> type) {
         this.type = type;
     }
 
-    public LiteralConverter(XSDDatatype type) {
+    public LiteralConverter(RDFDatatype type) {
         this.type = new SimpleObjectProperty<>(type);
     }
 
-    public XSDDatatype getType() {
+    public RDFDatatype getType() {
         return type.get();
     }
 
-    public ObjectProperty<XSDDatatype> typeProperty() {
+    public ObjectProperty<RDFDatatype> typeProperty() {
         return type;
     }
 
-    public void setType(XSDDatatype type) {
+    public void setType(RDFDatatype type) {
         this.type.set(type);
     }
 
@@ -52,4 +61,5 @@ public final class LiteralConverter extends StringConverter<Literal> {
         }
         return l;
     }
+
 }

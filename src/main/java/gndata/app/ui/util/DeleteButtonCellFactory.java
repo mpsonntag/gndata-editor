@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.util;
 
 import javafx.geometry.Insets;
@@ -16,6 +24,7 @@ public class DeleteButtonCellFactory
         return new DeleteButtonCell();
     }
 
+    // TODO pimp the appearance of the delete button
     private class DeleteButtonCell extends TableCell<StatementTableItem, String> {
         private final Button delButton = new Button("x");
 
@@ -36,6 +45,6 @@ public class DeleteButtonCellFactory
                 setGraphic(null);
             }
         }
-
     }
+
 }
