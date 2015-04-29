@@ -16,7 +16,7 @@ _Dependencies_
 
 To build the gndata-editor the following applications have to be available:
 
-- Java version 1.8.x or higher
+- Java version 1.8.0_40 or higher
 - Maven version 3.x.x or higher
 
 _Build instructions_
