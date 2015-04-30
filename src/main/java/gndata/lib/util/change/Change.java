@@ -1,16 +1,25 @@
 package gndata.lib.util.change;
 
-import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
 
 /**
- * Interface for changes in the RDF graph.
+ * Created by andrey on 30.04.15.
  */
-public interface Change {
+public class Change {
 
-    public void applyTo(Model m, OntModel o) throws IllegalStateException;
+    Model change;
+    boolean positive;
 
-    public void undoFrom(Model m) throws IllegalStateException;
+    public Change(Model change, boolean positive) {
+        this.change = change;
+        this.positive = positive;
+    }
 
-    public boolean hasChanges();
+    public boolean isPositive() {
+        return positive;
+    }
+
+    public Model getChange() {
+        return change;
+    }
 }

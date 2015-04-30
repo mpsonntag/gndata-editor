@@ -7,7 +7,7 @@ import com.hp.hpl.jena.rdf.model.*;
 /**
  * Common methods for all types of RDF graph changes.
  */
-public abstract class AbstractChange implements Change {
+public abstract class AbstractChange implements OldChange {
 
     private Model inserted = ModelFactory.createDefaultModel();
     private Model removed = ModelFactory.createDefaultModel();
