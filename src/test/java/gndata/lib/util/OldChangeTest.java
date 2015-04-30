@@ -8,7 +8,7 @@ import gndata.lib.util.change.*;
 import gndata.test.ThrowableAssert;
 import org.junit.*;
 
-public class ChangeTest {
+public class OldChangeTest {
 
     private Model model;
     private OntModel ontology;
@@ -54,7 +54,7 @@ public class ChangeTest {
 
     @Test
     public void testDelete() throws Exception {
-        Change op1 = new Delete(FakeRDFModel.rhm);
+        OldChange op1 = new Delete(FakeRDFModel.rhm);
         op1.applyTo(model, ontology);
 
         assert(op1.hasChanges());
