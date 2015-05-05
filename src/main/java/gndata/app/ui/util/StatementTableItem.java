@@ -8,17 +8,13 @@
 
 package gndata.app.ui.util;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.rdf.model.*;
-import gndata.lib.util.Resources;
 
 /**
  * Class that implements rendering of table items with RDF literals.
  */
-public class StatementTableItem {
+public final class StatementTableItem {
 
     private final Statement statement;
 
@@ -26,17 +22,34 @@ public class StatementTableItem {
         this.statement = statement;
     }
 
+    public Statement getStatement() { return statement; }
+
     public String getPredicate() {
         return statement.getPredicate().getLocalName();
     }
 
     public String getLiteral() {
         RDFNode object = statement.getObject();
-        if (object.isLiteral()) {
-            return object.asLiteral().getValue().toString();
-        } else {
-            return "";
-        }
+
+        return object.isLiteral() ? object.asLiteral().getValue().toString() : "";
+    }
+
+    public StatementTableItem withLiteral(String val) {
+
+        Resource subj = statement.getSubject();
+        Property pred = statement.getPredicate();
+        RDFNode obj = ResourceFactory.createPlainLiteral(val);
+
+        return new StatementTableItem(ResourceFactory.createStatement(subj, pred, obj));
+    }
+
+    public StatementTableItem withLiteral(String val, RDFDatatype type) {
+
+        Resource subj = statement.getSubject();
+        Property pred = statement.getPredicate();
+        RDFNode obj = ResourceFactory.createTypedLiteral(val, type);
+
+        return new StatementTableItem(ResourceFactory.createStatement(subj, pred, obj));
     }
 
     public String getType() {
@@ -49,14 +62,4 @@ public class StatementTableItem {
         }
     }
 
-    @Deprecated // because can be easily replaced using Resources.streamLiteralsFor
-    public static List<StatementTableItem> buildTableItems(RDFNode node) {
-        if (node == null || !node.isResource())
-            return new ArrayList<>();
-
-        return Resources.streamLiteralsFor(node.asResource())
-                        .map(StatementTableItem::new)
-                        .collect(Collectors.toList());
-
-    }
 }
