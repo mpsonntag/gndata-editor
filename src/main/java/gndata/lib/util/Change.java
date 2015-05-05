@@ -1,4 +1,4 @@
-package gndata.lib.util.change;
+package gndata.lib.util;
 
 import com.hp.hpl.jena.rdf.model.Model;
 

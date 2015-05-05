@@ -3,10 +3,8 @@ package gndata.lib.util;
 import java.util.*;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.listeners.StatementListener;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;
-import gndata.lib.util.change.*;
 
 /**
  * A helper for changing RDF graph.
@@ -17,7 +15,7 @@ public class ChangeHelper {
     private OntModel ontology;
 
     private List<Change> changes;
-    private int position;
+    private int position = -1;
 
     private boolean validate = false; // TODO do smth about it
 
@@ -34,7 +32,7 @@ public class ChangeHelper {
 
     public void undo() {
 
-        if (!(position > 0)) {
+        if (!(position > -1)) {
             throw new IllegalStateException("No previous changes recorded");
         }
 
@@ -70,7 +68,7 @@ public class ChangeHelper {
     }
 
     public void redo() {
-        if (!(position < changes.size())) {
+        if (!(position < changes.size() - 1)) {
             throw new IllegalStateException("Nothing to re-do");
         }
 
@@ -85,15 +83,15 @@ public class ChangeHelper {
             position += 1;
 
         } else {  // these are non-update operations
-            position += 1;
-
-            Change ch = changes.get(position);
+            Change ch = changes.get(position + 1);
 
             if (ch.isPositive()) {
                 model.add(ch.getChange());
             } else {
                 model.remove(ch.getChange());
             }
+
+            position += 1;
         }
 
         if (validate) {
@@ -104,23 +102,45 @@ public class ChangeHelper {
         }
     }
 
+    public Change get(int index) {
+        return changes.get(index);
+    }
+
+    public int size() {
+        return changes.size();
+    }
+
     /*   Private helper functions   */
 
+    private static boolean isUpdate(Change removed, Change added) {
+
+        // assume update is always first remove and then add
+
+        if (added.getChange().size() != removed.getChange().size()) {
+            return false;
+        }
+
+        StmtIterator iter = removed.getChange().listStatements();
+        while (iter.hasNext()) {
+            Statement st = iter.nextStatement();
+
+            if (added.getChange()
+                    .listStatements(st.getSubject(), st.getPredicate(), (RDFNode) null)
+                    .toList().size() != 1 ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private boolean isLastUpdate() {
-        // position > 1;
-
-        // TODO write code
-
-        return false;
+        return position > 0 && isUpdate(changes.get(position - 1), changes.get(position));
     }
 
     private boolean isNextUpdate() {
-        // position < changes.size() - 1;
-
-        // TODO write code
-
-        return false;
+        boolean posCheck = position < changes.size() - 1 && position + 2 < changes.size();
+        return posCheck && isUpdate(changes.get(position + 1), changes.get(position + 2));
     }
 
     private ValidityReport validate() {
@@ -139,31 +159,39 @@ public class ChangeHelper {
             if (!isUndo(ch) && !isRedo(ch)) {
 
                 // forget all undone changes, if any
-                if (position != changes.size()) {
+                if (position < changes.size() - 1) {
                     changes.subList(position, changes.size()).clear();
                 }
 
                 changes.add(ch);
-                position = changes.size();
+                position = changes.size() - 1;
             }
         }
 
         private boolean isUndo(Change newCh) {
-            Change oldCh = changes.get(position);
+            if (changes.size() > 0 && position > -1) {
+                Change oldCh = changes.get(position);
 
-            boolean isEqual = oldCh.getChange().equals(newCh.getChange());
-            boolean isOpposite = oldCh.isPositive() ^ newCh.isPositive();
+                boolean isEqual = oldCh.getChange().difference(newCh.getChange()).isEmpty();
+                boolean isOpposite = oldCh.isPositive() ^ newCh.isPositive();
 
-            return isEqual && isOpposite;
+                return isEqual && isOpposite;
+            } else {
+                return false;
+            }
         }
 
         private boolean isRedo(Change newCh) {
-            Change oldCh = changes.get(position + 1);
+            if (position < changes.size() - 1) {
+                Change oldCh = changes.get(position + 1);
 
-            boolean isEqual = oldCh.getChange().equals(newCh.getChange());
-            boolean isOpposite = oldCh.isPositive() == newCh.isPositive();
+                boolean isEqual = oldCh.getChange().difference(newCh.getChange()).isEmpty();
+                boolean isOpposite = oldCh.isPositive() == newCh.isPositive();
 
-            return position < changes.size() && isEqual && isOpposite;
+                return isEqual && isOpposite;
+            } else {
+                return false;
+            }
         }
 
         public void logAddChange(Model m) {
