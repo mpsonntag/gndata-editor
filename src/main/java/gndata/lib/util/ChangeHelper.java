@@ -49,7 +49,7 @@ public class ChangeHelper {
         } else {  // these are non-update operations
             Change ch = changes.get(position);
 
-            if (ch.isPositive()) {
+            if (ch.isAddition()) {
                 model.remove(ch.getChange());
             } else {
                 model.add(ch.getChange());
@@ -85,7 +85,7 @@ public class ChangeHelper {
         } else {  // these are non-update operations
             Change ch = changes.get(position + 1);
 
-            if (ch.isPositive()) {
+            if (ch.isAddition()) {
                 model.add(ch.getChange());
             } else {
                 model.remove(ch.getChange());
@@ -115,6 +115,10 @@ public class ChangeHelper {
     private static boolean isUpdate(Change removed, Change added) {
 
         // assume update is always first remove and then add
+        // Note: if a user manually deletes and then adds the same
+        // property for a certain object these both actions will
+        // be treated as one update!
+        // to be considered as feature for now
 
         if (added.getChange().size() != removed.getChange().size()) {
             return false;
@@ -173,7 +177,7 @@ public class ChangeHelper {
                 Change oldCh = changes.get(position);
 
                 boolean isEqual = oldCh.getChange().difference(newCh.getChange()).isEmpty();
-                boolean isOpposite = oldCh.isPositive() ^ newCh.isPositive();
+                boolean isOpposite = oldCh.isAddition() ^ newCh.isAddition();
 
                 return isEqual && isOpposite;
             } else {
@@ -186,9 +190,9 @@ public class ChangeHelper {
                 Change oldCh = changes.get(position + 1);
 
                 boolean isEqual = oldCh.getChange().difference(newCh.getChange()).isEmpty();
-                boolean isOpposite = oldCh.isPositive() == newCh.isPositive();
+                boolean isSame = oldCh.isAddition() == newCh.isAddition();
 
-                return isEqual && isOpposite;
+                return isEqual && isSame;
             } else {
                 return false;
             }
