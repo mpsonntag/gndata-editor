@@ -8,15 +8,15 @@ import com.hp.hpl.jena.rdf.model.Model;
 public class Change {
 
     Model change;
-    boolean positive;
+    boolean isAddition;
 
-    public Change(Model change, boolean positive) {
+    public Change(Model change, boolean isAddition) {
         this.change = change;
-        this.positive = positive;
+        this.isAddition = isAddition;
     }
 
-    public boolean isPositive() {
-        return positive;
+    public boolean isAddition() {
+        return isAddition;
     }
 
     public Model getChange() {

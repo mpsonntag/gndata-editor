@@ -43,10 +43,7 @@ public interface SimpleModelChangeHandler extends ModelChangedListener {
 
     @Override
     public default void addedStatements(Model model) {
-        Model m = ModelFactory.createDefaultModel();
-        m.add(model);
-
-        logAddChange(m);
+        logAddChange(model);
     }
 
     @Override
@@ -83,10 +80,7 @@ public interface SimpleModelChangeHandler extends ModelChangedListener {
 
     @Override
     public default void removedStatements(Model model) {
-        Model m = ModelFactory.createDefaultModel();
-        m.add(model);
-
-        logRemoveChange(m);
+        logRemoveChange(model);
     }
 
     @Override
