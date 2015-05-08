@@ -15,6 +15,8 @@ import java.util.stream.*;
 
 import static java.util.Spliterator.*;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
@@ -128,6 +130,99 @@ public class MetadataService {
         annotations.add(newData);
     }
 
+
+    public void dummy() {
+
+        OntClass cls = schema.getOntClass("all-foos");
+        String somePrefix = schema.getNsPrefixMap().get("foaf");
+
+        Resource parent = annotations.getResource("foo");
+        Resource child = annotations.getResource("bar");
+        Property p = annotations.getProperty("property");
+
+        // remove object property between parent & child Resources
+
+        Optional<Statement> rem = parent.listProperties(p)
+                .toList().stream().filter(st -> st.getObject().asResource().equals(child))
+                .findFirst();
+        if (rem.isPresent()) {
+            rem.get().remove();
+        }
+
+        // remove resource
+
+        Model toRemove = ModelFactory.createDefaultModel();
+        toRemove.add(annotations.listStatements(parent, null, (RDFNode) null));
+        toRemove.add(annotations.listStatements(null, null, parent));
+
+        annotations.remove(toRemove);
+
+        // create typed literal and add it to model
+
+        Literal o = ResourceFactory.createTypedLiteral("42", XSDDatatype.XSDint);
+        parent.addLiteral(p, o);
+
+        // get datatypes of property
+
+        List<? extends OntResource> types = schema.getOntProperty(p.getURI()).listRange().toList();
+        for (int i=1; i < types.size(); i++) {
+            types.get(i).equals(XSD.date);  // is date
+            types.get(i).equals(XSD.integer);  // is int
+            // etc.
+        }
+
+        // all classes;
+
+        schema.listClasses();
+
+        // class of a particular resource
+
+        schema.getOntClass(parent.getProperty(RDF.type).getObject().asResource().getURI());
+
+        // allowed connections for a particular class
+
+        List<OntClass> range = new ArrayList<>();
+        parent.listProperties(RDF.type).toList().forEach(st -> {
+            OntClass dt = schema.getOntClass(st.getObject().asResource().getURI());
+            dt.listDeclaredProperties().toList().forEach(prop -> {
+                prop.listRange().toList().forEach(ontRes -> {
+                    range.add(schema.getOntClass(ontRes.getURI()));
+                });
+            });
+        });
+
+        // get all DataProperties for a resource
+
+        OntClass foo = schema.getOntClass(parent.getProperty(RDF.type).getObject().asResource().getURI());
+        List<OntProperty> dataProperties = foo.listDeclaredProperties()
+                .toList().stream().filter(OntProperty::isDatatypeProperty)
+                .collect(Collectors.toList());
+
+        // get all still addable DataProperties for an Instance
+
+        List<OntProperty> possibleDataProperties = foo.listDeclaredProperties()
+                .toList().stream().filter(OntProperty::isDatatypeProperty)
+                .filter(pr -> !pr.isFunctionalProperty() || !annotations.contains(parent, pr))
+                .collect(Collectors.toList());
+
+        // get the Label DataProperty for a resource
+
+        Statement labelSt = parent.getProperty(RDFS.label);
+        Optional<String> label = labelSt == null ? Optional.ofNullable(null) : Optional.of(labelSt.getObject().asLiteral().getString());
+
+        // add new instance + DataProperties
+
+        Model newObject = ModelFactory.createDefaultModel();
+
+        Resource res = ResourceFactory.createResource(UUID.randomUUID().toString());
+
+        newObject.add(res, RDF.type, cls);
+        newObject.add(res, p, "some value");
+        newObject.add(res, p, "some other value");
+
+        annotations.add(newObject);
+
+    }
     /**
      * Creates a new Metadata Service using a given path. Combines existing
      * project RDF schemas (ontology files) and metadata storage (annotations)
