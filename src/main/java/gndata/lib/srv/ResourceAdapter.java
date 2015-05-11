@@ -5,7 +5,9 @@ import java.util.*;
 import static gndata.lib.util.Resources.*;
 import static java.util.stream.Collectors.toList;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * Adapter for navigation on rdf resources.
@@ -77,4 +79,39 @@ public class ResourceAdapter extends FileAdapter {
     public int hashCode() {
         return resource.hashCode();
     }
+
+
+    /* resource action API: TODO refactor in a separate interface later */
+
+
+    public Optional<String> getLabel() {
+        Statement labelSt = resource.getProperty(RDFS.label);
+        return labelSt == null ? Optional.ofNullable(null) : Optional.of(labelSt.getObject().asLiteral().getString());
+    }
+
+
+    public Resource addLiteral(Property p, String data, RDFDatatype dtype) {
+        Literal o = ResourceFactory.createTypedLiteral(data, dtype);
+        return resource.addLiteral(p, o);
+    }
+
+    public void removeObjectProperty(Property p, Resource obj) {
+        Optional<Statement> rem = resource.listProperties(p)
+                .toList().stream().filter(st -> st.getObject().asResource().equals(obj))
+                .findFirst();
+        if (rem.isPresent()) {
+            rem.get().remove();
+        }
+    }
+
+    public void remove() {
+        Model from = resource.getModel();
+
+        Model what = ModelFactory.createDefaultModel();
+        what.add(from.listStatements(resource, null, (RDFNode) null));
+        what.add(from.listStatements(null, null, resource));
+
+        from.remove(what);
+    }
+
 }
