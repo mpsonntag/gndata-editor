@@ -127,6 +127,10 @@ public class MetadataService {
         annotations.add(newData);
     }
 
+    public void add(Model m) {
+        annotations.add(m);
+    }
+
     /**
      * Creates a new Metadata Service using a given path. Combines existing
      * project RDF schemas (ontology files) and metadata storage (annotations)
