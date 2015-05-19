@@ -145,7 +145,7 @@ public class MetadataService {
 
         MetadataFilesManager metaFiles = new MetadataFilesManager(projectPath);
 
-        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
+        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 
         // TODO figure out if using OntDocumentManager to read files makes sense
         for (Path p : metaFiles.schemaPaths()) {

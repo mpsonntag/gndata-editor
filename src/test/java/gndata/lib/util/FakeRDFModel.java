@@ -27,7 +27,7 @@ public class FakeRDFModel {
     }
 
     public static OntModel getFakeSchema() {
-        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
+        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 
         schema.addSubModel(loadModelFromResources(schemaPath));
         return schema;

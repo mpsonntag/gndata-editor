@@ -1,14 +1,15 @@
 package gndata.lib.util;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
- * Created by andrey on 11.05.15.
+ * A helper class to perform common actions on the Ontology.
  */
 public class OntologyHelper {
 
@@ -18,46 +19,85 @@ public class OntologyHelper {
         this.ontology = ontology;
     }
 
+
     /* ontology Class methods */
 
-    public List<OntClass> listClasses() {
-        return ontology.listClasses().toList();
+
+    /**
+     * Returns list of available classes in the current ontology.
+     *
+     * @return Set<OntClass>
+     */
+    public Set<OntClass> listClasses() {
+        return ontology.listClasses().toSet();
     }
 
-    public List<OntClass> listClasses(Resource res) {
-        List<String> types = res.listProperties(RDF.type).toList().stream()
-                .map(st -> st.getObject().asResource().getURI())
-                .collect(Collectors.toList());
+    /**
+     * Returns list of classes a current resource belongs to.
+     *
+     * @return Set<OntClass>
+     */
+    public Set<OntClass> listClasses(Resource res) {
+        Set<OntClass> classes = new HashSet<>();
 
-        return ontology.listClasses().toList().stream()
-                .filter(cls -> types.contains(cls.getURI()))
-                .collect(Collectors.toList());
+        OntClass cls = ontology.getOntClass(res.listProperties(RDF.type)
+                .toList().get(0).getObject().asResource().getURI());
+
+        classes.add(cls);
+        classes.addAll(cls.listSuperClasses().toSet());
+
+        return classes;
     }
 
-    public List<OntClass> listRelated(OntClass cls) {
-        List<OntClass> range = new ArrayList<>();
+    /**
+     * Returns a set of Classes defined as a Range for a given Property.
+     *
+     * @return Set<OntClass>
+     */
+    public Set<OntClass> getRange(OntProperty prop) {
+        return prop.listRange().toList().stream()
+                .map(res -> ontology.getOntClass(res.getURI()))
+                .collect(Collectors.toSet());
+    }
 
-        cls.listDeclaredProperties().toList().stream()
-                .filter(OntProperty::isObjectProperty)
-                .forEach(prop -> {
-                    prop.listRange().toList().forEach(ontRes -> {
-                        range.add(ontology.getOntClass(ontRes.getURI()));
-                    });
-                });
+    /**
+     * Returns a map of related (via owl:range) properties/classes for the given class.
+     *
+     * @return Set<Pair<OntProperty, OntClass>>
+     */
+    public Set<Pair<OntProperty, OntClass>> listRelated(OntClass cls) {
+        Set<Pair<OntProperty, OntClass>> range = new HashSet<>();
+
+        listObjectProperties(cls).stream().forEach(prop ->
+                range.addAll(getRange(prop).stream()
+                        .map(rcls -> Pair.of(prop, rcls))
+                        .collect(Collectors.toSet())));
 
         return range;
     }
 
-    public List<OntClass> listRelated(Resource res) {
-        List<OntClass> range = new ArrayList<>();
+    /**
+     * Returns a map of related (via owl:range) properties/classes for the given resource.
+     *
+     * @return Set<Pair<OntProperty, OntClass>>
+     */
+    public Set<Pair<OntProperty, OntClass>> listRelated(Resource res) {
+        Set<Pair<OntProperty, OntClass>> range = new HashSet<>();
 
         listClasses(res).forEach(cls -> range.addAll(listRelated(cls)));
 
         return range;
     }
 
+
     /* ontology Property methods */
 
+
+    /**
+     * Returns a map of related (via owl:range) properties/classes for the given resource.
+     *
+     * @return Set<Pair<OntProperty, OntClass>>
+     */
     public List<OntProperty> listDatatypeProperties(OntClass cls) {
         return cls.listDeclaredProperties()
                 .toList().stream().filter(OntProperty::isDatatypeProperty)
@@ -76,7 +116,7 @@ public class OntologyHelper {
     }
 
     public List<OntProperty> listObjectProperties(OntClass cls) {
-        return cls.listDeclaredProperties()
+        return cls.listDeclaredProperties(true)
                 .toList().stream().filter(OntProperty::isObjectProperty)
                 .collect(Collectors.toList());
     }

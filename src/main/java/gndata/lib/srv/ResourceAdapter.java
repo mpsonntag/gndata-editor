@@ -1,6 +1,7 @@
 package gndata.lib.srv;
 
 import java.util.*;
+import java.util.stream.*;
 
 import static gndata.lib.util.Resources.*;
 import static java.util.stream.Collectors.toList;
@@ -95,13 +96,16 @@ public class ResourceAdapter extends FileAdapter {
         return resource.addLiteral(p, o);
     }
 
-    public void removeObjectProperty(Property p, Resource obj) {
-        Optional<Statement> rem = resource.listProperties(p)
-                .toList().stream().filter(st -> st.getObject().asResource().equals(obj))
-                .findFirst();
-        if (rem.isPresent()) {
-            rem.get().remove();
-        }
+    public void removeObjectProperties(List<Resource> objs) {
+        Model toRemove = ModelFactory.createDefaultModel();
+
+        toRemove.add(resource.listProperties()
+                .toList().stream()
+                .filter(st -> st.getObject().isResource())
+                .filter(st -> objs.contains(st.getObject().asResource()))
+                .collect(Collectors.toList()));
+
+        resource.getModel().remove(toRemove);  // remove in a single change
     }
 
     public void remove() {
