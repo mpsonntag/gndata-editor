@@ -72,18 +72,6 @@ public class OntologyHelper {
         // to filter for still addable props use filter below
         // .filter(pr -> !pr.isFunctionalProperty() || !annotations.contains(res, pr))
 
-        Model newObject = ModelFactory.createDefaultModel();
-
-        Resource res = ResourceFactory.createResource(UUID.randomUUID().toString());
-
-        newObject.add(res, RDF.type, cls);
-        newObject.add(res, p, "some value");
-        newObject.add(res, p, "some other value");
-
-        annotations.add(newObject);
-
-
-
         return props;
     }
 
