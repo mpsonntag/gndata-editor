@@ -3,9 +3,11 @@ package gndata.lib.util;
 import java.util.*;
 import java.util.stream.*;
 
+import com.hp.hpl.jena.datatypes.*;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -54,10 +56,31 @@ public class OntologyHelper {
      *
      * @return Set<OntClass>
      */
-    public Set<OntClass> getRange(OntProperty prop) {
+    public Set<OntClass> getRange(ObjectProperty prop) {
         return prop.listRange().toList().stream()
                 .map(res -> ontology.getOntClass(res.getURI()))
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns a set of Classes defined as a Range for a given Property.
+     *
+     * @return Set<RDFDatatype>
+     */
+    public Set<RDFDatatype> getRange(DatatypeProperty prop) {
+        Set<RDFDatatype> range = new HashSet<>();
+
+        TypeMapper tm = TypeMapper.getInstance();
+        range.addAll(prop.listRange().toList().stream()
+                .map(p -> tm.getTypeByName(p.getURI()))
+                .filter(p -> p != null)
+                .collect(Collectors.toSet()));
+
+        if (range.isEmpty()) {
+            range.add(XSDDatatype.XSDstring);
+        }
+
+        return range;
     }
 
     /**
@@ -65,8 +88,8 @@ public class OntologyHelper {
      *
      * @return Set<Pair<OntProperty, OntClass>>
      */
-    public Set<Pair<OntProperty, OntClass>> listRelated(OntClass cls) {
-        Set<Pair<OntProperty, OntClass>> range = new HashSet<>();
+    public Set<Pair<ObjectProperty, OntClass>> listRelated(OntClass cls) {
+        Set<Pair<ObjectProperty, OntClass>> range = new HashSet<>();
 
         listObjectProperties(cls).stream().forEach(prop ->
                 range.addAll(getRange(prop).stream()
@@ -81,8 +104,8 @@ public class OntologyHelper {
      *
      * @return Set<Pair<OntProperty, OntClass>>
      */
-    public Set<Pair<OntProperty, OntClass>> listRelated(Resource res) {
-        Set<Pair<OntProperty, OntClass>> range = new HashSet<>();
+    public Set<Pair<ObjectProperty, OntClass>> listRelated(Resource res) {
+        Set<Pair<ObjectProperty, OntClass>> range = new HashSet<>();
 
         listClasses(res).forEach(cls -> range.addAll(listRelated(cls)));
 
@@ -98,14 +121,15 @@ public class OntologyHelper {
      *
      * @return Set<Pair<OntProperty, OntClass>>
      */
-    public List<OntProperty> listDatatypeProperties(OntClass cls) {
+    public List<DatatypeProperty> listDatatypeProperties(OntClass cls) {
         return cls.listDeclaredProperties()
                 .toList().stream().filter(OntProperty::isDatatypeProperty)
+                .map(p -> ontology.getDatatypeProperty(p.getURI()))
                 .collect(Collectors.toList());
     }
 
-    public List<OntProperty> listDatatypeProperties(Resource res) {
-        List<OntProperty> props = new ArrayList<>();
+    public List<DatatypeProperty> listDatatypeProperties(Resource res) {
+        List<DatatypeProperty> props = new ArrayList<>();
 
         listClasses(res).forEach(cls -> props.addAll(listDatatypeProperties(cls)));
 
@@ -115,14 +139,15 @@ public class OntologyHelper {
         return props;
     }
 
-    public List<OntProperty> listObjectProperties(OntClass cls) {
+    public List<ObjectProperty> listObjectProperties(OntClass cls) {
         return cls.listDeclaredProperties(true)
                 .toList().stream().filter(OntProperty::isObjectProperty)
+                .map(p -> ontology.getObjectProperty(p.getURI()))
                 .collect(Collectors.toList());
     }
 
-    public List<OntProperty> listObjectProperties(Resource res) {
-        List<OntProperty> props = new ArrayList<>();
+    public List<ObjectProperty> listObjectProperties(Resource res) {
+        List<ObjectProperty> props = new ArrayList<>();
 
         listClasses(res).forEach(cls -> props.addAll(listObjectProperties(cls)));
 

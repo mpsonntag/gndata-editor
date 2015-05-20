@@ -2,6 +2,8 @@ package gndata.lib.util;
 
 import java.util.*;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,13 +48,35 @@ public class OntologyHelperTest {
     }
 
     @Test
-    public void testRelated() throws Exception {
-        Set<Pair<OntProperty, OntClass>> lst;
+    public void testRange() throws Exception {
         OntClass person = ontology.getOntClass(foaf + "Person");
         OntClass document = ontology.getOntClass(foaf + "Document");
 
-        OntProperty knows = ontology.getOntProperty(foaf + "knows");
-        OntProperty publications = ontology.getOntProperty(foaf + "publications");
+        ObjectProperty knows = ontology.getObjectProperty(foaf + "knows");
+        ObjectProperty publications = ontology.getObjectProperty(foaf + "publications");
+
+        assert hlp.getRange(knows).contains(person);
+        assert !hlp.getRange(knows).contains(document);
+
+        assert !hlp.getRange(publications).contains(person);
+        assert hlp.getRange(publications).contains(document);
+
+        DatatypeProperty fName = ontology.getDatatypeProperty(foaf + "firstName");
+
+        assert hlp.getRange(fName).contains(XSDDatatype.XSDstring);
+
+        // TODO FOAF does not seem to contain type restrictions
+        // TODO add more tests
+    }
+
+    @Test
+    public void testRelated() throws Exception {
+        Set<Pair<ObjectProperty, OntClass>> lst;
+        OntClass person = ontology.getOntClass(foaf + "Person");
+        OntClass document = ontology.getOntClass(foaf + "Document");
+
+        ObjectProperty knows = ontology.getObjectProperty(foaf + "knows");
+        ObjectProperty publications = ontology.getObjectProperty(foaf + "publications");
 
         lst = hlp.listRelated(person);
 
@@ -75,25 +99,23 @@ public class OntologyHelperTest {
     public void testProperties() throws Exception {
         OntClass person = ontology.getOntClass(foaf + "Person");
 
-        OntProperty fName = ontology.getOntProperty(foaf + "firstName");
-        OntProperty knows = ontology.getOntProperty(foaf + "knows");
-        OntProperty thumbnail = ontology.getOntProperty(foaf + "thumbnail");
+        DatatypeProperty fName = ontology.getDatatypeProperty(foaf + "firstName");
+        DatatypeProperty sha1 = ontology.getDatatypeProperty(foaf + "sha1");
+
+        ObjectProperty knows = ontology.getObjectProperty(foaf + "knows");
+        ObjectProperty thumbnail = ontology.getObjectProperty(foaf + "thumbnail");
 
         assert hlp.listDatatypeProperties(person).contains(fName);
-        assert !hlp.listDatatypeProperties(person).contains(knows);
-        assert !hlp.listDatatypeProperties(person).contains(thumbnail);
+        assert !hlp.listDatatypeProperties(person).contains(sha1);
 
-        assert !hlp.listObjectProperties(person).contains(fName);
         assert hlp.listObjectProperties(person).contains(knows);
         assert !hlp.listObjectProperties(person).contains(thumbnail);
 
         Resource res = model.getResource(FakeRDFModel.rhm);
 
         assert hlp.listDatatypeProperties(res).contains(fName);
-        assert !hlp.listDatatypeProperties(res).contains(knows);
-        assert !hlp.listDatatypeProperties(res).contains(thumbnail);
+        assert !hlp.listDatatypeProperties(res).contains(sha1);
 
-        assert !hlp.listObjectProperties(res).contains(fName);
         assert hlp.listObjectProperties(res).contains(knows);
         assert !hlp.listObjectProperties(res).contains(thumbnail);
     }
