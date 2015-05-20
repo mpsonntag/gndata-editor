@@ -1,13 +1,13 @@
 package gndata.lib.util;
 
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
 import com.hp.hpl.jena.datatypes.*;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.*;
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.RDF;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**

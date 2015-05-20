@@ -1,8 +1,7 @@
 package gndata.lib.util;
 
-import java.util.*;
+import java.util.Set;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;

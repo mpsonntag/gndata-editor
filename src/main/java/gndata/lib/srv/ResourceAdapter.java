@@ -7,8 +7,10 @@ import static gndata.lib.util.Resources.*;
 import static java.util.stream.Collectors.toList;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Adapter for navigation on rdf resources.
@@ -85,6 +87,30 @@ public class ResourceAdapter extends FileAdapter {
     /* resource action API: TODO refactor in a separate interface later */
 
 
+    public List<Resource> availableToAdd(ObjectProperty p, OntClass cls) {
+        List<Resource> lst = new ArrayList<>();
+
+        // all available Resources of type cls
+        List<Resource> available = resource.getModel()
+                .listStatements(null, RDF.type, cls).toList().stream()
+                .map(Statement::getSubject)
+                .collect(Collectors.toList());
+
+        if (p.isFunctionalProperty() && resource.getProperty(p) == null) {
+            lst.addAll(available);
+        } else {
+            lst.addAll(available);
+
+            // already connected Resources
+            lst.removeAll(resource.listProperties(p).toList().stream()
+                    .map(Statement::getObject)
+                    .map(RDFNode::asResource)
+                    .collect(Collectors.toList()));
+        }
+
+        return lst;
+    }
+
     public Optional<String> getLabel() {
         Statement labelSt = resource.getProperty(RDFS.label);
         return labelSt == null ? Optional.ofNullable(null) : Optional.of(labelSt.getObject().asLiteral().getString());
@@ -94,6 +120,29 @@ public class ResourceAdapter extends FileAdapter {
     public Resource addLiteral(Property p, String data, RDFDatatype dtype) {
         Literal o = ResourceFactory.createTypedLiteral(data, dtype);
         return resource.addLiteral(p, o);
+    }
+
+    public void updateObjectProperties(List<Pair<Property, Resource>> objs) {
+        Model toRemove = ModelFactory.createDefaultModel();
+        Model toAdd = ModelFactory.createDefaultModel();
+
+        toRemove.add(resource.listProperties().toList().stream()
+                .filter(st -> st.getObject().isResource())  // obj props only
+                .filter(st -> !objs.contains(Pair.of(st.getPredicate(), st.getObject().asResource())))
+                .collect(Collectors.toList()));
+
+        List<Pair<Property, Resource>> notChanged = objs.stream()
+                .filter(pair -> resource.listProperties(pair.getLeft())
+                        .toList().stream().map(st -> st.getObject().asResource())
+                        .collect(Collectors.toList()).contains(pair.getRight()))
+                .collect(Collectors.toList());
+
+        toAdd.add(objs.stream().filter(pair -> !notChanged.contains(pair))
+                .map(pair -> ResourceFactory.createStatement(resource, pair.getLeft(), pair.getRight()))
+                .collect(Collectors.toList()));
+
+        resource.getModel().remove(toRemove);
+        resource.getModel().add(toAdd);
     }
 
     public void removeObjectProperties(List<Resource> objs) {
