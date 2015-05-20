@@ -15,9 +15,8 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Adapter for navigation on rdf resources.
  *
- * TODO implement
  */
-public class ResourceAdapter extends FileAdapter {
+public class ResourceAdapter implements IFileAdapter {
 
     private Resource resource;
     private ResourceAdapter parent;
@@ -40,7 +39,7 @@ public class ResourceAdapter extends FileAdapter {
     }
 
     public List<Statement> getLiterals() {
-        return listLiteralsFor(resource);
+        return streamLiteralsFor(resource).collect(Collectors.toList());
     }
 
     @Override

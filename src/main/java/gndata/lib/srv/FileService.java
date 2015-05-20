@@ -25,7 +25,7 @@ public class FileService {
 
     }
 
-    public boolean isFileInProject(FileAdapter path) {
+    public boolean isFileInProject(IFileAdapter path) {
 
         // TODO implement check
         return true;

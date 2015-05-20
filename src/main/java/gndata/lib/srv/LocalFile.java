@@ -28,7 +28,7 @@ import org.apache.tika.mime.MediaType;
  * Class implementing methods for handling local files and folders
  * giving access to information like file size or mime type.
  */
-public class LocalFile extends FileAdapter<LocalFile> {
+public class LocalFile implements IFileAdapter<LocalFile> {
 
     private Path path;
     private Optional<LocalFile> parent;
