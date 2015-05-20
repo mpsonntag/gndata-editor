@@ -50,7 +50,7 @@ public class QueryDetailsCtrl extends PageCtrl {
             if (newVal == null) {
                 statements.clear();
             } else {
-                ResourceWrapper rw = new ResourceWrapper(newVal.getSubject());
+                ResourceAdapter rw = new ResourceAdapter(newVal.getSubject());
                 statements.setAll(rw.getLiterals().stream()
                         .map(StatementTableItem::new).collect(Collectors.toList()));
             }

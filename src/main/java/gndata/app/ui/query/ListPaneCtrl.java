@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 import com.hp.hpl.jena.rdf.model.Statement;
 import gndata.app.state.QueryState;
 import gndata.app.ui.util.TwoLineListCell;
-import gndata.lib.srv.ResourceWrapper;
+import gndata.lib.srv.ResourceAdapter;
 
 
 public class ListPaneCtrl implements Initializable {
@@ -53,7 +53,7 @@ public class ListPaneCtrl implements Initializable {
         @Override
         protected void update(Statement stmt, boolean empty) {
             if (!empty) {
-                ResourceWrapper node = new ResourceWrapper(stmt.getSubject());
+                ResourceAdapter node = new ResourceAdapter(stmt.getSubject());
 
                 lineOne.set(node.toNameString());
                 lineTwo.set(node.toNameString());

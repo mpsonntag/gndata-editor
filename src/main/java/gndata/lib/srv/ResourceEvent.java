@@ -9,12 +9,12 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class ResourceEvent implements EventAdapter {
 
-    private ResourceWrapper res;
+    private ResourceAdapter res;
     private LocalDateTime start;
     private LocalDateTime end;
 
     public ResourceEvent(Resource res) {
-        this.res = new ResourceWrapper(res);
+        this.res = new ResourceAdapter(res);
 
         // TODO get actual values from resource
 

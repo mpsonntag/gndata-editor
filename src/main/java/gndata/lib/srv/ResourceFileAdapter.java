@@ -9,7 +9,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 /**
  * Created by andrey on 20.05.15.
  */
-public class ResourceFileAdapter extends ResourceWrapper implements IFileAdapter {
+public class ResourceFileAdapter extends ResourceAdapter implements IFileAdapter {
 
     private ResourceFileAdapter parent;
 
