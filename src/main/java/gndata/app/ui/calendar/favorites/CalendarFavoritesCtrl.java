@@ -15,7 +15,7 @@ import javafx.util.Callback;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
 import gndata.app.state.*;
-import gndata.lib.srv.ResourceAdapter;
+import gndata.lib.srv.*;
 import org.controlsfx.control.CheckListView;
 
 /**
@@ -24,12 +24,12 @@ import org.controlsfx.control.CheckListView;
 public class CalendarFavoritesCtrl implements Initializable {
 
     @FXML
-    private CheckListView<ResourceAdapter> favoritesList;
+    private CheckListView<ResourceFileAdapter> favoritesList;
 
     private final ProjectState ps;
     private final CalendarState cs;
 
-    private ObservableList<ResourceAdapter> items;
+    private ObservableList<ResourceFileAdapter> items;
 
     @Inject
     public CalendarFavoritesCtrl(ProjectState ps, CalendarState cs) {
@@ -47,7 +47,7 @@ public class CalendarFavoritesCtrl implements Initializable {
         favoritesList.getCheckModel().checkAll();
 
         favoritesList.getCheckModel().getCheckedItems().addListener(
-                (ListChangeListener.Change<? extends ResourceAdapter> l) ->
+                (ListChangeListener.Change<? extends ResourceFileAdapter> l) ->
                         cs.getSelectedTypes().setAll(favoritesList.getCheckModel().getCheckedItems())
         );
 
@@ -61,7 +61,7 @@ public class CalendarFavoritesCtrl implements Initializable {
         if (ps.getMetadata() != null) {
             items.setAll(ps.getMetadata().getAvailableTypes()
                     .stream()
-                    .map(r -> new ResourceAdapter(r, null))
+                    .map(r -> new ResourceFileAdapter(r, null))
                     .collect(Collectors.toList()));
         }
     }

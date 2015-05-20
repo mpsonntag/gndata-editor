@@ -5,17 +5,16 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 import com.hp.hpl.jena.rdf.model.Resource;
-import gndata.lib.util.Resources;
 
 
 public class ResourceEvent implements EventAdapter {
 
-    private Resource res;
+    private ResourceWrapper res;
     private LocalDateTime start;
     private LocalDateTime end;
 
     public ResourceEvent(Resource res) {
-        this.res = res;
+        this.res = new ResourceWrapper(res);
 
         // TODO get actual values from resource
 
@@ -42,7 +41,7 @@ public class ResourceEvent implements EventAdapter {
     }
 
     public String getSummary() {
-        String name = Resources.toNameString(res);
+        String name = res.toNameString();
 
         return name.length() < 8 ? name : name.substring(0, 7);
 
@@ -51,7 +50,7 @@ public class ResourceEvent implements EventAdapter {
 
     public String getDescription() {
         //return Resources.toInfoString(res);
-        return res.getURI();
+        return res.resource.getURI();
     }
 
 

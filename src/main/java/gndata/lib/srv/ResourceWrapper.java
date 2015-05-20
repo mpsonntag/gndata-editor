@@ -33,6 +33,10 @@ public class ResourceWrapper {
         return resource.hashCode();
     }
 
+    public Resource getResource() {
+        return resource;
+    }
+
     /**
      * Gets a human readable name for a {@link Resource}. If the resource is a class
      * the name will be the class name. Otherwise the method will try to use {@link RDFS#label}

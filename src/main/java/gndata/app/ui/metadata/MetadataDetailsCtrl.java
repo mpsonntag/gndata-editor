@@ -14,17 +14,16 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.fxml.*;
+import javafx.fxml.FXML;
 import javafx.scene.web.WebView;
 
-import com.hp.hpl.jena.datatypes.*;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.html.PageCtrl;
 import gndata.app.state.MetadataNavState;
 import gndata.app.ui.util.*;
-import gndata.lib.util.Resources;
 
 /**
  * Controller for viewing and editing DataProperties.
@@ -103,7 +102,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
             } else {
                 // fetch and set up all existing DataProperties
                 statementList.setAll(
-                        Resources.streamLiteralsFor(newVal.getResource())
+                        newVal.getLiterals().stream()
                                 .map(StatementTableItem::new)
                                 .collect(Collectors.toList())
                 );
@@ -111,7 +110,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
                 // TODO implementation get all available predicates
                 // TODO for the selected resource from the metadata service layer
                 // fetch and set up all available Predicates to add new DataProperties
-                Resources.streamLiteralsFor(newVal.getResource())
+                newVal.getLiterals().stream()
                         .forEach(r -> availablePredicates.add(r.getPredicate()));
             }
 

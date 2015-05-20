@@ -22,15 +22,15 @@ public class MetadataListCtrl implements Initializable {
 
 
     @FXML
-    private ListView<ResourceAdapter> metadataListView;
+    private ListView<ResourceFileAdapter> metadataListView;
     @FXML
     private TextField filterTextField;
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
     private final StringProperty filter;
-    private final ObservableList<ResourceAdapter> filteredList;
-    private final List<ResourceAdapter> unfilteredList;
+    private final ObservableList<ResourceFileAdapter> filteredList;
+    private final List<ResourceFileAdapter> unfilteredList;
 
     @Inject
     public MetadataListCtrl(ProjectState projectState, MetadataNavState navState) {
@@ -75,11 +75,11 @@ public class MetadataListCtrl implements Initializable {
     /**
      * Listen for selected parent changes.
      */
-    private class SelectedParentListener implements ChangeListener<ResourceAdapter> {
+    private class SelectedParentListener implements ChangeListener<ResourceFileAdapter> {
 
         @Override
-        public void changed(ObservableValue<? extends ResourceAdapter> observable, ResourceAdapter oldValue,
-                            ResourceAdapter newValue) {
+        public void changed(ObservableValue<? extends ResourceFileAdapter> observable, ResourceFileAdapter oldValue,
+                            ResourceFileAdapter newValue) {
 
             unfilteredList.clear();
             unfilteredList.addAll(newValue.getChildren());
@@ -103,7 +103,7 @@ public class MetadataListCtrl implements Initializable {
 
         @Override
         public void handleDoubleClick(MouseEvent mouseEvent) {
-            ResourceAdapter ra = metadataListView.getSelectionModel().getSelectedItem();
+            ResourceFileAdapter ra = metadataListView.getSelectionModel().getSelectedItem();
             navState.setSelectedParent(ra);
         }
     }
@@ -122,7 +122,7 @@ public class MetadataListCtrl implements Initializable {
                 unfilteredList.clear();
                 unfilteredList.addAll(
                         ms.query.streamSearchResults(navState.getSearchString())
-                            .map(r -> new ResourceAdapter(r, null))
+                            .map(r -> new ResourceFileAdapter(r, null))
                             .collect(Collectors.toList())
                 );
 
@@ -138,15 +138,15 @@ public class MetadataListCtrl implements Initializable {
 
 
     /**
-     * A list cell for lists showing a {@link ResourceAdapter}.
+     * A list cell for lists showing a {@link ResourceFileAdapter}.
      */
-    private class MetadataListCell extends TwoLineListCell<ResourceAdapter> {
+    private class MetadataListCell extends TwoLineListCell<ResourceFileAdapter> {
 
         @Override
-        protected void update(ResourceAdapter item, boolean empty) {
+        protected void update(ResourceFileAdapter item, boolean empty) {
             if (! empty) {
                 lineOne.set(item.getFileName());
-                lineTwo.set(item.getInfo());
+                lineTwo.set(item.toInfoString());
             } else {
                 lineOne.set(null);
                 lineTwo.set(null);
