@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toList;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
- * Created by andrey on 20.05.15.
+ * Represents an RDF Resource as a element in the file tree.
  */
 public class ResourceFileAdapter extends ResourceAdapter implements IFileAdapter {
 
@@ -27,7 +27,7 @@ public class ResourceFileAdapter extends ResourceAdapter implements IFileAdapter
     @Override
     public List<ResourceFileAdapter> getChildren() {
         return getResources().stream()
-                .map(r -> new ResourceFileAdapter(r, this))
+                .map(r -> new ResourceFileAdapter(r.getResource(), this))
                 .collect(toList());
     }
 

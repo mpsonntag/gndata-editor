@@ -101,29 +101,30 @@ public class ResourceAdapter {
 
 
     /**
-     * Streams all statements containing literal values as object for a certain resource.
+     * Returns all statements containing literal values as object for a certain resource.
      *
-     * @return A stream with literals.
+     * @return A collection with literals.
      */
     public Collection<Statement> getLiterals() {
         return resource.listProperties().filterKeep(new LiteralFilter()).toList();
     }
 
     /**
-     * Streams all resources directly related to the given resource. Blank nodes and
+     * Returns all resources directly related to the given resource. Blank nodes and
      * Resources that represent a type are ignored. If the resource itself is a {@link OWL#Class}
      * the method will return all instances of this class.
      *
      * For instance resources the method also resolves reverse relationships.
      *
-     * @return A stream with related resources.
+     * @return A collection with related resources.
      */
-    public Collection<Resource> getResources() {
+    public Collection<ResourceAdapter> getResources() {
         ExtendedIterator<Statement> it;
 
         if (resource.hasProperty(RDF.type, OWL.Class)) {  //resource is an OWL Class
             return resource.getModel().listStatements(null, RDF.type, resource).toList().stream()
                     .map(Statement::getSubject)
+                    .map(ResourceAdapter::new)
                     .collect(Collectors.toList());
 
         } else {
@@ -139,17 +140,25 @@ public class ResourceAdapter {
             return Stream.concat(forward, reverse)
                     .sorted(new StatementComparator())
                     .map(stmt -> stmt.getSubject().equals(resource) ? stmt.getObject().asResource() : stmt.getSubject())
+                    .map(ResourceAdapter::new)
                     .collect(Collectors.toList());
         }
     }
 
-    public Collection<Resource> availableToAdd(ObjectProperty p, OntClass cls) {
+    /**
+     * Returns all available resources (in the related Model) of a particular OntClass
+     * that can be connected via a given ObjectProperty.
+     *
+     * @return A collection with available to add resources.
+     */
+    public Collection<ResourceAdapter> availableToAdd(ObjectProperty p, OntClass cls) {
         List<Resource> lst = new ArrayList<>();
 
         // all available Resources of type cls
         List<Resource> available = resource.getModel()
                 .listStatements(null, RDF.type, cls).toList().stream()
                 .map(Statement::getSubject)
+                .filter(res -> !res.equals(resource))  // exclude self
                 .collect(Collectors.toList());
 
         if (p.isFunctionalProperty() && resource.getProperty(p) == null) {
@@ -164,32 +173,13 @@ public class ResourceAdapter {
                     .collect(Collectors.toList()));
         }
 
-        return lst;
+        return lst.stream().map(ResourceAdapter::new).collect(Collectors.toList());
     }
 
-    public void updateObjectProperties(List<Pair<Property, Resource>> objs) {
-        Model toRemove = ModelFactory.createDefaultModel();
-        Model toAdd = ModelFactory.createDefaultModel();
-
-        toRemove.add(resource.listProperties().toList().stream()
-                .filter(st -> st.getObject().isResource())  // obj props only
-                .filter(st -> !objs.contains(Pair.of(st.getPredicate(), st.getObject().asResource())))
-                .collect(Collectors.toList()));
-
-        List<Pair<Property, Resource>> notChanged = objs.stream()
-                .filter(pair -> resource.listProperties(pair.getLeft())
-                        .toList().stream().map(st -> st.getObject().asResource())
-                        .collect(Collectors.toList()).contains(pair.getRight()))
-                .collect(Collectors.toList());
-
-        toAdd.add(objs.stream().filter(pair -> !notChanged.contains(pair))
-                .map(pair -> ResourceFactory.createStatement(resource, pair.getLeft(), pair.getRight()))
-                .collect(Collectors.toList()));
-
-        resource.getModel().remove(toRemove);
-        resource.getModel().add(toAdd);
-    }
-
+    /**
+     * Removes given object properties from the related Model.
+     * (Resources stay in the Model, only connections are removed)
+     */
     public void removeObjectProperties(List<Resource> objs) {
         Model toRemove = ModelFactory.createDefaultModel();
 
@@ -202,6 +192,9 @@ public class ResourceAdapter {
         resource.getModel().remove(toRemove);  // remove in a single change
     }
 
+    /**
+     * Removes this resource from the related Model.
+     */
     public void remove() {
         Model from = resource.getModel();
 
@@ -215,6 +208,16 @@ public class ResourceAdapter {
 
     /* helper classes */
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        ResourceAdapter that = (ResourceAdapter) o;
+
+        return resource.equals(that.resource);
+    }
 
     /**
      * Filters statements with literal objects.
