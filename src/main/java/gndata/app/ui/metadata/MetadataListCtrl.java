@@ -174,13 +174,9 @@ public class MetadataListCtrl implements Initializable {
     public void removeObjectProperty() {
         ArrayList<Resource> remList = new ArrayList<>();
 
-        if(metadataListView.getSelectionModel().getSelectedItems().size() > 1){
-            metadataListView.getSelectionModel().getSelectedItems()
-                    .iterator()
-                    .forEachRemaining(c -> remList.add(c.getResource()));
-        } else {
-            remList.add(metadataListView.getSelectionModel().getSelectedItem().getResource());
-        }
+        metadataListView.getSelectionModel().getSelectedItems()
+                .iterator()
+                .forEachRemaining(c -> remList.add(c.getResource()));
 
         navState.getSelectedParent().removeObjectProperties(remList);
 
@@ -192,13 +188,10 @@ public class MetadataListCtrl implements Initializable {
     // TODO navParent or navChild. If this is the case, reset the navigation
     // remove all selected instances from the RDF model
     public void deleteInstance(){
-        if(metadataListView.getSelectionModel().getSelectedItems().size() > 1){
-            metadataListView.getSelectionModel().getSelectedItems()
-                    .iterator()
-                    .forEachRemaining(ResourceAdapter::remove);
-        } else {
-            metadataListView.getSelectionModel().getSelectedItem().remove();
-        }
+
+        metadataListView.getSelectionModel().getSelectedItems()
+                .iterator()
+                .forEachRemaining(ResourceAdapter::remove);
 
         refreshList();
     }
