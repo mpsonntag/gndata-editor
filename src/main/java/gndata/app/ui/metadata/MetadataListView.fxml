@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?language javascript?>
 
 <!--
 Copyright (c) 2014, German Neuroinformatics Node (G-Node)
@@ -17,9 +18,36 @@ LICENSE file in the root of the Project.
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataListCtrl">
     <center>
-        <ListView fx:id="metadataListView" />
+        <ListView fx:id="metadataListView">
+            <contextMenu>
+                <ContextMenu fx:id="contextMenu" onShowing="#showContextMenu">
+                    <items>
+                        <MenuItem fx:id="rename" onAction="#renameParent" />
+                        <MenuItem fx:id="manageObjProp" onAction="#openManageObjectProperties" />
+                        <SeparatorMenuItem/>
+                        <SeparatorMenuItem/>
+                        <MenuItem fx:id="addInstance" onAction="#openAddResource" />
+                        <MenuItem fx:id="addSelectedInstance" onAction="#openAddSelectedResource" />
+                        <SeparatorMenuItem/>
+                        <MenuItem fx:id="removeLink" onAction="#removeObjectProperty" />
+                        <MenuItem fx:id="removeInstance" onAction="#deleteInstance" />
+                    </items>
+                </ContextMenu>
+            </contextMenu>
+            <fx:script>
+                rename.textProperty().bindBidirectional(controller.cmRenameProperty())
+                manageObjProp.textProperty().bindBidirectional(controller.cmManageObjPropProperty())
+                addInstance.textProperty().bindBidirectional(controller.cmAddInstanceProperty())
+                addSelectedInstance.textProperty().bindBidirectional(controller.cmAddSelectedInstanceProperty())
+                removeLink.textProperty().bindBidirectional(controller.cmRemoveLinkProperty())
+                removeInstance.textProperty().bindBidirectional(controller.cmRemoveInstanceProperty())
+            </fx:script>
+        </ListView>
     </center>
     <bottom>
         <TextField fx:id="filterTextField" promptText="Filter" />
+        <fx:script>
+            filterTextField.textProperty().bindBidirectional(controller.filterTextFieldProperty())
+        </fx:script>
     </bottom>
 </BorderPane>
