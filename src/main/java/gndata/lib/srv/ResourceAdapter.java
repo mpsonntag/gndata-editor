@@ -101,7 +101,21 @@ public class ResourceAdapter {
     /* Object / Datatype properties methods */
 
     /**
-     * Adds a typed literal to the  {@link Resource} of this Object
+     * Either adds a new RDFS label to the current {@link Resource}
+     * or updates it's value, if the label already exists
+     * */
+    public void updateLabel(String value) {
+        Statement labelSt = resource.getProperty(RDFS.label);
+        if(labelSt == null) {
+            resource.addProperty(RDFS.label, value);
+        } else {
+            String language = labelSt.getLanguage();
+            labelSt.changeObject(value, language);
+        }
+    }
+
+    /**
+     * Adds a typed literal to the {@link Resource} of this Object
      *
      * @return The {@link Resource} of this Object
      */
