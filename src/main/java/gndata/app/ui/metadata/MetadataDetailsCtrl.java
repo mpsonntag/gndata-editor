@@ -19,6 +19,7 @@ import javafx.scene.web.WebView;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.html.PageCtrl;
@@ -52,10 +53,10 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
     private ObjectProperty<ObservableList<StatementTableItem>> existingPredicates;
 
-    private ObservableList<Property> availablePredicates;
-    private ObjectProperty<ObservableList<Property>> availPredList;
+    private ObservableList<DatatypeProperty> availablePredicates;
+    private ObjectProperty<ObservableList<DatatypeProperty>> availPredList;
 
-    private ObjectProperty<Property> selectedPredicate;
+    private ObjectProperty<DatatypeProperty> selectedPredicate;
 
     @Inject
     public MetadataDetailsCtrl(ProjectState projectState, MetadataNavState metadataState) {
@@ -66,7 +67,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
         // notification messages
         notificationMsg = new SimpleStringProperty();
 
-        // existing DataProperties
+        // handle existing DataProperties
         statementList = FXCollections.observableList(new ArrayList<>());
         listListener = new ChangeStatementListListener();
         statementList.addListener(listListener);
@@ -85,7 +86,9 @@ public class MetadataDetailsCtrl extends PageCtrl {
         selectedPredicate.addListener((observable, oldValue, newValue) -> {
             newPredPromptText.set("");
             if (observable != null && newValue != null) {
-                RDFDatatype dt = fetchRDFDataType(observable.getValue().getURI());
+                //TODO take care of the case of multiple datatypes
+                Set<RDFDatatype> dts = projectState.getMetadata().ontmanager.getRange(observable.getValue());
+                RDFDatatype dt = dts.iterator().next();
                 newPredType.set(dt);
                 newPredPromptText.set("Enter " + (dt == null ? "String" : dt.getJavaClass().getSimpleName()) + " value");
             }
@@ -163,8 +166,8 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
     public final ObjectProperty<ObservableList<StatementTableItem>> existingPredicatesProperty() { return existingPredicates; }
 
-    public final ObjectProperty<ObservableList<Property>> availablePredicatesProperty() { return availPredList; }
-    public final ObjectProperty<Property> selectedPredicateProperty() { return selectedPredicate; }
+    public final ObjectProperty<ObservableList<DatatypeProperty>> availablePredicatesProperty() { return availPredList; }
+    public final ObjectProperty<DatatypeProperty> selectedPredicateProperty() { return selectedPredicate; }
     public final StringProperty newPredValueProperty() { return newPredValue; }
     public final ObjectProperty<RDFDatatype> newPredTypeProperty() { return newPredType; }
     public final StringProperty newPredPromptTextProperty() { return newPredPromptText; }
@@ -178,9 +181,9 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
         if (selectedPredicate.get() != null && !newPredValue.getValue().isEmpty()) {
 
-            // TODO add value consistency checks e.g. entered value is actually required BigInteger etc.
-            // requires model.createTypedLiteral(Object) for now all new entries have to be of type double
-            RDFDatatype dt = fetchRDFDataType(selectedPredicate.get().getURI());
+            //TODO take care of the case of multiple datatypes
+            Set<RDFDatatype> dts = projectState.getMetadata().ontmanager.getRange(selectedPredicate.get());
+            RDFDatatype dt = dts.iterator().next();
 
             if (dt.isValid(newPredValue.getValue())) {
 
@@ -213,17 +216,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
     // clear notificationMsg label text when clicked
     public void clearLabel() {
         notificationMsg.set("");
-    }
-
-    // TODO replace with actual call to the metadata service layer
-    private RDFDatatype fetchRDFDataType(String uri){
-        XSDDatatype dt;
-        if (uri.equals("http://g-node.org/thomas#hasAuthor")) {
-            dt = XSDDatatype.XSDstring;
-        } else {
-            dt = XSDDatatype.XSDfloat;
-        }
-        return dt;
     }
 
 }
