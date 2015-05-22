@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
-import gndata.app.ui.metadata.manage.RenameInstanceCtrl;
+import gndata.app.ui.metadata.manage.*;
 import gndata.app.ui.util.*;
 import gndata.lib.srv.*;
 
@@ -162,12 +162,13 @@ public class MetadataListCtrl implements Initializable {
 
     // Add a new instance of the selected resource RDF class
     public void openAddSelectedResource() {
-        System.out.println("Add specific resource");
+        new AddRDFInstance(projectState,
+                navState, metadataListView.getSelectionModel().getSelectedItem().getResource());
     }
 
     // Add a new instance of an unspecified RDF class
     public void openAddResource() {
-        System.out.println("Add resource");
+        new AddRDFInstance(projectState, navState, null);
     }
 
     // remove objectProperties between parent resource
