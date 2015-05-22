@@ -22,8 +22,10 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.html.PageCtrl;
-import gndata.app.state.MetadataNavState;
+import gndata.app.state.*;
+import gndata.app.ui.util.listener.ChangeStatementListListener;
 import gndata.app.ui.util.*;
+import gndata.lib.util.OntologyHelper;
 
 /**
  * Controller for viewing and editing DataProperties.
@@ -36,6 +38,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
     private WebView webView;
 
     private MetadataNavState metadataState;
+    private ProjectState projectState;
 
     private final StringProperty notificationMsg;
 
@@ -54,11 +57,11 @@ public class MetadataDetailsCtrl extends PageCtrl {
     private ObjectProperty<Property> selectedPredicate;
 
     @Inject
-    public MetadataDetailsCtrl(MetadataNavState metadataState) {
+    public MetadataDetailsCtrl(ProjectState projectState, MetadataNavState metadataState) {
 
+        this.projectState = projectState;
         this.metadataState = metadataState;
 
-        // TODO proper messageLabel implementation
         // notification messages
         notificationMsg = new SimpleStringProperty();
 
@@ -87,6 +90,25 @@ public class MetadataDetailsCtrl extends PageCtrl {
             }
         });
 
+        // listen on changes to the data property list and refresh
+        // the list of still available new DataProperties accordingly
+        statementList.addListener((ListChangeListener<StatementTableItem>) c -> {
+            if (metadataState.selectedNodeProperty().get() != null) {
+                Resource currRes = metadataState.selectedNodeProperty().get().getResource();
+                availablePredicates.clear();
+
+                OntologyHelper oh = projectState.getMetadata().ontmanager;
+
+                oh.listDatatypeProperties(currRes).stream()
+                        .filter(pr -> !pr.isFunctionalProperty() &&
+                                !projectState.getMetadata().getAnnotations().contains(currRes, pr))
+                        .forEach(curr -> availablePredicates.add(curr.asDatatypeProperty()));
+
+                availPredList.set(availablePredicates);
+                newPredValue.set("");
+            }
+        });
+
         // listen on changes of the selected parent RDF Resource and update
         // lists of existing and adding new DataProperties accordingly.
         metadataState.selectedNodeProperty().addListener((obs, odlVal, newVal) -> {
@@ -106,12 +128,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
                                 .map(StatementTableItem::new)
                                 .collect(Collectors.toList())
                 );
-
-                // TODO implementation get all available predicates
-                // TODO for the selected resource from the metadata service layer
-                // fetch and set up all available Predicates to add new DataProperties
-                newVal.getLiterals().stream()
-                        .forEach(r -> availablePredicates.add(r.getPredicate()));
             }
 
             listListener.setEnabled();
@@ -161,14 +177,14 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
         if (selectedPredicate.get() != null && !newPredValue.getValue().isEmpty()) {
 
-            // fetch parent resource
-            Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
-
             // TODO add value consistency checks e.g. entered value is actually required BigInteger etc.
             // requires model.createTypedLiteral(Object) for now all new entries have to be of type double
             RDFDatatype dt = fetchRDFDataType(selectedPredicate.get().getURI());
 
             if (dt.isValid(newPredValue.getValue())) {
+
+                // fetch parent resource
+                Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
 
                 StatementTableItem newSTI = new StatementTableItem(
                         getDataPropertyStatement(parentResource,
@@ -177,6 +193,7 @@ public class MetadataDetailsCtrl extends PageCtrl {
                                 dt));
 
                 statementList.add(newSTI);
+
             } else {
 
                 String warningMsg = "Cannot add property! " + newPredValue.getValue()
@@ -214,61 +231,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
             dt = XSDDatatype.XSDfloat;
         }
         return dt;
-    }
-
-    // -----------------------------------------
-    // Custom Listeners
-    // -----------------------------------------
-
-    // Listener class handling any changes to the list of DataProperty Statements
-    private class ChangeStatementListListener implements ListChangeListener<StatementTableItem>{
-
-        private boolean enabled = true;
-
-        @Override
-        public void onChanged(Change<? extends StatementTableItem> c) {
-            if(enabled) {
-                while (c.next()) {
-                    System.out.println("List has changed: " + c.toString());
-                    if (c.wasReplaced()) {
-                        System.out.println("  Was replaced: " + c.wasReplaced());
-                        System.out.println("  Removed size: " + c.getRemovedSize() + " added size: " + c.getAddedSize());
-
-                        Statement rmstmt = c.getRemoved().get(c.getRemovedSize() - 1).getStatement();
-                        Statement addstmt = c.getAddedSubList().get(c.getAddedSize() - 1).getStatement();
-                        System.out.println("  Replace " + rmstmt.getSubject() + ": " + rmstmt.getPredicate() + ", " + rmstmt.getLiteral()
-                                + "\n with " + addstmt.getSubject() + ": " + addstmt.getPredicate() + ", " + addstmt.getLiteral());
-
-                        if (rmstmt.getLiteral().getDatatype() != null) {
-                            System.out.println("  Datatype URI of removed property: "+ rmstmt.getLiteral().getDatatype().getURI());
-                            System.out.println("  JC canName removed property: "+
-                                    rmstmt.getLiteral().getDatatype().getJavaClass().getCanonicalName());
-                        } else {
-                            System.out.println("  Plain literal, no DataType available");
-                        }
-
-                    } else if (c.wasRemoved()) {
-                        System.out.println("  Was removed: " + c.wasRemoved());
-                        System.out.println("  Removed size: " + c.getRemovedSize() + " added size: " + c.getAddedSize());
-
-                        Statement rmstmt = c.getRemoved().get(c.getRemovedSize() - 1).getStatement();
-                        System.out.println("  Remove "+ rmstmt.getSubject() +": "+ rmstmt.getLiteral());
-
-                    } else if (c.wasAdded()) {
-                        System.out.println("  Was added: " + c.wasAdded());
-                        System.out.println("  Removed size: " + c.getRemovedSize() + " added size: " + c.getAddedSize());
-
-                        Statement addstmt = c.getAddedSubList().get(c.getAddedSize() - 1).getStatement();
-                        System.out.println("  Add "+ addstmt.getSubject() +": "+ addstmt.getPredicate() +", "+ addstmt.getLiteral());
-                    }
-                    System.out.println("\n");
-                }
-            }
-        }
-
-        public void setEnabled() { this.enabled = true; }
-
-        public void setDisabled() { this.enabled = false; }
     }
 
 }
