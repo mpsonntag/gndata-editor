@@ -189,6 +189,11 @@ public class ResourceAdapter {
                 .filter(st -> objs.contains(st.getObject().asResource()))
                 .collect(Collectors.toList()));
 
+        toRemove.add(resource.getModel().listStatements(null, null, resource)
+                    .toList().stream()
+                    .filter(st -> objs.contains(st.getSubject()))
+                    .collect(Collectors.toList()));
+
         resource.getModel().remove(toRemove);  // remove in a single change
     }
 

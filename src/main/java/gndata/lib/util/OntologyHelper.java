@@ -121,15 +121,15 @@ public class OntologyHelper {
      *
      * @return Set<Pair<OntProperty, OntClass>>
      */
-    public List<DatatypeProperty> listDatatypeProperties(OntClass cls) {
+    public Set<DatatypeProperty> listDatatypeProperties(OntClass cls) {
         return cls.listDeclaredProperties()
                 .toList().stream().filter(OntProperty::isDatatypeProperty)
                 .map(p -> ontology.getDatatypeProperty(p.getURI()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public List<DatatypeProperty> listDatatypeProperties(Resource res) {
-        List<DatatypeProperty> props = new ArrayList<>();
+    public Set<DatatypeProperty> listDatatypeProperties(Resource res) {
+        Set<DatatypeProperty> props = new HashSet<>();
 
         listClasses(res).forEach(cls -> props.addAll(listDatatypeProperties(cls)));
 
@@ -139,15 +139,15 @@ public class OntologyHelper {
         return props;
     }
 
-    public List<ObjectProperty> listObjectProperties(OntClass cls) {
+    public Set<ObjectProperty> listObjectProperties(OntClass cls) {
         return cls.listDeclaredProperties(true)
                 .toList().stream().filter(OntProperty::isObjectProperty)
                 .map(p -> ontology.getObjectProperty(p.getURI()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public List<ObjectProperty> listObjectProperties(Resource res) {
-        List<ObjectProperty> props = new ArrayList<>();
+    public Set<ObjectProperty> listObjectProperties(Resource res) {
+        Set<ObjectProperty> props = new HashSet<>();
 
         listClasses(res).forEach(cls -> props.addAll(listObjectProperties(cls)));
 

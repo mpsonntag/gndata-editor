@@ -121,6 +121,12 @@ public class ResourceAdapterTest {
 
         assert !timRA.getResources().contains(robertRA);
         assert timRA.getResources().contains(amyRA);
+
+        toRemove.clear();
+        toRemove.add(tim);
+        amyRA.removeObjectProperties(toRemove);
+
+        assert !timRA.getResources().contains(amyRA);
     }
 
     @Test
