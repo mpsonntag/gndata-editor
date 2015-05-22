@@ -187,25 +187,20 @@ public class MetadataListCtrl implements Initializable {
         refreshList();
     }
 
-    // remove all selected instances from the RDF model
-    public void deleteInstance(){
-        System.out.println("deleteInstanceMain");
-    }
-
     // TODO add user validation before actually deleting an instance
     // TODO check navigation, if the to be removed ResourceAdapter is a
     // TODO navParent or navChild. If this is the case, reset the navigation
-    // delete selected resource from the RDF model and refresh the displayed list.
-    public void deleteInstance(ResourceAdapter res) {
-        System.out.println("deleteInstance");
-    }
+    // remove all selected instances from the RDF model
+    public void deleteInstance(){
+        if(metadataListView.getSelectionModel().getSelectedItems().size() > 1){
+            metadataListView.getSelectionModel().getSelectedItems()
+                    .iterator()
+                    .forEachRemaining(ResourceAdapter::remove);
+        } else {
+            metadataListView.getSelectionModel().getSelectedItem().remove();
+        }
 
-    // TODO add user validation before actually deleting an instance
-    // TODO check navigation, if any of the to be removed ResourceAdapters is a
-    // TODO navParent or navChild. If this is the case, reset the navigation
-    // delete all selected resources from the RDF model and refresh the displayed list
-    public void deleteInstance(ObservableList<ResourceAdapter> resList) {
-        System.out.println("deleteInstances");
+        refreshList();
     }
 
     // refresh the unfiltered resource adapter list and re-apply the filter
@@ -221,6 +216,7 @@ public class MetadataListCtrl implements Initializable {
             applyFilter(fltr);
         }
     }
+
 
     // -------------------------------------------
     // Custom classes
