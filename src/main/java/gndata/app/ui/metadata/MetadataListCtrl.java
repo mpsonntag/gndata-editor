@@ -169,21 +169,22 @@ public class MetadataListCtrl implements Initializable {
         System.out.println("Add resource");
     }
 
-    // wrapper to check if more than one list items have been selected
+    // remove objectProperties between parent resource
+    // and user selected child resource
     public void removeObjectProperty() {
-        System.out.println("RemoveObjectPropertyMain");
-    }
+        ArrayList<Resource> remList = new ArrayList<>();
 
-    // TODO call service layer and remove link between the objects
-    // remove objectProperty between parent resource and child resource
-    public void removeObjectProperty(Resource res) {
-        System.out.println("RemoveObjectProperty");
-    }
+        if(metadataListView.getSelectionModel().getSelectedItems().size() > 1){
+            metadataListView.getSelectionModel().getSelectedItems()
+                    .iterator()
+                    .forEachRemaining(c -> remList.add(c.getResource()));
+        } else {
+            remList.add(metadataListView.getSelectionModel().getSelectedItem().getResource());
+        }
 
-    // TODO call service layer and remove link between the objects
-    // remove objectProperty between parent resource and multiple child resources
-    public void removeObjectProperty(ObservableList<ResourceAdapter> resList) {
-        System.out.println("RemoveObjectPropertyList");
+        navState.getSelectedParent().removeObjectProperties(remList);
+
+        refreshList();
     }
 
     // remove all selected instances from the RDF model
@@ -207,6 +208,19 @@ public class MetadataListCtrl implements Initializable {
         System.out.println("deleteInstances");
     }
 
+    // refresh the unfiltered resource adapter list and re-apply the filter
+    private void refreshList() {
+
+        unfilteredList.clear();
+        unfilteredList.addAll(navState.getSelectedParent().getChildren());
+
+        String fltr = filter.get();
+        if (fltr == null || fltr.equals("")) {
+            applyFilter(null);
+        } else {
+            applyFilter(fltr);
+        }
+    }
 
     // -------------------------------------------
     // Custom classes
