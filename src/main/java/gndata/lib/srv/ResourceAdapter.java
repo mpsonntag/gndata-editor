@@ -102,7 +102,7 @@ public class ResourceAdapter {
 
     /**
      * Either adds a new RDFS label to the current {@link Resource}
-     * or updates it's value, if the label already exists
+     * or updates its value, if the label already exists
      * */
     public void updateLabel(String value) {
         Statement labelSt = resource.getProperty(RDFS.label);

@@ -19,6 +19,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.*;
 
+import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.app.state.*;
 
 /**
@@ -100,18 +101,14 @@ public class RenameInstanceCtrl extends Pane implements Initializable {
     // -----------------------------------------
 
     /**
-     * Discard changes, if the cancel button is used
+     * Discard any changes, if the cancel button is used
      */
     public void cancel() {
         st.hide();
     }
 
-    /**
-     * Update the RDF label of the selected parent,
-     * if a value has been provided
-     */
     // TODO check, if all classes actually support RDFS label or if owl:name has to be used
-    // TODO implement logic to update the labels of the navigation bar after label has been set
+    // implement logic to update the labels of the navigation bar after label has been set
     // how should a refresh actually be done:
     // we directly tap into the resource adapter. the resource adapter is also registered
     // in the navigation bar. should we add an observable (resourceContentChange) to the resource adapter, which
@@ -119,6 +116,10 @@ public class RenameInstanceCtrl extends Pane implements Initializable {
     // we also register a listener to this particular observable of the resource adapter
     // if the state of the observable of the resource adapter changes, the navigation bar
     // calls the private updateButtons method to redraw the whole bar.
+
+    /**
+     * Update the RDF label of the selected parent {@link Resource}, if a value has been provided
+     */
     public void rename() {
         if(renameValue.getValue() != null && !renameValue.getValue().isEmpty()) {
             navState.getSelectedParent().updateLabel(renameValue.getValue());
