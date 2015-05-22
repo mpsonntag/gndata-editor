@@ -25,6 +25,7 @@ import gndata.app.html.PageCtrl;
 import gndata.app.state.*;
 import gndata.app.ui.util.listener.ChangeStatementListListener;
 import gndata.app.ui.util.*;
+import gndata.lib.srv.*;
 import gndata.lib.util.OntologyHelper;
 
 /**
@@ -183,16 +184,19 @@ public class MetadataDetailsCtrl extends PageCtrl {
 
             if (dt.isValid(newPredValue.getValue())) {
 
-                // fetch parent resource
-                Resource parentResource = metadataState.selectedNodeProperty().getValue().getResource();
+                // Add new predicate to selected parent resource
+                ResourceFileAdapter parentResource = metadataState.selectedNodeProperty().get();
+                parentResource.addLiteral(selectedPredicate.get(), newPredValue.getValue(), dt);
 
-                StatementTableItem newSTI = new StatementTableItem(
-                        getDataPropertyStatement(parentResource,
-                                selectedPredicate.get(),
-                                newPredValue.getValue(),
-                                dt));
-
-                statementList.add(newSTI);
+                listListener.setDisabled();
+                // reset statementList
+                statementList.clear();
+                // reload all DataProperties for current Instance
+                statementList.setAll(
+                        parentResource.getLiterals().stream()
+                                .map(StatementTableItem::new)
+                                .collect(Collectors.toList()));
+                listListener.setEnabled();
 
             } else {
 
@@ -209,17 +213,6 @@ public class MetadataDetailsCtrl extends PageCtrl {
     // clear notificationMsg label text when clicked
     public void clearLabel() {
         notificationMsg.set("");
-    }
-
-    // TODO part of the logic of this method should probably be move to the metadata service layer
-    // TODO create a new DataProperty for an existing resource
-    // return the new DataProperty as Statement
-    private Statement getDataPropertyStatement(Resource parentResource, Property selProp, String value, RDFDatatype dt) {
-        Property p = ResourceFactory.createProperty(selProp.getNameSpace(), selProp.getLocalName());
-
-        RDFNode o = ResourceFactory.createTypedLiteral(value, dt);
-
-        return ResourceFactory.createStatement(parentResource, p, o);
     }
 
     // TODO replace with actual call to the metadata service layer
