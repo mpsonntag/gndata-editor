@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
+import gndata.app.ui.metadata.manage.RenameInstanceCtrl;
 import gndata.app.ui.util.*;
 import gndata.lib.srv.*;
 
@@ -150,7 +151,7 @@ public class MetadataListCtrl implements Initializable {
     // Edit the RDF label text of the selected parent resource
     // Open new window for this
     public void renameParent() {
-        System.out.println("rename parent resource");
+        new RenameInstanceCtrl(navState);
     }
 
     // TODO edit signature once methods from service layer are available
