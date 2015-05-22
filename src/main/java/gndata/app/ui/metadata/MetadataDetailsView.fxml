@@ -37,7 +37,9 @@ LICENSE file in the root of the Project.
             <Tab text="Table">
                 <BorderPane>
                     <top>
-                        <Label fx:id="messageLabel" minHeight="50" onMouseClicked="#clearLabel" />
+                        <Label fx:id="messageLabel" minHeight="50" onMouseClicked="#clearLabel" >
+                            <padding><Insets left="25" /></padding>
+                        </Label>
                         <fx:script>
                             messageLabel.textProperty().bindBidirectional(controller.notificationMsgProperty())
                         </fx:script>
@@ -68,9 +70,6 @@ LICENSE file in the root of the Project.
                                     </cellValueFactory>
                                 </TableColumn>
                                 <TableColumn fx:id="deleteColumn" text="Delete">
-                                    <cellValueFactory>
-                                        <PropertyValueFactory property="type"/>
-                                    </cellValueFactory>
                                     <cellFactory>
                                         <DeleteButtonCellFactory/>
                                     </cellFactory>
@@ -82,7 +81,7 @@ LICENSE file in the root of the Project.
                         </fx:script>
                     </center>
                     <bottom>
-                        <HBox alignment="CENTER_RIGHT">
+                        <HBox alignment="CENTER_RIGHT" spacing="5">
                             <children>
                                 <fx:define>
                                     <LiteralFilter fx:id="litFilter" />

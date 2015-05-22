@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import static java.util.Spliterator.*;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.util.iterator.*;
@@ -99,6 +100,15 @@ public class ResourceAdapter {
 
     /* Object / Datatype properties methods */
 
+    /**
+     * Adds a typed literal to the  {@link Resource} of this Object
+     *
+     * @return The {@link Resource} of this Object
+     */
+    public Resource addLiteral(Property p, String data, RDFDatatype dtype) {
+        Literal o = ResourceFactory.createTypedLiteral(data, dtype);
+        return resource.addLiteral(p, o);
+    }
 
     /**
      * Returns all statements containing literal values as object for a certain resource.
