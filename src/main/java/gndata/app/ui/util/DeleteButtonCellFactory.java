@@ -17,21 +17,21 @@ import javafx.util.Callback;
  */
 
 public class DeleteButtonCellFactory
-        implements Callback<TableColumn<StatementTableItem, String>, TableCell<StatementTableItem, String>> {
+        implements Callback<TableColumn<Object, String>, TableCell<Object, String>> {
 
     @Override
-    public TableCell<StatementTableItem, String> call (TableColumn<StatementTableItem, String> p) {
+    public TableCell<Object, String> call (TableColumn<Object, String> p) {
         return new DeleteButtonCell();
     }
 
     // TODO pimp the appearance of the delete button
-    private class DeleteButtonCell extends TableCell<StatementTableItem, String> {
+    private class DeleteButtonCell extends TableCell<Object, String> {
         private final Button delButton = new Button("x");
 
         DeleteButtonCell() {
             delButton.setPadding(new Insets(1));
             delButton.setOnAction(event -> {
-                // retrieve and remove corresponding StatementTableItem
+                // retrieve and remove corresponding Object
                 this.getTableView().getItems().remove(getTableRow().getIndex());
             });
         }
