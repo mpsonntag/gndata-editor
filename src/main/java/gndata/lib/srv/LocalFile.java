@@ -296,4 +296,9 @@ public class LocalFile implements IFileAdapter<LocalFile> {
 
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
+
+    @Override
+    public String toString() {
+        return getFileName();
+    }
 }
