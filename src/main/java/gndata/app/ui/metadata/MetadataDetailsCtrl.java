@@ -18,9 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.web.WebView;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.app.html.PageCtrl;
 import gndata.app.state.*;
