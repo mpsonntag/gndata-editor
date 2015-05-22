@@ -15,10 +15,10 @@ import javafx.fxml.*;
 import javafx.scene.control.ListView;
 
 import com.google.inject.Inject;
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Statement;
 import gndata.app.state.QueryState;
 import gndata.app.ui.util.TwoLineListCell;
-import gndata.lib.util.Resources;
+import gndata.lib.srv.ResourceAdapter;
 
 
 public class ListPaneCtrl implements Initializable {
@@ -53,10 +53,10 @@ public class ListPaneCtrl implements Initializable {
         @Override
         protected void update(Statement stmt, boolean empty) {
             if (!empty) {
-                Resource node = stmt.getSubject();
+                ResourceAdapter node = new ResourceAdapter(stmt.getSubject());
 
-                lineOne.set(Resources.toNameString(node));
-                lineTwo.set(Resources.toNameString(node));
+                lineOne.set(node.toNameString());
+                lineTwo.set(node.toNameString());
             }
         }
     }

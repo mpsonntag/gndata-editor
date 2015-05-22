@@ -7,17 +7,15 @@ import javax.inject.Inject;
 import javafx.fxml.*;
 import javafx.scene.control.ListView;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.vocabulary.*;
 import gndata.app.state.*;
-import gndata.lib.srv.ResourceAdapter;
+import gndata.lib.srv.*;
 
 /**
  * Controller for the metadata favorites list.
  */
 public class MetadataFavoritesCtrl implements Initializable {
     @FXML
-    private ListView<ResourceAdapter> favoritesList;
+    private ListView<ResourceFileAdapter> favoritesList;
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
@@ -30,7 +28,7 @@ public class MetadataFavoritesCtrl implements Initializable {
         this.projectState.configProperty().addListener((p, o, n) -> {
             navState.getFavoriteFolders().setAll(
                     projectState.getMetadata().getAvailableTypes().stream()
-                            .map(r -> new ResourceAdapter(r, null))
+                            .map(r -> new ResourceFileAdapter(r, null))
                             .collect(Collectors.toList())
             );
             if (! navState.getFavoriteFolders().isEmpty())

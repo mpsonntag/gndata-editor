@@ -10,13 +10,10 @@ package gndata.lib.srv;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.*;
-
-import static java.util.Spliterator.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.reasoner.*;
 import com.hp.hpl.jena.vocabulary.*;
@@ -31,6 +28,7 @@ public class MetadataService {
 
     public QueryHelper query;
     public ChangeHelper change;
+    public OntologyHelper ontmanager;
 
     private OntModel schema;    // union model for all imported ontology files
     private Model annotations;  // model for data annotations
@@ -41,6 +39,7 @@ public class MetadataService {
 
         this.query = new QueryHelper(annotations);
         this.change = new ChangeHelper(annotations, schema);
+        this.ontmanager = new OntologyHelper(schema);
     }
 
     /**
@@ -128,6 +127,10 @@ public class MetadataService {
         annotations.add(newData);
     }
 
+    public void add(Model m) {
+        annotations.add(m);
+    }
+
     /**
      * Creates a new Metadata Service using a given path. Combines existing
      * project RDF schemas (ontology files) and metadata storage (annotations)
@@ -142,7 +145,7 @@ public class MetadataService {
 
         MetadataFilesManager metaFiles = new MetadataFilesManager(projectPath);
 
-        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
+        OntModel schema = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
 
         // TODO figure out if using OntDocumentManager to read files makes sense
         for (Path p : metaFiles.schemaPaths()) {

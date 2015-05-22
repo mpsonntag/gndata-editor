@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 
 import gndata.app.state.*;
 import gndata.app.ui.util.*;
-import gndata.lib.srv.ResourceAdapter;
+import gndata.lib.srv.ResourceFileAdapter;
 
 /**
  * Controller for the metadata navigation bar.
@@ -19,7 +19,7 @@ public class MetadataNavCtrl implements Initializable {
     @FXML
     private TextField searchField;
     @FXML
-    private BreadCrumbNav<ResourceAdapter> navBar;
+    private BreadCrumbNav<ResourceFileAdapter> navBar;
 
     private final ProjectState projectState;
     private final MetadataNavState navState;

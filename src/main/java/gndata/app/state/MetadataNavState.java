@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
-import gndata.lib.srv.ResourceAdapter;
+import gndata.lib.srv.ResourceFileAdapter;
 
 
 /**
@@ -24,10 +24,10 @@ public class MetadataNavState {
 
     private final StringProperty searchString;
     private final BooleanProperty showBrowsingResults;
-    private final ObjectProperty<ResourceAdapter> selectedParent;
-    private final ObjectProperty<ResourceAdapter> selectedNode;
-    private final ObservableList<ResourceAdapter> favoriteFolders;
-    private final ObservableList<ResourceAdapter> navigationPath;
+    private final ObjectProperty<ResourceFileAdapter> selectedParent;
+    private final ObjectProperty<ResourceFileAdapter> selectedNode;
+    private final ObservableList<ResourceFileAdapter> favoriteFolders;
+    private final ObservableList<ResourceFileAdapter> navigationPath;
 
 
 
@@ -65,35 +65,35 @@ public class MetadataNavState {
         this.showBrowsingResults.set(showBrowsingResults);
     }
 
-    public ResourceAdapter getSelectedNode() {
+    public ResourceFileAdapter getSelectedNode() {
         return selectedNode.get();
     }
 
-    public ObjectProperty<ResourceAdapter> selectedNodeProperty() {
+    public ObjectProperty<ResourceFileAdapter> selectedNodeProperty() {
         return selectedNode;
     }
 
-    public void setSelectedNode(ResourceAdapter selectedNode) {
+    public void setSelectedNode(ResourceFileAdapter selectedNode) {
         this.selectedNode.set(selectedNode);
     }
 
-    public ResourceAdapter getSelectedParent() {
+    public ResourceFileAdapter getSelectedParent() {
         return selectedParent.get();
     }
 
-    public ObjectProperty<ResourceAdapter> selectedParentProperty() {
+    public ObjectProperty<ResourceFileAdapter> selectedParentProperty() {
         return selectedParent;
     }
 
-    public void setSelectedParent(ResourceAdapter selectedParent) {
+    public void setSelectedParent(ResourceFileAdapter selectedParent) {
         this.selectedParent.set(selectedParent);
     }
 
-    public ObservableList<ResourceAdapter> getFavoriteFolders() {
+    public ObservableList<ResourceFileAdapter> getFavoriteFolders() {
         return favoriteFolders;
     }
 
-    public ObservableList<ResourceAdapter> getNavigationPath() {
+    public ObservableList<ResourceFileAdapter> getNavigationPath() {
         return navigationPath;
     }
 }

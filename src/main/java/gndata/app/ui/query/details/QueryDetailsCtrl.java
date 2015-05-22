@@ -18,10 +18,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.web.WebView;
 
 import gndata.app.html.PageCtrl;
-import gndata.app.state.*;
+import gndata.app.state.QueryState;
 import gndata.app.ui.util.*;
-import gndata.lib.srv.ResourceAdapter;
-import gndata.lib.util.Resources;
+import gndata.lib.srv.*;
 
 /**
  * Controller for the table to view metadata items.
@@ -45,17 +44,15 @@ public class QueryDetailsCtrl extends PageCtrl {
 
         qs.selectedStatementProperty().addListener((obs, odlVal, newVal) -> {
             if (newVal != null) {
-                getPage().applyModel(new ResourceAdapter(newVal.getSubject(), null));
+                getPage().applyModel(new ResourceFileAdapter(newVal.getSubject(), null));
             }
 
             if (newVal == null) {
                 statements.clear();
             } else {
-                statements.setAll(
-                        Resources.streamLiteralsFor(newVal.getSubject())
-                                .map(StatementTableItem::new)
-                                .collect(Collectors.toList())
-                );
+                ResourceAdapter rw = new ResourceAdapter(newVal.getSubject());
+                statements.setAll(rw.getLiterals().stream()
+                        .map(StatementTableItem::new).collect(Collectors.toList()));
             }
         });
     }
