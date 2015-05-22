@@ -53,4 +53,9 @@ public class ResourceFileAdapter extends ResourceAdapter implements IFileAdapter
 
         return resource.equals(that.resource);
     }
+
+    @Override
+    public String toString() {
+        return getFileName();
+    }
 }
