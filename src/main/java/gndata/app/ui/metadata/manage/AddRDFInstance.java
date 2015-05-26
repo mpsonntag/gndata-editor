@@ -86,30 +86,24 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         addPredType = new SimpleObjectProperty<>();
         addPredPromptText = new SimpleStringProperty();
 
-        // update the contents of the DataProperty table, if a new class has been selected
+        // Update the contents of the DataProperty table, if a new class has been selected
         selectedNewClass.addListener((observable, oldValue, newValue) -> {
 
             if(selectedNewClass.get().getValue() != null) {
 
-                // reset
                 newPredicatesList.clear();
-                additionalPredicatesList.clear();
 
                 oh.listDatatypeProperties(selectedNewClass.get().getValue()).stream()
                         .forEach(c -> {
                             //TODO take care of the case of multiple datatypes
                             Set<RDFDatatype> dts = oh.getRange(c.asDatatypeProperty());
                             RDFDatatype dt = dts.iterator().next();
-
                             newPredicatesList.add(new DataPropertyTableItem(c.asProperty(), dt));
-
-                            additionalPredicatesList.add(c.asDatatypeProperty());
                         });
-                additionalPredicates.set(additionalPredicatesList);
             }
         });
 
-        // listen on the selected new predicate and set corresponding RDF DataType accordingly
+        // Listen on the selected new predicate and set the corresponding RDF DataType accordingly
         selectedPredicate.addListener((observable, oldValue, newValue) -> {
             addPredPromptText.set("");
             if (observable != null && newValue != null) {
@@ -122,7 +116,26 @@ public class AddRDFInstance extends BorderPane implements Initializable {
             }
         });
 
-        // load corresponding FXML and display contents in popup stage
+        // Handle list of additional DataType properties
+        newPredicatesList.addListener((ListChangeListener<DataPropertyTableItem>) change -> {
+            // Reset list of additional DataType properties
+            additionalPredicatesList.clear();
+
+            // Get all available datatype properties for selected class
+            oh.listDatatypeProperties(selectedNewClass.get().getValue()).stream()
+                    .forEach(c -> additionalPredicatesList.add(c.asDatatypeProperty()));
+
+            // TODO implement check for DataType Properties which can be added
+            // TODO multiple times
+            // Remove all datatype properties which already exist in the table
+            newPredicatesList.stream().forEach(c -> {
+                if(additionalPredicatesList.contains(c.getProperty())){
+                    additionalPredicatesList.remove(c.getProperty());
+                }
+            });
+        });
+
+        // Load corresponding FXML and display contents in popup stage
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AddRDFInstance.fxml"));
         loader.setRoot(this);
         loader.setController(this);
@@ -140,7 +153,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // set application modality to prohibit actions
+        // Set application modality to prohibit actions
         // while the add object property window is open.
         st.initModality(Modality.APPLICATION_MODAL);
         st.setTitle("Add new resource");
@@ -150,20 +163,20 @@ public class AddRDFInstance extends BorderPane implements Initializable {
 
         labelText.set("Add " + labelInsert + " to: " + navState.getSelectedParent().getFileName());
 
-        // reset observable class list
+        // Reset observable class list
         newClassesList.clear();
         oh.listRelated(navState.getSelectedParent().getResource())
                 .forEach(newClassesList::add);
 
-        // initialize new class combobox list wrapper with an observable list of available RDF classes
+        // Initialize new class combobox list wrapper with an observable list of available RDF classes
         newClasses.set(newClassesList);
 
-        // initialize data property tableview list wrapper with
-        // observable list of existing DataProperties
+        // Initialize data property tableview list wrapper with
+        // Observable list of existing DataProperties
         newPredicates.set(newPredicatesList);
 
-        // initialize add data property combobox list wrapper with
-        // observable list of additionally addable data properties
+        // Initialize add data property combobox list wrapper with
+        // Observable list of additionally addable data properties
         additionalPredicates.set(additionalPredicatesList);
 
     }
@@ -173,25 +186,25 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     // FXML binding properties
     // -------------------------------------------
 
-    // insets for padding
+    // Insets for padding
     public final ObjectProperty<Insets> insetProperty() { return currInsets; }
-    // main label text
+    // Main label text
     public final StringProperty labelTextProperty() { return labelText; }
 
-    // list of available classes for adding a new instance
+    // List of available classes for adding a new instance
     public final ObjectProperty<ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>>> newClassesProperty() {
         return newClasses;
     }
-    // retrieve selected class from the UI element
+    // Retrieve selected class from the UI element
     public final ObjectProperty<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> selectedNewClassProperty() {
         return selectedNewClass;
     }
-    // pre-select new class in the UI element selection model, if class is available
+    // Pre-select new class in the UI element selection model, if class is available
     public final Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass> getPreSelNewClass() {
 
         List<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> getRelatedList = new ArrayList<>();
-        // pre-set selection if provided and available
-        // this is required, since the object property which should connect the
+        // Pre-set selection if provided and available
+        // This is required, since the object property which should connect the
         // pre-selected ontology class to the parent resource is potentially not unique and
         // not known at this point.
         if(preSelNewClass != null) {
@@ -204,14 +217,14 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         return  getRelatedList.size() > 0 ? getRelatedList.get(0) : null;
     }
 
-    // list of existing data properties for the currently selected new class
+    // List of existing data properties for the currently selected new class
     public final ObjectProperty<ObservableList<DataPropertyTableItem>> newPredicatesProperty() { return newPredicates; }
 
-    // adding additional data properties for the currently selected new class
+    // Adding additional data properties for the currently selected new class
     public final ObjectProperty<ObservableList<DatatypeProperty>> additionalPredicatesProperty() { return additionalPredicates; }
-    // retrieve selected predicate from the UI element
+    // Retrieve selected predicate from the UI element
     public final ObjectProperty<DatatypeProperty> selectedPredicateProperty() { return selectedPredicate; }
-    // provide the RDF DataType of a selected predicate to the UI elements
+    // Provide the RDF DataType of a selected predicate to the UI elements
     public final ObjectProperty<RDFDatatype> addPredTypeProperty() { return addPredType; }
     public final StringProperty addPredicateValueProperty() { return addPredValue; }
     public final StringProperty addPredicatePromptTextProperty() { return addPredPromptText; }
@@ -224,36 +237,37 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         st.hide();
     }
 
-    // add new class instance and all corresponding data properties to RDF model
+    // Add a new class instance and all corresponding DataProperties to RDF model
     public void addToRDFModel() {
-        // get the parent resource where the new Instance should be connected to
+        // Get the parent resource where the new Instance should be connected to
         Resource parentResource = navState.getSelectedParent().getResource();
 
-        Model newModel = ModelFactory.createDefaultModel();
+        Model tmpModel = ModelFactory.createDefaultModel();
         Resource newResource = ResourceFactory.createResource(UUID.randomUUID().toString());
 
-        // add all provided DataProperties
+        // Add all provided new DataProperties to the temporary model
         newPredicatesList.iterator().forEachRemaining(
                 c -> {
                     if (c.getTextFieldValue() != null && !c.getTextFieldValue().isEmpty()) {
                         RDFNode o = ResourceFactory.createTypedLiteral(c.getTextFieldValue(), c.getDataType());
                         Statement s = ResourceFactory.createStatement(newResource, c.getProperty(), o);
-                        newModel.add(s);
+                        tmpModel.add(s);
                     }
                 });
 
         // TODO find better solution to deal with completely empty property values
-        if (newModel.size()>0) {
-            // connect new class instance to parent resource
+        if (tmpModel.size()>0) {
+            // Connect the new class instance to the parent resource
             Property connectProperty = ResourceFactory.createProperty(selectedNewClass.get().getKey().getURI());
             Statement connectStatement = ResourceFactory.createStatement(parentResource, connectProperty, newResource);
-            newModel.add(connectStatement);
+            tmpModel.add(connectStatement);
 
-            // add RDF type of the new class instance
+            // Add the RDF type of the new class instance
             Statement rdfTypeStatement = ResourceFactory.createStatement(newResource, RDF.type, selectedNewClass.get().getValue());
-            newModel.add(rdfTypeStatement);
+            tmpModel.add(rdfTypeStatement);
 
-            projectState.getMetadata().add(newModel);
+            // Add the content of the temp model to the actual Jena Model
+            projectState.getMetadata().add(tmpModel);
 
             // TODO add resource successfully added check, only hide the window, if true
             st.hide();
@@ -263,10 +277,10 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         }
     }
 
-    // Method for creating and adding a new DataProperty to an existing Resource
+    // Method for creating and adding an additional DataProperty to the list of new DataProperties
     public void addDataProperty() {
 
-        if (selectedPredicate.get() != null && ! addPredValue.get().isEmpty()) {
+        if (selectedPredicate.get() != null && addPredValue.get() != null && ! addPredValue.get().isEmpty()) {
 
             //TODO take care of the case of multiple datatypes
             Set<RDFDatatype> dts = oh.getRange(selectedPredicate.get());
@@ -277,7 +291,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
             newPredicatesList.add(newDTI);
         }
 
-        // cleanup after dp has been added
+        // Cleanup after dp has been added
         // TODO reset selected predicate
         //selectedPredicate.set(null);
         addPredValue.set("");
