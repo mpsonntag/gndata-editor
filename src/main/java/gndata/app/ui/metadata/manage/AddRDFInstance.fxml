@@ -38,7 +38,7 @@ LICENSE file in the root of the Project.
                     </converter>
                 </ComboBox>
                 <fx:script>
-                    <!--newClassFXML.getSelectionModel().select(controller.getAddNewClass())-->
+                    newClassFXML.getSelectionModel().select(controller.getPreSelNewClass())
                     newClassFXML.itemsProperty().bindBidirectional(controller.newClassesProperty())
                     controller.selectedNewClassProperty().bind(newClassFXML.getSelectionModel().selectedItemProperty())
                 </fx:script>

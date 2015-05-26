@@ -23,7 +23,7 @@ public class JenaPropertyClassStringConverter extends StringConverter<Pair<Objec
 
     @Override
     public String toString(Pair<ObjectProperty, OntClass> pcPair) {
-        return pcPair != null ? pcPair.getValue().getLocalName() +" (link by "+pcPair.getKey().getLocalName() +")" : null;
+        return pcPair == null ? null : pcPair.getValue().getLocalName() +" (link by "+pcPair.getKey().getLocalName() +")";
     }
 
     @Override

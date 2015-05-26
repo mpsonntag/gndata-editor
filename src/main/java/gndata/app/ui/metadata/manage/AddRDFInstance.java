@@ -11,6 +11,7 @@ package gndata.app.ui.metadata.manage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 import javafx.beans.property.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
@@ -43,8 +44,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     private final ObjectProperty<Insets> currInsets;
     private final StringProperty labelText;
 
-    private final Resource addNewClass;
-
+    private final Resource preSelNewClass;
     private final ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> newClassesList;
     private final ObjectProperty<ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>>> newClasses;
     private final ObjectProperty<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> selectedNewClass;
@@ -67,7 +67,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         navState = navigationState;
         oh = projectState.getMetadata().ontmanager;
 
-        addNewClass = extRes;
+        preSelNewClass = extRes;
 
         currInsets = new SimpleObjectProperty<>(new Insets(5));
         labelText = new SimpleStringProperty();
@@ -89,21 +89,24 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         // update the contents of the DataProperty table, if a new class has been selected
         selectedNewClass.addListener((observable, oldValue, newValue) -> {
 
-            // reset
-            newPredicatesList.clear();
-            additionalPredicatesList.clear();
+            if(selectedNewClass.get().getValue() != null) {
 
-            oh.listDatatypeProperties(selectedNewClass.get().getValue()).stream()
-                    .forEach(c -> {
-                        //TODO take care of the case of multiple datatypes
-                        Set<RDFDatatype> dts = oh.getRange(c.asDatatypeProperty());
-                        RDFDatatype dt = dts.iterator().next();
+                // reset
+                newPredicatesList.clear();
+                additionalPredicatesList.clear();
 
-                        newPredicatesList.add(new DataPropertyTableItem(c.asProperty(), dt));
+                oh.listDatatypeProperties(selectedNewClass.get().getValue()).stream()
+                        .forEach(c -> {
+                            //TODO take care of the case of multiple datatypes
+                            Set<RDFDatatype> dts = oh.getRange(c.asDatatypeProperty());
+                            RDFDatatype dt = dts.iterator().next();
 
-                        additionalPredicatesList.add(c.asDatatypeProperty());
-                    });
-            additionalPredicates.set(additionalPredicatesList);
+                            newPredicatesList.add(new DataPropertyTableItem(c.asProperty(), dt));
+
+                            additionalPredicatesList.add(c.asDatatypeProperty());
+                        });
+                additionalPredicates.set(additionalPredicatesList);
+            }
         });
 
         // listen on the selected new predicate and set corresponding RDF DataType accordingly
@@ -143,7 +146,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         st.setTitle("Add new resource");
 
         final String labelInsert =
-                addNewClass == null ? "resource" : addNewClass.getProperty(RDF.type).getResource().getLocalName();
+                preSelNewClass == null ? "resource" : preSelNewClass.getProperty(RDF.type).getResource().getLocalName();
 
         labelText.set("Add " + labelInsert + " to: " + navState.getSelectedParent().getFileName());
 
@@ -175,8 +178,6 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     // main label text
     public final StringProperty labelTextProperty() { return labelText; }
 
-    // pre-select new class in the UI element, if available
-    public final Resource getAddNewClass() { return addNewClass; }
     // list of available classes for adding a new instance
     public final ObjectProperty<ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>>> newClassesProperty() {
         return newClasses;
@@ -184,6 +185,23 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     // retrieve selected class from the UI element
     public final ObjectProperty<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> selectedNewClassProperty() {
         return selectedNewClass;
+    }
+    // pre-select new class in the UI element selection model, if class is available
+    public final Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass> getPreSelNewClass() {
+
+        List<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> getRelatedList = new ArrayList<>();
+        // pre-set selection if provided and available
+        // this is required, since the object property which should connect the
+        // pre-selected ontology class to the parent resource is potentially not unique and
+        // not known at this point.
+        if(preSelNewClass != null) {
+            getRelatedList = oh.listRelated(navState.getSelectedParent().getResource())
+                    .stream()
+                    .filter(p -> Objects.equals(p.getValue().getURI(), preSelNewClass.getProperty(RDF.type).getObject().asResource().getURI()))
+                    .collect(Collectors.toList());
+        }
+
+        return  getRelatedList.size() > 0 ? getRelatedList.get(0) : null;
     }
 
     // list of existing data properties for the currently selected new class
@@ -211,7 +229,6 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         // get the parent resource where the new Instance should be connected to
         Resource parentResource = navState.getSelectedParent().getResource();
 
-        // TODO check if we actually need an inf model which includes the ontology
         Model newModel = ModelFactory.createDefaultModel();
         Resource newResource = ResourceFactory.createResource(UUID.randomUUID().toString());
 
