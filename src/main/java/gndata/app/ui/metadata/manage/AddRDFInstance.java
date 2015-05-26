@@ -236,12 +236,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
             Statement rdfTypeStatement = ResourceFactory.createStatement(newResource, RDF.type, selectedNewClass.get().getValue());
             newModel.add(rdfTypeStatement);
 
-            // TODO remove once adding to RDF model works
-            System.out.println("Model created, contains statement: "+ newModel.size());
-            newModel.listStatements().forEachRemaining(c -> System.out.println("\t" + c.getSubject().toString() + " " + c.getPredicate().toString() + " " + c.getObject().toString()));
-
-            // TODO add model to RDF model
-            //projectState.getMetadata().add(newModel);
+            projectState.getMetadata().add(newModel);
 
             // TODO add resource successfully added check, only hide the window, if true
             st.hide();
