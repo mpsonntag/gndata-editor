@@ -17,8 +17,8 @@ LICENSE file in the root of the Project.
 <?import gndata.app.ui.util.converter.PropertyStringConverter?>
 <?import gndata.app.ui.util.DeleteButtonCellFactory?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import gndata.app.ui.util.converter.ResourceStringConverter?>
 
+<?import gndata.app.ui.util.converter.JenaPropertyClassStringConverter?>
 <fx:root type="javafx.scene.layout.BorderPane"
          xmlns:fx="http://javafx.com/fxml/1"
          xmlns="http://javafx.com/javafx/8"
@@ -34,11 +34,11 @@ LICENSE file in the root of the Project.
 
                 <ComboBox fx:id="newClassFXML" >
                     <converter>
-                        <ResourceStringConverter/>
+                        <JenaPropertyClassStringConverter/>
                     </converter>
                 </ComboBox>
                 <fx:script>
-                    newClassFXML.getSelectionModel().select(controller.getAddNewClass())
+                    <!--newClassFXML.getSelectionModel().select(controller.getAddNewClass())-->
                     newClassFXML.itemsProperty().bindBidirectional(controller.newClassesProperty())
                     controller.selectedNewClassProperty().bind(newClassFXML.getSelectionModel().selectedItemProperty())
                 </fx:script>

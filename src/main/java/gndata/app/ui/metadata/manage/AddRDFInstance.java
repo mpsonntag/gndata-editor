@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.Insets;
@@ -20,13 +21,14 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
 import gndata.app.ui.util.*;
 import gndata.lib.util.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Provides Modal Popup Window with a dynamic form for adding a new RDF Class Instance
@@ -35,15 +37,18 @@ public class AddRDFInstance extends BorderPane implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
+    private final OntologyHelper oh;
     private final Stage st = new Stage();
 
     private final ObjectProperty<Insets> currInsets;
     private final StringProperty labelText;
 
     private final Resource addNewClass;
-    private final ObservableList<Resource> newClassesList;
-    private final ObjectProperty<ObservableList<Resource>> newClasses;
-    private final ObjectProperty<Resource> selectedNewClass;
+
+    private final ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> newClassesList;
+    private final ObjectProperty<ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>>> newClasses;
+    private final ObjectProperty<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> selectedNewClass;
+
 
     private final ObservableList<DataPropertyTableItem> newPredicatesList;
     private final ObjectProperty<ObservableList<DataPropertyTableItem>> newPredicates;
@@ -60,6 +65,8 @@ public class AddRDFInstance extends BorderPane implements Initializable {
 
         projectState = projState;
         navState = navigationState;
+        oh = projectState.getMetadata().ontmanager;
+
         addNewClass = extRes;
 
         currInsets = new SimpleObjectProperty<>(new Insets(5));
@@ -79,7 +86,6 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         addPredType = new SimpleObjectProperty<>();
         addPredPromptText = new SimpleStringProperty();
 
-
         // update the contents of the DataProperty table, if a new class has been selected
         selectedNewClass.addListener((observable, oldValue, newValue) -> {
 
@@ -87,11 +93,10 @@ public class AddRDFInstance extends BorderPane implements Initializable {
             newPredicatesList.clear();
             additionalPredicatesList.clear();
 
-            OntologyHelper oh = projectState.getMetadata().ontmanager;
-            oh.listDatatypeProperties(selectedNewClass.get()).stream()
+            oh.listDatatypeProperties(selectedNewClass.get().getValue()).stream()
                     .forEach(c -> {
                         //TODO take care of the case of multiple datatypes
-                        Set<RDFDatatype> dts = projectState.getMetadata().ontmanager.getRange(c.asDatatypeProperty());
+                        Set<RDFDatatype> dts = oh.getRange(c.asDatatypeProperty());
                         RDFDatatype dt = dts.iterator().next();
 
                         newPredicatesList.add(new DataPropertyTableItem(c.asProperty(), dt));
@@ -106,7 +111,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
             addPredPromptText.set("");
             if (observable != null && newValue != null) {
                 //TODO take care of the case of multiple datatypes
-                Set<RDFDatatype> dts = projectState.getMetadata().ontmanager.getRange(observable.getValue());
+                Set<RDFDatatype> dts = oh.getRange(observable.getValue());
                 RDFDatatype dt = dts.iterator().next();
 
                 addPredType.set(dt);
@@ -140,24 +145,14 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         final String labelInsert =
                 addNewClass == null ? "resource" : addNewClass.getProperty(RDF.type).getResource().getLocalName();
 
-        labelText.set("Add "+ labelInsert +" to: "+ navState.getSelectedParent().getFileName());
+        labelText.set("Add " + labelInsert + " to: " + navState.getSelectedParent().getFileName());
 
         // reset observable class list
         newClassesList.clear();
+        oh.listRelated(navState.getSelectedParent().getResource())
+                .forEach(newClassesList::add);
 
-        // set up available RDF classes available as children for the current parent resource
-        // TODO remove the next lines of mockup with the actual list from the metadataservice
-        // TODO fetch all available classes for parent RDF class and add them here
-        // START mockup
-        newClassesList.add(navState.getSelectedParent().getResource());
-        if(navState.getSelectedParent().getParent().isPresent()) {
-            newClassesList.addAll(navState.getSelectedParent().getParent().get().getResource()); }
-        if(addNewClass != null){
-            newClassesList.addAll(addNewClass); }
-        // END mockup
-
-        // initialize new class combobox list wrapper with
-        // observable list of available RDF classes
+        // initialize new class combobox list wrapper with an observable list of available RDF classes
         newClasses.set(newClassesList);
 
         // initialize data property tableview list wrapper with
@@ -167,6 +162,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         // initialize add data property combobox list wrapper with
         // observable list of additionally addable data properties
         additionalPredicates.set(additionalPredicatesList);
+
     }
 
 
@@ -182,12 +178,15 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     // pre-select new class in the UI element, if available
     public final Resource getAddNewClass() { return addNewClass; }
     // list of available classes for adding a new instance
-    public final ObjectProperty<ObservableList<Resource>> newClassesProperty() { return newClasses; }
+    public final ObjectProperty<ObservableList<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>>> newClassesProperty() {
+        return newClasses;
+    }
     // retrieve selected class from the UI element
-    public final ObjectProperty<Resource> selectedNewClassProperty() { return selectedNewClass; }
+    public final ObjectProperty<Pair<com.hp.hpl.jena.ontology.ObjectProperty, OntClass>> selectedNewClassProperty() {
+        return selectedNewClass;
+    }
 
     // list of existing data properties for the currently selected new class
-    //public final ObjectProperty<ObservableList<StatementTableItem>> newPredicatesProperty() { return newPredicates; }
     public final ObjectProperty<ObservableList<DataPropertyTableItem>> newPredicatesProperty() { return newPredicates; }
 
     // adding additional data properties for the currently selected new class
@@ -216,6 +215,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         Model newModel = ModelFactory.createDefaultModel();
         Resource newResource = ResourceFactory.createResource(UUID.randomUUID().toString());
 
+        // add all provided DataProperties
         newPredicatesList.iterator().forEachRemaining(
                 c -> {
                     if (c.getTextFieldValue() != null && !c.getTextFieldValue().isEmpty()) {
@@ -227,11 +227,14 @@ public class AddRDFInstance extends BorderPane implements Initializable {
 
         // TODO find better solution to deal with completely empty property values
         if (newModel.size()>0) {
-            // TODO service layer method to get the proper object property
-            // TODO to connect the new resource to the parent resource
-            Property connectProperty = ResourceFactory.createProperty("GenericNamespace", "GenericLocalName");
+            // connect new class instance to parent resource
+            Property connectProperty = ResourceFactory.createProperty(selectedNewClass.get().getKey().getURI());
             Statement connectStatement = ResourceFactory.createStatement(parentResource, connectProperty, newResource);
             newModel.add(connectStatement);
+
+            // add RDF type of the new class instance
+            Statement rdfTypeStatement = ResourceFactory.createStatement(newResource, RDF.type, selectedNewClass.get().getValue());
+            newModel.add(rdfTypeStatement);
 
             // TODO remove once adding to RDF model works
             System.out.println("Model created, contains statement: "+ newModel.size());
@@ -240,8 +243,9 @@ public class AddRDFInstance extends BorderPane implements Initializable {
             // TODO add model to RDF model
             //projectState.getMetadata().add(newModel);
 
-            // TODO add check, if resource was successfully added, only hide if true
+            // TODO add resource successfully added check, only hide the window, if true
             st.hide();
+
         } else {
             labelText.set("Please add at least one property value. Only properties containing values will be added");
         }
@@ -253,7 +257,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
         if (selectedPredicate.get() != null && ! addPredValue.get().isEmpty()) {
 
             //TODO take care of the case of multiple datatypes
-            Set<RDFDatatype> dts = projectState.getMetadata().ontmanager.getRange(selectedPredicate.get());
+            Set<RDFDatatype> dts = oh.getRange(selectedPredicate.get());
             RDFDatatype dt = dts.iterator().next();
 
             DataPropertyTableItem newDTI = new DataPropertyTableItem(selectedPredicate.get(), dt);

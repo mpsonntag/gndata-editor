@@ -31,7 +31,6 @@ import gndata.lib.srv.*;
  */
 public class MetadataListCtrl implements Initializable {
 
-
     @FXML private ListView<ResourceFileAdapter> metadataListView;
 
     private final ProjectState projectState;
@@ -164,11 +163,13 @@ public class MetadataListCtrl implements Initializable {
     public void openAddSelectedResource() {
         new AddRDFInstance(projectState,
                 navState, metadataListView.getSelectionModel().getSelectedItem().getResource());
+        refreshList();
     }
 
     // Add a new instance of an unspecified RDF class
     public void openAddResource() {
         new AddRDFInstance(projectState, navState, null);
+        refreshList();
     }
 
     // remove objectProperties between parent resource
