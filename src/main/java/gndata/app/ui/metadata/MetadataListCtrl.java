@@ -186,10 +186,9 @@ public class MetadataListCtrl implements Initializable {
         new RenameInstanceCtrl(navState);
     }
 
-    // TODO edit signature once methods from service layer are available
     // Edit selected parent object properties
     public void openManageObjectProperties() {
-        System.out.println("Manage parent resource object properties");
+        new ManageObjectPropertiesCtrl(projectState, navState);
     }
 
     // Add a new instance of the selected resource RDF class

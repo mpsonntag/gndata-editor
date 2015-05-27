@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?language javascript?>
+
+<!--
+Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted under the terms of the BSD License. See
+LICENSE file in the root of the Project.
+-->
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.Pane"
+         xmlns:fx="http://javafx.com/fxml/1"
+         xmlns="http://javafx.com/javafx/8"
+         prefWidth="650" prefHeight="450">
+
+    <HBox fx:id="boxMain" alignment="TOP_CENTER" spacing="10">
+        <VBox fx:id="boxOwned" alignment="TOP_CENTER" spacing="10">
+            <Label fx:id="labelOwned" text="Owned Links"></Label>
+            <ListView fx:id="ownedLinks" />
+        </VBox>
+        <VBox fx:id="boxButton" alignment="BASELINE_CENTER" spacing="10">
+            <Label fx:id="labelButton"></Label>
+            <Button text="Remove"/>
+            <Button text="Add" />
+        </VBox>
+        <VBox fx:id="boxAvailable" alignment="TOP_CENTER" spacing="10">
+            <Label fx:id="LabelAvailable" text="Available Links"></Label>
+            <ListView fx:id="availableLinks" />
+        </VBox>
+    </HBox>
+
+    <fx:script>
+        boxMain.paddingProperty().bind(controller.paddingInsetsProperty())
+        boxOwned.paddingProperty().bind(controller.paddingInsetsProperty())
+        boxButton.paddingProperty().bind(controller.paddingInsetsProperty())
+        boxAvailable.paddingProperty().bind(controller.paddingInsetsProperty())
+    </fx:script>
+
+</fx:root>
