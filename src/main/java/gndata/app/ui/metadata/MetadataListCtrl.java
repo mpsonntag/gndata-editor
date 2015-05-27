@@ -161,14 +161,14 @@ public class MetadataListCtrl implements Initializable {
 
     // Add a new instance of the selected resource RDF class
     public void openAddSelectedResource() {
-        new AddRDFInstance(projectState,
+        new AddRDFInstanceCtrl(projectState,
                 navState, metadataListView.getSelectionModel().getSelectedItem().getResource());
         refreshList();
     }
 
     // Add a new instance of an unspecified RDF class
     public void openAddResource() {
-        new AddRDFInstance(projectState, navState, null);
+        new AddRDFInstanceCtrl(projectState, navState, null);
         refreshList();
     }
 

@@ -34,7 +34,7 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Provides Modal Popup Window with a dynamic form for adding a new RDF Class Instance
  */
-public class AddRDFInstance extends BorderPane implements Initializable {
+public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
@@ -61,7 +61,7 @@ public class AddRDFInstance extends BorderPane implements Initializable {
     private final StringProperty addPredPromptText;
 
 
-    public AddRDFInstance(ProjectState projState, MetadataNavState navigationState, Resource extRes){
+    public AddRDFInstanceCtrl(ProjectState projState, MetadataNavState navigationState, Resource extRes){
 
         projectState = projState;
         navState = navigationState;
