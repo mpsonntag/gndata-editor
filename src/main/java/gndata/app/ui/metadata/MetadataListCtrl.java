@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
-import gndata.app.ui.metadata.manage.RenameInstanceCtrl;
+import gndata.app.ui.metadata.manage.*;
 import gndata.app.ui.util.*;
 import gndata.lib.srv.*;
 
@@ -30,7 +30,6 @@ import gndata.lib.srv.*;
  * Controller for the metadata list.
  */
 public class MetadataListCtrl implements Initializable {
-
 
     @FXML private ListView<ResourceFileAdapter> metadataListView;
 
@@ -162,12 +161,15 @@ public class MetadataListCtrl implements Initializable {
 
     // Add a new instance of the selected resource RDF class
     public void openAddSelectedResource() {
-        System.out.println("Add specific resource");
+        new AddRDFInstanceCtrl(projectState,
+                navState, metadataListView.getSelectionModel().getSelectedItem().getResource());
+        refreshList();
     }
 
     // Add a new instance of an unspecified RDF class
     public void openAddResource() {
-        System.out.println("Add resource");
+        new AddRDFInstanceCtrl(projectState, navState, null);
+        refreshList();
     }
 
     // remove objectProperties between parent resource

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?language javascript?>
+
+<!--
+Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted under the terms of the BSD License. See
+LICENSE file in the root of the Project.
+-->
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import gndata.app.ui.util.filter.LiteralFilter?>
+<?import gndata.app.ui.util.converter.LiteralConverter?>
+<?import gndata.app.ui.util.converter.PropertyStringConverter?>
+<?import gndata.app.ui.util.DeleteButtonCellFactory?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<?import gndata.app.ui.util.converter.JenaPropertyClassStringConverter?>
+<fx:root type="javafx.scene.layout.BorderPane"
+         xmlns:fx="http://javafx.com/fxml/1"
+         xmlns="http://javafx.com/javafx/8"
+         fx:id="addRDFInstancePane"
+         prefWidth="800" prefHeight="500">
+    <center>
+        <VBox fx:id="addRDFInstanceVB" spacing="5">
+            <children>
+                <Label fx:id="addRDFInstanceLabel" />
+                <fx:script>
+                    addRDFInstanceLabel.textProperty().bind(controller.labelTextProperty())
+                </fx:script>
+
+                <ComboBox fx:id="newClassFXML" >
+                    <converter>
+                        <JenaPropertyClassStringConverter/>
+                    </converter>
+                </ComboBox>
+                <fx:script>
+                    newClassFXML.getSelectionModel().select(controller.getPreSelNewClass())
+                    newClassFXML.itemsProperty().bindBidirectional(controller.newClassesProperty())
+                    controller.selectedNewClassProperty().bind(newClassFXML.getSelectionModel().selectedItemProperty())
+                </fx:script>
+
+                <TableView fx:id="newPredicatesFXML" editable="true">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn text="Property">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="predicate"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Value">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="textField"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="DataType">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="type"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Delete">
+                            <cellFactory>
+                                <DeleteButtonCellFactory/>
+                            </cellFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+                <fx:script>
+                    newPredicatesFXML.itemsProperty().bindBidirectional(controller.newPredicatesProperty())
+                </fx:script>
+
+                <Label fx:id="addPredicateLabel" text="Add additional property" />
+                <HBox spacing="5">
+                    <children>
+                        <fx:define>
+                            <LiteralFilter fx:id="litFilter" />
+                            <LiteralConverter fx:id="litConv" />
+                        </fx:define>
+
+                        <ComboBox fx:id="addPredicate">
+                            <converter>
+                                <PropertyStringConverter/>
+                            </converter>
+                        </ComboBox>
+                        <TextField fx:id="addPredicateValue">
+                            <textFormatter>
+                                <TextFormatter valueConverter="$litConv" filter="$litFilter" />
+                            </textFormatter>
+                        </TextField>
+                        <Button text="Add" onAction="#addDataProperty"/>
+
+                        <fx:script>
+                            addPredicate.itemsProperty().bindBidirectional(controller.additionalPredicatesProperty())
+                            controller.selectedPredicateProperty().bind(addPredicate.getSelectionModel().selectedItemProperty())
+
+                            litFilter.typeProperty().bindBidirectional(controller.addPredTypeProperty())
+                            litConv.typeProperty().bindBidirectional(controller.addPredTypeProperty())
+                            addPredicateValue.textProperty().bindBidirectional(controller.addPredicateValueProperty())
+                            addPredicateValue.promptTextProperty().bind(controller.addPredicatePromptTextProperty())
+                        </fx:script>
+                    </children>
+                </HBox>
+                <HBox spacing="5">
+                    <children>
+                        <Button text="Cancel" onAction="#cancel" prefWidth="100" prefHeight="10"/>
+                        <Button text="Add new resource" onAction="#addToRDFModel" prefWidth="150" prefHeight="10"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+
+    <!-- add padding where needed -->
+    <fx:script>
+        addRDFInstancePane.paddingProperty().bind(controller.insetProperty())
+        addRDFInstanceVB.paddingProperty().bind(controller.insetProperty())
+        addRDFInstanceLabel.paddingProperty().bind(controller.insetProperty())
+        addPredicateLabel.paddingProperty().bind(controller.insetProperty())
+    </fx:script>
+</fx:root>
