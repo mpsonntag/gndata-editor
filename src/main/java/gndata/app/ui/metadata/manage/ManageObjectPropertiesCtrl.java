@@ -32,6 +32,7 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
 
     private final ProjectState projState;
     private final MetadataNavState navState;
+    private final OntologyHelper oh;
 
     private final ObservableList<ResourceAdapter> ownedLinksList;
     private final ObservableList<ResourceAdapter> availableLinksList;
@@ -53,6 +54,7 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
 
         projState = projectState;
         navState = navigationState;
+        oh = projState.getMetadata().ontmanager;
 
         ownedLinksList = FXCollections.observableArrayList();
         availableLinksList = FXCollections.observableArrayList();
@@ -92,23 +94,13 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         st.initModality(Modality.APPLICATION_MODAL);
 
         final String parent = navState.getSelectedParent().getFileName();
-        st.setTitle("Manage links of " + parent);
+        st.setTitle("Manage links of "+ parent);
 
         // Set selection mode of both lists to multiple
         ownedLinksSelMode.setValue(SelectionMode.MULTIPLE);
         availableLinksSelMode.setValue(SelectionMode.MULTIPLE);
 
-        ownedLinksList.addAll(navState.getSelectedParent().getResources());
-
-        OntologyHelper oh = projState.getMetadata().ontmanager;
-        oh.listRelated(navState.getSelectedParent().getResource()).stream()
-                .forEach(c -> availableLinksList.addAll(
-                        navState.getSelectedParent().availableToAdd(c.getKey(), c.getValue())
-                ));
-
-        ownedLinks.set(ownedLinksList);
-        availableLinks.set(availableLinksList);
-
+        setLists();
     }
 
 
@@ -138,26 +130,11 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         List<Resource> remList = new ArrayList<>();
         ownedLinksSelModel.get().getSelectedItems().forEach(
                 c -> remList.add(c.getResource()));
+
         navState.getSelectedParent().removeObjectProperties(remList);
 
-        // reset everything
-        ownedLinksList.clear();
-        availableLinksList.clear();
-
-        ownedLinks.get().clear();
-        availableLinks.get().clear();
-
-        ownedLinksList.addAll(navState.getSelectedParent().getResources());
-
-        OntologyHelper oh = projState.getMetadata().ontmanager;
-        oh.listRelated(navState.getSelectedParent().getResource()).stream()
-                .forEach(c -> availableLinksList.addAll(
-                        navState.getSelectedParent().availableToAdd(c.getKey(), c.getValue())
-                ));
-
-        ownedLinks.set(ownedLinksList);
-        availableLinks.set(availableLinksList);
-
+        clearLists();
+        setLists();
     }
 
     // Add the proper object properties of al selected items
@@ -165,7 +142,30 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
     public void addItems(){
         System.out.println("Add items");
         availableLinksSelModel.get().getSelectedItems().forEach(
-                c -> System.out.println("\tCurrRes: "+ c.getResource().getLocalName()));
+                c -> System.out.println("\tCurrRes: " + c.getResource().getLocalName()));
+
+        clearLists();
+        setLists();
+    }
+
+    private void clearLists() {
+        ownedLinksList.clear();
+        availableLinksList.clear();
+
+        ownedLinks.get().clear();
+        availableLinks.get().clear();
+    }
+
+    private void setLists(){
+        ownedLinksList.addAll(navState.getSelectedParent().getResources());
+
+        oh.listRelated(navState.getSelectedParent().getResource()).stream()
+                .forEach(c -> availableLinksList.addAll(
+                        navState.getSelectedParent().availableToAdd(c.getKey(), c.getValue())
+                ));
+
+        ownedLinks.set(ownedLinksList);
+        availableLinks.set(availableLinksList);
     }
 
 }
