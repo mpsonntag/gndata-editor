@@ -21,24 +21,34 @@ LICENSE file in the root of the Project.
     <HBox fx:id="boxMain" alignment="TOP_CENTER" spacing="10">
         <VBox fx:id="boxOwned" alignment="TOP_CENTER" spacing="10">
             <Label fx:id="labelOwned" text="Owned Links" />
-            <ListView fx:id="ownedLinks">
+            <ListView fx:id="ownedLinksFXML">
                 <cellFactory>
                     <ObjectPropertyListItemCellFactory />
                 </cellFactory>
             </ListView>
+            <fx:script>
+                ownedLinksFXML.itemsProperty().bindBidirectional(controller.ownedLinksItemProperty())
+                ownedLinksFXML.getSelectionModel().selectionModeProperty().bindBidirectional(controller.ownedLinksSelModeProperty())
+                controller.ownedLinksSelModelProperty().bind(ownedLinksFXML.selectionModelProperty())
+            </fx:script>
         </VBox>
-        <VBox fx:id="boxButton" alignment="BASELINE_CENTER" spacing="10">
+        <VBox fx:id="boxButton" alignment="CENTER" spacing="10">
             <Label fx:id="labelButton" />
-            <Button text="Remove"/>
-            <Button text="Add" />
+            <Button text="Remove &gt;" onAction="#removeItems"/>
+            <Button text="&lt; Add" onAction="#addItems"/>
         </VBox>
         <VBox fx:id="boxAvailable" alignment="TOP_CENTER" spacing="10">
             <Label fx:id="LabelAvailable" text="Available Links" />
-            <ListView fx:id="availableLinks">
+            <ListView fx:id="availableLinksFXML">
                 <cellFactory>
                     <ObjectPropertyListItemCellFactory />
                 </cellFactory>
             </ListView>
+            <fx:script>
+                availableLinksFXML.itemsProperty().bindBidirectional(controller.availableLinksItemProperty())
+                availableLinksFXML.getSelectionModel().selectionModeProperty().bindBidirectional(controller.availableLinksSelModeProperty())
+                controller.availableLinksSelModelProperty().bind(availableLinksFXML.selectionModelProperty())
+            </fx:script>
         </VBox>
     </HBox>
 

@@ -20,6 +20,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.*;
 
+import com.hp.hpl.jena.rdf.model.Resource;
 import gndata.lib.srv.*;
 import gndata.lib.util.OntologyHelper;
 import gndata.app.state.*;
@@ -29,14 +30,20 @@ import gndata.app.state.*;
  */
 public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
 
-    @FXML   private ListView<ResourceAdapter> ownedLinks;
-    @FXML   private ListView<ResourceAdapter> availableLinks;
-
     private final ProjectState projState;
     private final MetadataNavState navState;
 
-    private final ObservableList<ResourceAdapter> ownedList;
-    private final ObservableList<ResourceAdapter> availableList;
+    private final ObservableList<ResourceAdapter> ownedLinksList;
+    private final ObservableList<ResourceAdapter> availableLinksList;
+
+    private final ObjectProperty<ObservableList<ResourceAdapter>> ownedLinks;
+    private final ObjectProperty<ObservableList<ResourceAdapter>> availableLinks;
+
+    private final ObjectProperty<MultipleSelectionModel<ResourceAdapter>> ownedLinksSelModel;
+    private final ObjectProperty<MultipleSelectionModel<ResourceAdapter>> availableLinksSelModel;
+
+    private final ObjectProperty<SelectionMode> ownedLinksSelMode;
+    private final ObjectProperty<SelectionMode> availableLinksSelMode;
 
     private final Stage st = new Stage();
 
@@ -47,8 +54,17 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         projState = projectState;
         navState = navigationState;
 
-        ownedList = FXCollections.observableArrayList();
-        availableList = FXCollections.observableArrayList();
+        ownedLinksList = FXCollections.observableArrayList();
+        availableLinksList = FXCollections.observableArrayList();
+
+        ownedLinks = new SimpleObjectProperty<>();
+        availableLinks = new SimpleObjectProperty<>();
+
+        ownedLinksSelModel = new SimpleObjectProperty<>();
+        availableLinksSelModel = new SimpleObjectProperty<>();
+
+        ownedLinksSelMode = new SimpleObjectProperty<>();
+        availableLinksSelMode = new SimpleObjectProperty<>();
 
         // Padding insets are required here, since the label padding attribute
         // cannot be set in the fxml file w/o eliciting a javafx.fxml.LoadException
@@ -78,19 +94,20 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         final String parent = navState.getSelectedParent().getFileName();
         st.setTitle("Manage links of " + parent);
 
-        ownedLinks.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        availableLinks.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        // Set selection mode of both lists to multiple
+        ownedLinksSelMode.setValue(SelectionMode.MULTIPLE);
+        availableLinksSelMode.setValue(SelectionMode.MULTIPLE);
 
-        ownedList.addAll(navState.getSelectedParent().getResources());
+        ownedLinksList.addAll(navState.getSelectedParent().getResources());
 
         OntologyHelper oh = projState.getMetadata().ontmanager;
         oh.listRelated(navState.getSelectedParent().getResource()).stream()
-                .forEach(c -> availableList.addAll(
+                .forEach(c -> availableLinksList.addAll(
                         navState.getSelectedParent().availableToAdd(c.getKey(), c.getValue())
                 ));
 
-        ownedLinks.getItems().addAll(ownedList);
-        availableLinks.getItems().addAll(availableList);
+        ownedLinks.set(ownedLinksList);
+        availableLinks.set(availableLinksList);
 
     }
 
@@ -101,9 +118,54 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
 
     public final ObjectProperty<Insets> paddingInsetsProperty() { return paddingInsets; }
 
+    public final ObjectProperty<ObservableList<ResourceAdapter>> ownedLinksItemProperty() { return ownedLinks; }
+    public final ObjectProperty<ObservableList<ResourceAdapter>> availableLinksItemProperty() { return availableLinks; }
+
+    public final ObjectProperty<MultipleSelectionModel<ResourceAdapter>> ownedLinksSelModelProperty() { return ownedLinksSelModel; }
+    public final ObjectProperty<MultipleSelectionModel<ResourceAdapter>> availableLinksSelModelProperty() { return availableLinksSelModel; }
+
+    public final ObjectProperty<SelectionMode> ownedLinksSelModeProperty() { return ownedLinksSelMode; }
+    public final ObjectProperty<SelectionMode> availableLinksSelModeProperty() { return availableLinksSelMode; }
+
 
     // -----------------------------------------
     // Methods
     // -----------------------------------------
+
+    // Remove the object properties of all selected items
+    // to the parent resource
+    public void removeItems(){
+        List<Resource> remList = new ArrayList<>();
+        ownedLinksSelModel.get().getSelectedItems().forEach(
+                c -> remList.add(c.getResource()));
+        navState.getSelectedParent().removeObjectProperties(remList);
+
+        // reset everything
+        ownedLinksList.clear();
+        availableLinksList.clear();
+
+        ownedLinks.get().clear();
+        availableLinks.get().clear();
+
+        ownedLinksList.addAll(navState.getSelectedParent().getResources());
+
+        OntologyHelper oh = projState.getMetadata().ontmanager;
+        oh.listRelated(navState.getSelectedParent().getResource()).stream()
+                .forEach(c -> availableLinksList.addAll(
+                        navState.getSelectedParent().availableToAdd(c.getKey(), c.getValue())
+                ));
+
+        ownedLinks.set(ownedLinksList);
+        availableLinks.set(availableLinksList);
+
+    }
+
+    // Add the proper object properties of al selected items
+    // to the parent resource
+    public void addItems(){
+        System.out.println("Add items");
+        availableLinksSelModel.get().getSelectedItems().forEach(
+                c -> System.out.println("\tCurrRes: "+ c.getResource().getLocalName()));
+    }
 
 }
