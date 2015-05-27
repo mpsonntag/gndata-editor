@@ -11,6 +11,7 @@ LICENSE file in the root of the Project.
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import gndata.app.ui.util.ObjectPropertyListItemCellFactory?>
 
 <fx:root type="javafx.scene.layout.Pane"
          xmlns:fx="http://javafx.com/fxml/1"
@@ -19,17 +20,25 @@ LICENSE file in the root of the Project.
 
     <HBox fx:id="boxMain" alignment="TOP_CENTER" spacing="10">
         <VBox fx:id="boxOwned" alignment="TOP_CENTER" spacing="10">
-            <Label fx:id="labelOwned" text="Owned Links"></Label>
-            <ListView fx:id="ownedLinks" />
+            <Label fx:id="labelOwned" text="Owned Links" />
+            <ListView fx:id="ownedLinks">
+                <cellFactory>
+                    <ObjectPropertyListItemCellFactory />
+                </cellFactory>
+            </ListView>
         </VBox>
         <VBox fx:id="boxButton" alignment="BASELINE_CENTER" spacing="10">
-            <Label fx:id="labelButton"></Label>
+            <Label fx:id="labelButton" />
             <Button text="Remove"/>
             <Button text="Add" />
         </VBox>
         <VBox fx:id="boxAvailable" alignment="TOP_CENTER" spacing="10">
-            <Label fx:id="LabelAvailable" text="Available Links"></Label>
-            <ListView fx:id="availableLinks" />
+            <Label fx:id="LabelAvailable" text="Available Links" />
+            <ListView fx:id="availableLinks">
+                <cellFactory>
+                    <ObjectPropertyListItemCellFactory />
+                </cellFactory>
+            </ListView>
         </VBox>
     </HBox>
 

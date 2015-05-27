@@ -22,7 +22,6 @@ import javafx.stage.*;
 
 import gndata.lib.srv.*;
 import gndata.lib.util.OntologyHelper;
-
 import gndata.app.state.*;
 
 /**
