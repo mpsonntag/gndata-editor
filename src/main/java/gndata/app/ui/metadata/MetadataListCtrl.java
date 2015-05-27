@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import com.google.inject.Inject;
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
@@ -35,18 +36,25 @@ public class MetadataListCtrl implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
+
     private final StringProperty listFilterText;
     private final StringProperty filter;
     private final ObservableList<ResourceFileAdapter> filteredList;
     private final List<ResourceFileAdapter> unfilteredList;
 
-    // context menu properties
+    // Context menu properties
     private final StringProperty cmRename;
     private final StringProperty cmManageObjProp;
     private final StringProperty cmAddInstance;
     private final StringProperty cmAddSelectedInstance;
     private final StringProperty cmRemoveLink;
     private final StringProperty cmRemoveInstance;
+
+    private final BooleanProperty cmRenameDisabled;
+    private final BooleanProperty cmManageObjPropDisabled;
+    private final BooleanProperty cmRemoveLinkDisabled;
+    private final BooleanProperty cmRemoveInstanceDisabled;
+
 
     @Inject
     public MetadataListCtrl(ProjectState projState, MetadataNavState navigationState) {
@@ -69,6 +77,11 @@ public class MetadataListCtrl implements Initializable {
         cmAddSelectedInstance = new SimpleStringProperty();
         cmRemoveLink = new SimpleStringProperty();
         cmRemoveInstance = new SimpleStringProperty();
+
+        cmRenameDisabled = new SimpleBooleanProperty();
+        cmManageObjPropDisabled = new SimpleBooleanProperty();
+        cmRemoveLinkDisabled = new SimpleBooleanProperty();
+        cmRemoveInstanceDisabled = new SimpleBooleanProperty();
     }
 
     @Override
@@ -76,7 +89,7 @@ public class MetadataListCtrl implements Initializable {
 
         listFilterText.bindBidirectional(filter);
 
-        // set selection mode of the listView to multiple
+        // Set selection mode of the listView to multiple
         metadataListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         metadataListView.setItems(filteredList);
@@ -102,12 +115,17 @@ public class MetadataListCtrl implements Initializable {
     public StringProperty cmRemoveLinkProperty() { return cmRemoveLink; }
     public StringProperty cmRemoveInstanceProperty() { return cmRemoveInstance; }
 
+    public BooleanProperty cmRenameDisabledProperty() { return cmRenameDisabled; }
+    public BooleanProperty cmManageObjPropDisabledProperty() { return cmManageObjPropDisabled; }
+    public BooleanProperty cmRemoveLinkDisabledProperty() { return cmRemoveLinkDisabled; }
+    public BooleanProperty cmRemoveInstanceDisabledProperty() { return cmRemoveInstanceDisabled; }
+
 
     // -------------------------------------------
     // Custom methods
     // -------------------------------------------
 
-    // filter the list of resource adapters
+    // Filter the list of resource adapters
     public void applyFilter(String filter) {
 
         if (filter == null || filter.equals("")) {
@@ -121,8 +139,9 @@ public class MetadataListCtrl implements Initializable {
         }
     }
 
-    // set context menu content
+    // Set context menu content
     public void showContextMenu() {
+
         final ResourceFileAdapter currRes = metadataListView.getSelectionModel().getSelectedItem();
 
         final Statement typeStmt = currRes.getResource().getProperty(RDF.type);
@@ -145,16 +164,30 @@ public class MetadataListCtrl implements Initializable {
         cmAddSelectedInstance.set("Add new " + type);
         cmRemoveLink.set(remLink);
         cmRemoveInstance.set(delInst);
+
+        cmRenameDisabled.set(false);
+        cmManageObjPropDisabled.set(false);
+        cmRemoveLinkDisabled.set(false);
+        cmRemoveInstanceDisabled.set(false);
+
+        // Disable menu items if the selected parent is a top level RDF class
+        Set<OntClass> classList = projectState.getMetadata().ontmanager.listClasses(navState.getSelectedParent().getResource());
+        RDFNode parentClass = navState.getSelectedParent().getResource().getProperty(RDF.type).getObject();
+        if(classList.size() == 1 && classList.contains(parentClass)) {
+            cmRenameDisabled.set(true);
+            cmManageObjPropDisabled.set(true);
+            cmRemoveLinkDisabled.set(true);
+            cmRemoveInstanceDisabled.set(true);
+        }
     }
 
     // Edit the RDF label text of the selected parent resource
-    // Open new window for this
     public void renameParent() {
         new RenameInstanceCtrl(navState);
     }
 
     // TODO edit signature once methods from service layer are available
-    // edit selected parent object properties
+    // Edit selected parent object properties
     public void openManageObjectProperties() {
         System.out.println("Manage parent resource object properties");
     }
@@ -172,7 +205,7 @@ public class MetadataListCtrl implements Initializable {
         refreshList();
     }
 
-    // remove objectProperties between parent resource
+    // Remove objectProperties between parent resource
     // and user selected child resource
     public void removeObjectProperty() {
         ArrayList<Resource> remList = new ArrayList<>();
@@ -189,7 +222,7 @@ public class MetadataListCtrl implements Initializable {
     // TODO add user validation before actually deleting an instance
     // TODO check navigation, if the to be removed ResourceAdapter is a
     // TODO navParent or navChild. If this is the case, reset the navigation
-    // remove all selected instances from the RDF model
+    // Remove all selected instances from the RDF model
     public void deleteInstance(){
 
         metadataListView.getSelectionModel().getSelectedItems()
@@ -199,7 +232,7 @@ public class MetadataListCtrl implements Initializable {
         refreshList();
     }
 
-    // refresh the unfiltered resource adapter list and re-apply the filter
+    // Refresh the unfiltered resource adapter list and re-apply the filter
     private void refreshList() {
 
         unfilteredList.clear();
@@ -284,7 +317,7 @@ public class MetadataListCtrl implements Initializable {
 
 
     /**
-     * A list cell for lists showing a {@link ResourceFileAdapter}.
+     * A list cell for lists using {@link ResourceFileAdapter} as source.
      */
     private class MetadataListCell extends TwoLineListCell<ResourceFileAdapter> {
 

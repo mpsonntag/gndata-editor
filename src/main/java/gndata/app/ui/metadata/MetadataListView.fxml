@@ -25,7 +25,6 @@ LICENSE file in the root of the Project.
                         <MenuItem fx:id="rename" onAction="#renameParent" />
                         <MenuItem fx:id="manageObjProp" onAction="#openManageObjectProperties" />
                         <SeparatorMenuItem/>
-                        <SeparatorMenuItem/>
                         <MenuItem fx:id="addInstance" onAction="#openAddResource" />
                         <MenuItem fx:id="addSelectedInstance" onAction="#openAddSelectedResource" />
                         <SeparatorMenuItem/>
@@ -41,6 +40,11 @@ LICENSE file in the root of the Project.
                 addSelectedInstance.textProperty().bindBidirectional(controller.cmAddSelectedInstanceProperty())
                 removeLink.textProperty().bindBidirectional(controller.cmRemoveLinkProperty())
                 removeInstance.textProperty().bindBidirectional(controller.cmRemoveInstanceProperty())
+
+                rename.disableProperty().bindBidirectional(controller.cmRenameDisabledProperty())
+                manageObjProp.disableProperty().bindBidirectional(controller.cmManageObjPropDisabledProperty())
+                removeLink.disableProperty().bindBidirectional(controller.cmRemoveLinkDisabledProperty())
+                removeInstance.disableProperty().bindBidirectional(controller.cmRemoveInstanceDisabledProperty())
             </fx:script>
         </ListView>
     </center>
