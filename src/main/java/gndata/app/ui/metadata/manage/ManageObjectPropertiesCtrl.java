@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.Insets;
@@ -41,7 +40,6 @@ import gndata.app.state.*;
  */
 public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
 
-    private final ProjectState projState;
     private final MetadataNavState navState;
     private final OntologyHelper oh;
 
@@ -58,14 +56,13 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
     private final ObjectProperty<SelectionMode> availableLinksSelMode;
 
     private final Stage st = new Stage();
-
     private final ObjectProperty<Insets> paddingInsets;
+
 
     public ManageObjectPropertiesCtrl(ProjectState projectState, MetadataNavState navigationState) {
 
-        projState = projectState;
         navState = navigationState;
-        oh = projState.getMetadata().ontmanager;
+        oh = projectState.getMetadata().ontmanager;
 
         ownedLinksList = FXCollections.observableArrayList();
         availableLinksList = FXCollections.observableArrayList();
@@ -98,14 +95,14 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         st.show();
     }
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         // Set application modality to prohibit actions while the add object property window is open.
         st.initModality(Modality.APPLICATION_MODAL);
 
-        final String parent = navState.getSelectedParent().getFileName();
-        st.setTitle("Manage links of "+ parent);
+        st.setTitle("Manage links of "+ navState.getSelectedParent().getFileName());
 
         // Set selection mode of both lists to multiple
         ownedLinksSelMode.setValue(SelectionMode.MULTIPLE);
@@ -156,7 +153,7 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         }
     }
 
-    // Add the proper object properties of al selected items
+    // Add the proper object properties of all selected items
     // to the parent resource
     public void addItems(){
 
@@ -174,6 +171,15 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         }
     }
 
+    // TODO: Display Bug in both Listviews:
+    // When multiple items are removed from a list and the list is refreshed,
+    // it can happen, that the Strings of old items that should no longer be
+    // displayed, are still visible, even though they are no proper items
+    // and are not selectable as such. Could be a problem with the bindings to
+    // the FXML file, that the lists there are not properly cleared, even though
+    // the bound lists in the controller have been cleared and refreshed.
+
+    // Clear owned and available object properties lists
     private void clearLists() {
         ownedLinksList.clear();
         availableLinksList.clear();
@@ -182,7 +188,8 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
         availableLinks.get().clear();
     }
 
-    private void setLists(){
+    // Add the content of both owned and available object properties lists
+    private void setLists() {
         //TODO replace placeholder method call with proper call to the ResourceAdapter, once its implemented
         //ownedLinksList.addAll(navState.getSelectedParent().getResources_());
         ownedLinksList.addAll(getResources(navState.getSelectedParent().getResource()));
@@ -312,6 +319,5 @@ public class ManageObjectPropertiesCtrl extends Pane implements Initializable {
             return o.isResource() && (! o.isAnon()) && (! stmt.getPredicate().equals(RDF.type));
         }
     }
-
 
 }

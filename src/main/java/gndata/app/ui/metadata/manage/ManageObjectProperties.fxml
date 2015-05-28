@@ -33,9 +33,8 @@ LICENSE file in the root of the Project.
             </fx:script>
         </VBox>
         <VBox fx:id="boxButton" alignment="CENTER" spacing="10">
-            <Label fx:id="labelButton" />
-            <Button text="Remove &gt;" onAction="#removeItems"/>
             <Button text="&lt; Add" onAction="#addItems"/>
+            <Button text="Remove &gt;" onAction="#removeItems"/>
         </VBox>
         <VBox fx:id="boxAvailable" alignment="TOP_CENTER" spacing="10">
             <Label fx:id="LabelAvailable" text="Available Links" />
