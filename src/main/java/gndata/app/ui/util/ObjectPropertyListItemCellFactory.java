@@ -11,24 +11,27 @@ package gndata.app.ui.util;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
+import com.hp.hpl.jena.rdf.model.Property;
 import gndata.lib.srv.ResourceAdapter;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Provides the nameString of a {@link ResourceAdapter} for display in a {@link ListView} {@link ListCell}.
  */
-public class ObjectPropertyListItemCellFactory implements Callback<ListView<ResourceAdapter>, ListCell<ResourceAdapter>> {
+public class ObjectPropertyListItemCellFactory implements
+        Callback<ListView<Pair<Property,ResourceAdapter>>, ListCell<Pair<Property,ResourceAdapter>>> {
 
     @Override
-    public ListCell<ResourceAdapter> call(ListView<ResourceAdapter> p) {
+    public ListCell<Pair<Property,ResourceAdapter>> call(ListView<Pair<Property,ResourceAdapter>> p) {
         return new ObjectPropertyCell();
     }
 
-    private class ObjectPropertyCell extends ListCell<ResourceAdapter> {
+    private class ObjectPropertyCell extends ListCell<Pair<Property,ResourceAdapter>> {
         @Override
-        public void updateItem(ResourceAdapter item, boolean empty) {
+        public void updateItem(Pair<Property,ResourceAdapter> item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty && item != null) {
-                setText(item.toNameString());
+                setText(item.getValue().toNameString());
             }
         }
     }
