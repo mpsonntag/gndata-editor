@@ -134,7 +134,7 @@ public class MetadataListCtrl implements Initializable {
     // -------------------------------------------
 
     /**
-     * Filter the list of resource adapters
+     * Filter the list of {@ResourceAdapters}
      * @param filter
      */
     public void applyFilter(String filter) {
@@ -151,7 +151,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Set context menu content
+     * Set ContextMenu content
      */
     public void showContextMenu() {
         final ResourceFileAdapter currRes = metadataListSelectionModel.get().getSelectedItem();
@@ -179,21 +179,25 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Edit the RDF label text of the selected parent resource, opens a modal stage window
+     * Used to edit the RDF label text of the selected parent {@Resource}
+     * Opens a modal stage window
      */
     public void renameParent() {
         new RenameInstanceCtrl(navState);
     }
 
     /**
-     * Edit selected parent object properties
+     * Used ot manage the {@ObjectProperties} of the parent {@Resource}
+     * Opens a modal stage window
      */
     public void openManageObjectProperties() {
         System.out.println("Manage parent resource object properties");
     }
 
     /**
-     * Add a new instance of the selected resource RDF class
+     * Used to add a new instance with the same RDF class as the {@Resource}
+     * currently selected in the ListView to the parent {@Resource}.
+     * Opens a modal stage window
      */
     public void openAddSelectedResource() {
         new AddRDFInstanceCtrl(projectState,
@@ -202,7 +206,8 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Add a new instance of an unspecified RDF class
+     * Used to add a new instance to the parent {@Resource}
+     * Opens a modal stage window
      */
     public void openAddResource() {
         new AddRDFInstanceCtrl(projectState, navState, null);
@@ -210,7 +215,8 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Remove objectProperties between parent resource and user selected child resource
+     * Used to remove {@ObjectProperties} between parent {@Resource} and
+     * the {@Resources} currently selected in the ListView.
      */
     public void removeObjectProperty() {
         ArrayList<Resource> remList = new ArrayList<>();
@@ -228,7 +234,7 @@ public class MetadataListCtrl implements Initializable {
     // TODO check navigation, if the to be removed ResourceAdapter is a
     // TODO navParent or navChild. If this is the case, reset the navigation
     /**
-     * Remove all selected instances from the RDF model
+     * Used to delete all selected {@Resources} from the RDF {@Model}
      */
     public void deleteInstance(){
 
@@ -240,7 +246,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Refresh the unfiltered resource adapter list and re-apply the filter
+     * Refresh the unfiltered {@ResourceAdapter} list and re-apply the filter
      */
     private void refreshList() {
 
@@ -310,8 +316,8 @@ public class MetadataListCtrl implements Initializable {
                 unfilteredList.clear();
                 unfilteredList.addAll(
                         ms.query.streamSearchResults(navState.getSearchString())
-                            .map(r -> new ResourceFileAdapter(r, null))
-                            .collect(Collectors.toList())
+                                .map(r -> new ResourceFileAdapter(r, null))
+                                .collect(Collectors.toList())
                 );
 
                 String fltr = filter.get();
