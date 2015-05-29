@@ -35,12 +35,17 @@ public class MetadataListCtrl implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
+
     private final StringProperty listFilterText;
     private final StringProperty filter;
     private final ObservableList<ResourceFileAdapter> filteredList;
     private final List<ResourceFileAdapter> unfilteredList;
 
-    // context menu properties
+    private final ObjectProperty<ObservableList<ResourceFileAdapter>> metadataList;
+    private final ObjectProperty<MultipleSelectionModel<ResourceFileAdapter>> metadataSelectionModel;
+    private final ObjectProperty<SelectionMode> selectionModeProp;
+
+    // Context menu properties
     private final StringProperty cmRename;
     private final StringProperty cmManageObjProp;
     private final StringProperty cmAddInstance;
@@ -57,6 +62,10 @@ public class MetadataListCtrl implements Initializable {
         listFilterText = new SimpleStringProperty();
         filteredList = FXCollections.observableArrayList();
         unfilteredList = new ArrayList<>();
+
+        metadataList = new SimpleObjectProperty<>();
+        metadataSelectionModel = new SimpleObjectProperty<>();
+        selectionModeProp = new SimpleObjectProperty<>();
 
         navState.selectedParentProperty().addListener(new SelectedParentListener());
         filter.addListener((p, o, n) -> applyFilter(n));
@@ -76,14 +85,14 @@ public class MetadataListCtrl implements Initializable {
 
         listFilterText.bindBidirectional(filter);
 
-        // set selection mode of the listView to multiple
-        metadataListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        // Set selection mode of the listView to multiple
+        selectionModeProp.setValue(SelectionMode.MULTIPLE);
 
-        metadataListView.setItems(filteredList);
-        navState.selectedNodeProperty().bind(metadataListView.getSelectionModel().selectedItemProperty());
+        navState.selectedNodeProperty().bind(metadataSelectionModel.get().selectedItemProperty());
+
+        metadataList.set(filteredList);
 
         metadataListView.addEventHandler(MouseEvent.MOUSE_CLICKED, new ListNavigationHandler());
-        metadataListView.setCellFactory(ra -> new MetadataListCell());
 
     }
 
@@ -91,6 +100,10 @@ public class MetadataListCtrl implements Initializable {
     // -------------------------------------------
     // FXML binding properties
     // -------------------------------------------
+
+    public ObjectProperty<MultipleSelectionModel<ResourceFileAdapter>> metadataSelectionModelProperty() { return metadataSelectionModel; }
+    public ObjectProperty<ObservableList<ResourceFileAdapter>> metadataListProperty() { return metadataList; }
+    public ObjectProperty<SelectionMode> selectionModeProperty() { return selectionModeProp; }
 
     public StringProperty filterTextFieldProperty() { return listFilterText; }
 
@@ -107,7 +120,7 @@ public class MetadataListCtrl implements Initializable {
     // Custom methods
     // -------------------------------------------
 
-    // filter the list of resource adapters
+    // Filter the list of resource adapters
     public void applyFilter(String filter) {
 
         if (filter == null || filter.equals("")) {
@@ -121,9 +134,9 @@ public class MetadataListCtrl implements Initializable {
         }
     }
 
-    // set context menu content
+    // Set context menu content
     public void showContextMenu() {
-        final ResourceFileAdapter currRes = metadataListView.getSelectionModel().getSelectedItem();
+        final ResourceFileAdapter currRes = metadataSelectionModel.get().getSelectedItem();
 
         final Statement typeStmt = currRes.getResource().getProperty(RDF.type);
         final String type = typeStmt == null ? "Thing" : typeStmt.getResource().getLocalName();
@@ -131,7 +144,7 @@ public class MetadataListCtrl implements Initializable {
         final String remLink;
         final String delInst;
 
-        if(metadataListView.getSelectionModel().getSelectedItems().size() > 1) {
+        if(metadataSelectionModel.get().getSelectedItems().size() > 1) {
             remLink = "Remove links to selected resources";
             delInst = "Delete selected resources";
         } else {
@@ -154,7 +167,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     // TODO edit signature once methods from service layer are available
-    // edit selected parent object properties
+    // Edit selected parent object properties
     public void openManageObjectProperties() {
         System.out.println("Manage parent resource object properties");
     }
@@ -162,7 +175,7 @@ public class MetadataListCtrl implements Initializable {
     // Add a new instance of the selected resource RDF class
     public void openAddSelectedResource() {
         new AddRDFInstanceCtrl(projectState,
-                navState, metadataListView.getSelectionModel().getSelectedItem().getResource());
+                navState, metadataSelectionModel.get().getSelectedItem().getResource());
         refreshList();
     }
 
@@ -172,12 +185,11 @@ public class MetadataListCtrl implements Initializable {
         refreshList();
     }
 
-    // remove objectProperties between parent resource
-    // and user selected child resource
+    // Remove objectProperties between parent resource and user selected child resource
     public void removeObjectProperty() {
         ArrayList<Resource> remList = new ArrayList<>();
 
-        metadataListView.getSelectionModel().getSelectedItems()
+        metadataSelectionModel.get().getSelectedItems()
                 .iterator()
                 .forEachRemaining(c -> remList.add(c.getResource()));
 
@@ -189,17 +201,17 @@ public class MetadataListCtrl implements Initializable {
     // TODO add user validation before actually deleting an instance
     // TODO check navigation, if the to be removed ResourceAdapter is a
     // TODO navParent or navChild. If this is the case, reset the navigation
-    // remove all selected instances from the RDF model
+    // Remove all selected instances from the RDF model
     public void deleteInstance(){
 
-        metadataListView.getSelectionModel().getSelectedItems()
+        metadataSelectionModel.get().getSelectedItems()
                 .iterator()
                 .forEachRemaining(ResourceAdapter::remove);
 
         refreshList();
     }
 
-    // refresh the unfiltered resource adapter list and re-apply the filter
+    // Refresh the unfiltered resource adapter list and re-apply the filter
     private void refreshList() {
 
         unfilteredList.clear();
@@ -282,21 +294,4 @@ public class MetadataListCtrl implements Initializable {
         }
     }
 
-
-    /**
-     * A list cell for lists showing a {@link ResourceFileAdapter}.
-     */
-    private class MetadataListCell extends TwoLineListCell<ResourceFileAdapter> {
-
-        @Override
-        protected void update(ResourceFileAdapter item, boolean empty) {
-            if (! empty) {
-                lineOne.set(item.getFileName());
-                lineTwo.set(item.toInfoString());
-            } else {
-                lineOne.set(null);
-                lineTwo.set(null);
-            }
-        }
-    }
 }

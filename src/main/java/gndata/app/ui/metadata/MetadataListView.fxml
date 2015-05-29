@@ -13,12 +13,16 @@ LICENSE file in the root of the Project.
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?import gndata.app.ui.util.MetadataListCellFactory?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
             fx:controller="gndata.app.ui.metadata.MetadataListCtrl">
     <center>
         <ListView fx:id="metadataListView">
+            <cellFactory>
+                <MetadataListCellFactory />
+            </cellFactory>
             <contextMenu>
                 <ContextMenu fx:id="contextMenu" onShowing="#showContextMenu">
                     <items>
@@ -43,6 +47,11 @@ LICENSE file in the root of the Project.
                 removeInstance.textProperty().bindBidirectional(controller.cmRemoveInstanceProperty())
             </fx:script>
         </ListView>
+        <fx:script>
+            metadataListView.itemsProperty().bindBidirectional(controller.metadataListProperty())
+            metadataListView.getSelectionModel().selectionModeProperty().bindBidirectional(controller.selectionModeProperty())
+            controller.metadataSelectionModelProperty().bind(metadataListView.selectionModelProperty())
+        </fx:script>
     </center>
     <bottom>
         <TextField fx:id="filterTextField" promptText="Filter" />
