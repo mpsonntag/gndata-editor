@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.event.EventHandler;
@@ -20,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import com.google.inject.Inject;
+import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
@@ -31,11 +33,11 @@ import gndata.lib.srv.*;
  * Controller for the metadata list. The provided context menu
  * grants access to various options for the management of
  * the RDF data model. These options include
- * Adding or editing the RDF label of the parent {@Resource}
- * Managing the {@ObjectProperties} of the parent {@Resource}
- * Adding a new {@Resource} to the parent {@Resource}
- * Removing {@ObjectProperties} to child {@Resources}
- * Deleting child {@Resources} from the RDF {@Model}
+ * Adding or editing the RDF label of the parent {@link Resource}
+ * Managing the {@link com.hp.hpl.jena.ontology.ObjectProperty} of the parent {@link Resource}
+ * Adding a new {@link Resource} to the parent {@link Resource}
+ * Removing {@link com.hp.hpl.jena.ontology.ObjectProperty} to child {@link Resource}
+ * Deleting child {@link Resource}s from the RDF {@link Model}
  */
 public class MetadataListCtrl implements Initializable {
 
@@ -134,7 +136,7 @@ public class MetadataListCtrl implements Initializable {
     // -------------------------------------------
 
     /**
-     * Filter the list of {@ResourceAdapters}
+     * Filter the list of {@link ResourceAdapter}s
      * @param filter
      */
     public void applyFilter(String filter) {
@@ -179,7 +181,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Used to edit the RDF label text of the selected parent {@Resource}
+     * Used to edit the RDF label text of the selected parent {@link Resource}
      * Opens a modal stage window
      */
     public void renameParent() {
@@ -187,7 +189,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Used ot manage the {@ObjectProperties} of the parent {@Resource}
+     * Used to manage the {@link com.hp.hpl.jena.ontology.ObjectProperty} of the parent {@link Resource}
      * Opens a modal stage window
      */
     public void openManageObjectProperties() {
@@ -195,8 +197,8 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Used to add a new instance with the same RDF class as the {@Resource}
-     * currently selected in the ListView to the parent {@Resource}.
+     * Used to add a new instance with the same RDF class as the {@link Resource}
+     * currently selected in the ListView to the parent {@link Resource}.
      * Opens a modal stage window
      */
     public void openAddSelectedResource() {
@@ -206,7 +208,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Used to add a new instance to the parent {@Resource}
+     * Used to add a new instance to the parent {@link Resource}
      * Opens a modal stage window
      */
     public void openAddResource() {
@@ -215,8 +217,8 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Used to remove {@ObjectProperties} between parent {@Resource} and
-     * the {@Resources} currently selected in the ListView.
+     * Used to remove {@link com.hp.hpl.jena.ontology.ObjectProperty} between parent {@link Resource} and
+     * the {@link Resource}s currently selected in the ListView.
      */
     public void removeObjectProperty() {
         ArrayList<Resource> remList = new ArrayList<>();
@@ -234,7 +236,7 @@ public class MetadataListCtrl implements Initializable {
     // TODO check navigation, if the to be removed ResourceAdapter is a
     // TODO navParent or navChild. If this is the case, reset the navigation
     /**
-     * Used to delete all selected {@Resources} from the RDF {@Model}
+     * Used to delete all selected {@link Resource}s from the RDF {@link Model}
      */
     public void deleteInstance(){
 
@@ -246,7 +248,7 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Refresh the unfiltered {@ResourceAdapter} list and re-apply the filter
+     * Refresh the unfiltered {@link ResourceAdapter} list and re-apply the filter
      */
     private void refreshList() {
 
