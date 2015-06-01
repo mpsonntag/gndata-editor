@@ -15,13 +15,13 @@ import javafx.beans.property.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.*;
 import javafx.collections.*;
+import javafx.collections.transformation.*;
 import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import com.google.inject.Inject;
-import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import gndata.app.state.*;
@@ -44,17 +44,12 @@ public class MetadataListCtrl implements Initializable {
     private final ProjectState projectState;
     private final MetadataNavState navState;
 
-    private final StringProperty listFilterText;
     private final StringProperty filter;
-    private final ObservableList<ResourceFileAdapter> filteredList;
-    private final List<ResourceFileAdapter> unfilteredList;
-
-    private final EventHandler<MouseEvent> listNavEventHandler;
-    private final ObjectProperty<EventHandler<? super MouseEvent>> listNavEventHandlerProp;
-
-    private final ObjectProperty<ObservableList<ResourceFileAdapter>> metadataList;
+    private final ObservableList<ResourceFileAdapter> unfilteredList;
+    private final FilteredList<ResourceFileAdapter> filteredSortedList;
     private final ObjectProperty<MultipleSelectionModel<ResourceFileAdapter>> metadataListSelectionModel;
-    private final ObjectProperty<SelectionMode> metadataListSelectionMode;
+
+    private final ObjectProperty<EventHandler<? super MouseEvent>> listNavEventHandler;
 
     // Context menu properties
     private final StringProperty cmRename;
@@ -69,22 +64,23 @@ public class MetadataListCtrl implements Initializable {
         projectState = projState;
         navState = navigationState;
 
-        filter = new SimpleStringProperty();
-        listFilterText = new SimpleStringProperty();
-        filteredList = FXCollections.observableArrayList();
-        unfilteredList = new ArrayList<>();
-
-        metadataList = new SimpleObjectProperty<>();
-        metadataListSelectionModel = new SimpleObjectProperty<>();
-        metadataListSelectionMode = new SimpleObjectProperty<>();
-
-        listNavEventHandler = new ListNavigationHandler();
-        listNavEventHandlerProp = new SimpleObjectProperty<>();
-
         navState.selectedParentProperty().addListener(new SelectedParentListener());
-        filter.addListener((p, o, n) -> applyFilter(n));
-
         navState.searchStringProperty().addListener(new SearchStringHandler());
+
+        listNavEventHandler = new SimpleObjectProperty<>(new ListNavigationHandler());
+
+        unfilteredList = FXCollections.observableArrayList();
+        filteredSortedList = new FilteredList<>(
+                            new SortedList<>(
+                                    unfilteredList,
+                                    (o,t) -> o.getFileName().compareTo(t.getFileName())
+                            )
+                        );
+
+        filter = new SimpleStringProperty();
+        filter.addListener((p, o, n) -> filteredSortedList.setPredicate(fa -> fa.getFileName().contains(n)));
+
+        metadataListSelectionModel = new SimpleObjectProperty<>();
 
         cmRename = new SimpleStringProperty();
         cmManageObjProp = new SimpleStringProperty();
@@ -97,15 +93,10 @@ public class MetadataListCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // Set selection mode of the listView to multiple
-        metadataListSelectionMode.setValue(SelectionMode.MULTIPLE);
-
-        listNavEventHandlerProp.set(listNavEventHandler);
-
-        listFilterText.bindBidirectional(filter);
-        metadataList.set(filteredList);
-
         navState.selectedNodeProperty().bind(metadataListSelectionModel.get().selectedItemProperty());
+
+        // Set selection mode of the listView to multiple
+        metadataListSelectionModel.get().setSelectionMode(SelectionMode.MULTIPLE);
 
     }
 
@@ -114,13 +105,11 @@ public class MetadataListCtrl implements Initializable {
     // FXML binding properties
     // -------------------------------------------
 
+    public FilteredList<ResourceFileAdapter> getFilteredList() { return filteredSortedList; }
     public ObjectProperty<MultipleSelectionModel<ResourceFileAdapter>> metadataListSelectionModelProperty() { return metadataListSelectionModel; }
-    public ObjectProperty<ObservableList<ResourceFileAdapter>> metadataListProperty() { return metadataList; }
-    public ObjectProperty<SelectionMode> selectionModeProperty() { return metadataListSelectionMode; }
 
-    public ObjectProperty<EventHandler<? super MouseEvent>> listNavEventHandlerPropProperty() { return listNavEventHandlerProp; }
-
-    public StringProperty filterTextFieldProperty() { return listFilterText; }
+    public ObjectProperty<EventHandler<? super MouseEvent>> listNavEventHandlerProperty() { return listNavEventHandler; }
+    public StringProperty filterTextFieldProperty() { return filter; }
 
     // Context menu properties
     public StringProperty cmRenameProperty() { return cmRename; }
@@ -134,23 +123,6 @@ public class MetadataListCtrl implements Initializable {
     // -------------------------------------------
     // Custom methods
     // -------------------------------------------
-
-    /**
-     * Filter the list of {@link ResourceAdapter}s
-     * @param filter
-     */
-    public void applyFilter(String filter) {
-
-        if (filter == null || filter.equals("")) {
-            filteredList.setAll(unfilteredList);
-        } else {
-            filteredList.setAll(
-                    unfilteredList.stream()
-                            .filter(ra -> ra.getFileName().contains(filter))
-                            .collect(Collectors.toList())
-            );
-        }
-    }
 
     /**
      * Set ContextMenu content
@@ -248,19 +220,12 @@ public class MetadataListCtrl implements Initializable {
     }
 
     /**
-     * Refresh the unfiltered {@link ResourceAdapter} list and re-apply the filter
+     * Refresh the unfiltered {@link ResourceAdapter} list.
+     * The filter will stay unchanged.
      */
     private void refreshList() {
-
         unfilteredList.clear();
         unfilteredList.addAll(navState.getSelectedParent().getChildren());
-
-        String fltr = filter.get();
-        if (fltr == null || fltr.equals("")) {
-            applyFilter(null);
-        } else {
-            applyFilter(fltr);
-        }
     }
 
 
@@ -292,14 +257,7 @@ public class MetadataListCtrl implements Initializable {
 
             unfilteredList.clear();
             unfilteredList.addAll(newValue.getChildren());
-
-            String fltr = filter.get();
-            if (fltr == null || fltr.equals("")) {
-                applyFilter(null); // just filter with null
-            } else {
-                filter.set(null); // reset the filter (triggers filtering)
-            }
-
+            filter.set("");
             navState.setShowBrowsingResults(true);
         }
     }
@@ -312,22 +270,18 @@ public class MetadataListCtrl implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+
             MetadataService ms = projectState.getMetadata();
 
             if (ms != null) {
+
                 unfilteredList.clear();
                 unfilteredList.addAll(
                         ms.query.streamSearchResults(navState.getSearchString())
                                 .map(r -> new ResourceFileAdapter(r, null))
                                 .collect(Collectors.toList())
                 );
-
-                String fltr = filter.get();
-                if (fltr == null || fltr.equals("")) {
-                    applyFilter(null); // just filter with null
-                } else {
-                    filter.set(null); // reset the filter (triggers filtering)
-                }
+                filter.set("");
             }
         }
     }

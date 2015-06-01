@@ -48,10 +48,9 @@ LICENSE file in the root of the Project.
             </fx:script>
         </ListView>
         <fx:script>
-            metadataListView.itemsProperty().bindBidirectional(controller.metadataListProperty())
-            metadataListView.getSelectionModel().selectionModeProperty().bindBidirectional(controller.selectionModeProperty())
+            metadataListView.setItems(controller.getFilteredList())
             controller.metadataListSelectionModelProperty().bind(metadataListView.selectionModelProperty())
-            metadataListView.onMouseClickedProperty().bindBidirectional(controller.listNavEventHandlerPropProperty())
+            metadataListView.onMouseClickedProperty().bindBidirectional(controller.listNavEventHandlerProperty())
         </fx:script>
     </center>
     <bottom>
