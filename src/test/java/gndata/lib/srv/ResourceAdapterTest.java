@@ -5,6 +5,7 @@ import java.util.*;
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import gndata.lib.util.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.*;
 
 /**
@@ -93,7 +94,7 @@ public class ResourceAdapterTest {
 
     @Test
     public void testGetResources() throws Exception {
-        assert timRA.getResources().contains(robertRA);
+        assert timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(robertRA)).count() > 0;
     }
 
     @Test
@@ -102,9 +103,9 @@ public class ResourceAdapterTest {
         OntClass person = ontology.getOntClass(foaf + "Person");
 
         assert timRA.availableToAdd(knows, person).size() == 1;
-        assert timRA.availableToAdd(knows, person).contains(deanRA);
+        assert timRA.availableToAdd(knows, person).contains(Pair.of((Property) knows, deanRA));
         assert deanRA.availableToAdd(knows, person).size() > 1;
-        assert deanRA.availableToAdd(knows, person).contains(timRA);
+        assert deanRA.availableToAdd(knows, person).contains(Pair.of((Property) knows, timRA));
 
         // TODO test also functional properties
     }
@@ -114,19 +115,19 @@ public class ResourceAdapterTest {
         List<Resource> toRemove = new ArrayList<>();
         toRemove.add(robert);
 
-        assert timRA.getResources().contains(robertRA);
-        assert timRA.getResources().contains(amyRA);
+        assert timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(robertRA)).count() > 0;
+        assert timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(amyRA)).count() > 0;
 
         timRA.removeObjectProperties(toRemove);
 
-        assert !timRA.getResources().contains(robertRA);
-        assert timRA.getResources().contains(amyRA);
+        assert !(timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(robertRA)).count() > 0);
+        assert timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(amyRA)).count() > 0;
 
         toRemove.clear();
         toRemove.add(tim);
         amyRA.removeObjectProperties(toRemove);
 
-        assert !timRA.getResources().contains(amyRA);
+        assert !(timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(amyRA)).count() > 0);
     }
 
     @Test
@@ -135,6 +136,6 @@ public class ResourceAdapterTest {
 
         assert model.listStatements().toList().stream()
                 .filter(st -> st.getSubject().equals(robert)).count() == 0;
-        assert !timRA.getResources().contains(robertRA);
+        assert !(timRA.getResources().stream().map(Pair::getValue).filter(ra -> ra.equals(robertRA)).count() > 0);
     }
 }

@@ -27,7 +27,7 @@ public class ResourceFileAdapter extends ResourceAdapter implements IFileAdapter
     @Override
     public List<ResourceFileAdapter> getChildren() {
         return getResources().stream()
-                .map(r -> new ResourceFileAdapter(r.getResource(), this))
+                .map(r -> new ResourceFileAdapter(r.getValue().getResource(), this))
                 .collect(toList());
     }
 
