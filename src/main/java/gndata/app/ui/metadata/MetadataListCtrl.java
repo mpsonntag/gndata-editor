@@ -176,7 +176,8 @@ public class MetadataListCtrl implements Initializable {
     public void openAddSelectedResource() {
         new AddRDFInstanceCtrl(projectState,
                 navState, metadataListSelectionModel.get().getSelectedItem().getResource());
-        refreshList();
+
+        unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
 
     /**
@@ -185,7 +186,8 @@ public class MetadataListCtrl implements Initializable {
      */
     public void openAddResource() {
         new AddRDFInstanceCtrl(projectState, navState, null);
-        refreshList();
+
+        unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
 
     /**
@@ -201,7 +203,7 @@ public class MetadataListCtrl implements Initializable {
 
         navState.getSelectedParent().removeObjectProperties(remList);
 
-        refreshList();
+        unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
 
     // TODO add user validation before actually deleting an instance
@@ -216,16 +218,7 @@ public class MetadataListCtrl implements Initializable {
                 .iterator()
                 .forEachRemaining(ResourceAdapter::remove);
 
-        refreshList();
-    }
-
-    /**
-     * Refresh the unfiltered {@link ResourceAdapter} list.
-     * The filter will stay unchanged.
-     */
-    private void refreshList() {
-        unfilteredList.clear();
-        unfilteredList.addAll(navState.getSelectedParent().getChildren());
+        unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
 
 
@@ -255,8 +248,7 @@ public class MetadataListCtrl implements Initializable {
         public void changed(ObservableValue<? extends ResourceFileAdapter> observable, ResourceFileAdapter oldValue,
                             ResourceFileAdapter newValue) {
 
-            unfilteredList.clear();
-            unfilteredList.addAll(newValue.getChildren());
+            unfilteredList.setAll(newValue.getChildren());
             filter.set("");
             navState.setShowBrowsingResults(true);
         }
@@ -275,8 +267,7 @@ public class MetadataListCtrl implements Initializable {
 
             if (ms != null) {
 
-                unfilteredList.clear();
-                unfilteredList.addAll(
+                unfilteredList.setAll(
                         ms.query.streamSearchResults(navState.getSearchString())
                                 .map(r -> new ResourceFileAdapter(r, null))
                                 .collect(Collectors.toList())
