@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata.manage;
+package gndata.app.ui.util;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,48 +14,48 @@ import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import gndata.app.ui.util.*;
-
 /**
- * Controller for the RenameInstanceView
+ * Controller for the StringDialogView
+ * This controller receives a title and a value string.
  */
-public class RenameInstance2Ctrl extends ValueDialogController<String> implements Initializable {
+public class StringDialogCtrl extends ValueDialogController<String> implements Initializable {
 
+    private final String title;
     private final String initVal;
 
-    private final StringProperty renameLabel;
-    private final StringProperty renameValue;
+    private final StringProperty titleValue;
+    private final StringProperty updateValue;
     private final StringProperty promptValue;
 
-    public RenameInstance2Ctrl(String initVal) {
+    public StringDialogCtrl(String title, String initVal) {
 
-        renameLabel = new SimpleStringProperty();
-        renameValue = new SimpleStringProperty();
+        this.title = title;
         this.initVal = initVal;
 
+        titleValue = new SimpleStringProperty();
+        updateValue = new SimpleStringProperty();
         promptValue = new SimpleStringProperty();
 
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        renameLabel.set("Rename " + initVal + ":");
-        renameValue.set(initVal);
+        titleValue.set(title);
+        updateValue.set(initVal);
         promptValue.set("Please enter a value");
     }
 
     @Override
     public String getValue() {
-        return renameValue.get();
+        return updateValue.get();
     }
 
     // -------------------------------------------
     // FXML binding properties
     // -------------------------------------------
 
-    public final StringProperty renameLabelProperty() { return renameLabel; }
-    public final StringProperty renameValueProperty() { return renameValue; }
+    public final StringProperty titleValueProperty() { return titleValue; }
+    public final StringProperty updateValueProperty() { return updateValue; }
     public final StringProperty promptValueProperty() { return promptValue; }
 
 
@@ -64,12 +64,12 @@ public class RenameInstance2Ctrl extends ValueDialogController<String> implement
     // -----------------------------------------
 
     /**
-     * Update the RDF label of the selected parent {@link Resource}, if a value has been provided
+     * Close window only in the case of a proper update value
      */
     @Override
     public void ok(ActionEvent event) {
 
-        if(renameValue.getValue() != null && !renameValue.getValue().isEmpty()) {
+        if(updateValue.getValue() != null && !updateValue.getValue().isEmpty()) {
             super.ok(event);
         } else {
             promptValue.set("Please enter a value");

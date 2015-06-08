@@ -167,7 +167,9 @@ public class MetadataListCtrl implements Initializable {
      */
     public void renameParent() {
 
-        RenameInstance2View renameView = new RenameInstance2View(navState.getSelectedParent().getFileName());
+        String parent = navState.getSelectedParent().getFileName();
+        String title = "Rename "+ parent;
+        StringDialogView renameView = new StringDialogView(title, parent);
         Optional<String> renameValue = renameView.showDialog();
 
         if(renameValue.isPresent() && !renameValue.get().isEmpty()) {

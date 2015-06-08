@@ -15,31 +15,28 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gndata.app.ui.metadata.manage.RenameInstance2Ctrl"
-            fx:id="view">
-
+            fx:controller="gndata.app.ui.util.StringDialogCtrl">
     <prefHeight>180</prefHeight>
     <prefWidth>500</prefWidth>
 
     <!-- title -->
     <top>
         <VBox styleClass="dialog-header">
-            <Label fx:id="renLabel" />
+            <Label fx:id="titleLabel" />
         </VBox>
     </top>
 
     <!-- form -->
     <center>
-        <VBox fx:id="renVBox" styleClass="dialog-form">
-            <TextField fx:id="renText" />
+        <VBox styleClass="dialog-form">
+            <TextField fx:id="updateText" />
         </VBox>
         <fx:script>
-            renLabel.textProperty().bind(controller.renameLabelProperty())
-            renText.textProperty().bindBidirectional(controller.renameValueProperty())
-            renText.promptTextProperty().bindBidirectional(controller.promptValueProperty())
+            titleLabel.textProperty().bind(controller.titleValueProperty())
+            updateText.textProperty().bindBidirectional(controller.updateValueProperty())
+            updateText.promptTextProperty().bindBidirectional(controller.promptValueProperty())
         </fx:script>
     </center>
-
 
     <!-- buttons -->
     <bottom>

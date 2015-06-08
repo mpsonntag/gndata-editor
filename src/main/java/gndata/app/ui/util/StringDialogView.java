@@ -6,22 +6,21 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-package gndata.app.ui.metadata.manage;
-
-import gndata.app.ui.util.*;
+package gndata.app.ui.util;
 
 /**
  * View that shows a dialog with a list of recently opened projects.
  */
-public class RenameInstance2View extends ValueDialogView<String> {
+public class StringDialogView extends ValueDialogView<String> {
 
     /**
      * Constructor.
      *
-     * @param initVal The string that is passed to the controller
+     * @param title String containing the title that the modal window label will display
+     * @param initVal String containing the initial value that is passed to the controller
      */
-    public RenameInstance2View(String initVal) {
-        super(new RenameInstance2Ctrl(initVal));
+    public StringDialogView(String title, String initVal) {
+        super(new StringDialogCtrl(title, initVal));
     }
 
 }
