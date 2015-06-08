@@ -47,8 +47,8 @@ LICENSE file in the root of the Project.
         </GridPane>
 
         <fx:script>
-            nameField.textProperty().bindBidirectional(nameProperty())
-            descriptionField.textProperty().bindBidirectional(descriptionProperty())
+            nameField.textProperty().bindBidirectional(controller.nameProperty())
+            descriptionField.textProperty().bindBidirectional(controller.descriptionProperty())
         </fx:script>
     </center>
 

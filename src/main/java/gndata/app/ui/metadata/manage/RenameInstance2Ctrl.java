@@ -20,7 +20,7 @@ import gndata.app.ui.util.*;
 /**
  * Controller for the RenameInstanceView
  */
-public class RenameInstance2Ctrl extends SimpleDialogController<String> implements Initializable {
+public class RenameInstance2Ctrl extends ValueDialogController<String> implements Initializable {
 
     private final String initVal;
 

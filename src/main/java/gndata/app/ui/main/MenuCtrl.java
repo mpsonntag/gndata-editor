@@ -105,7 +105,7 @@ public class MenuCtrl implements Initializable {
      */
     protected Optional<ProjectConfig> showConfigDialog(ProjectConfig config) {
         ProjectConfigView configDialog = new ProjectConfigView(config);
-        return configDialog.showDialog(menu.getScene().getWindow());
+        return configDialog.showDialog();
     }
 
     /**
@@ -151,7 +151,7 @@ public class MenuCtrl implements Initializable {
      */
     protected Optional<String> showListDialog(GlobalConfig config) {
         ProjectListView listView = new ProjectListView(config.getProjects());
-        return listView.showDialog(menu.getScene().getWindow());
+        return listView.showDialog();
     }
 
     public void importMetadata() {

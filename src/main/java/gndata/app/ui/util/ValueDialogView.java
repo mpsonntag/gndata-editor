@@ -8,17 +8,19 @@
 
 package gndata.app.ui.util;
 
+import java.util.Optional;
 
-public abstract class SimpleDialogView<T> extends DialogView<T> {
 
-    private final SimpleDialogController<T> controller;
+public abstract class ValueDialogView<T> extends DialogView<T> {
+
+    private final ValueDialogController<T> controller;
 
     /**
      * Constructor.
      *
      * @param controller The controller which should be passed to the view.
      */
-    public SimpleDialogView(SimpleDialogController<T> controller) {
+    public ValueDialogView(ValueDialogController<T> controller) {
         super(controller);
         this.controller = controller;
     }
@@ -28,15 +30,14 @@ public abstract class SimpleDialogView<T> extends DialogView<T> {
      *
      * @return The result of the dialog or null if the dialog was cancelled.
      */
-    public boolean showDialog() {
+    public Optional<T> showDialog() {
 
         showWindow();
 
-        // TODO proper boolean implementation of boolean
         if (! controller.isCancelled())
-            return true;
+            return Optional.of(controller.getValue());
         else
-            return false;
+            return Optional.empty();
     }
 
 }

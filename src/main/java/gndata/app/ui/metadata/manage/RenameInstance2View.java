@@ -8,12 +8,12 @@
 
 package gndata.app.ui.metadata.manage;
 
-import gndata.app.ui.util.SimpleDialogView;
+import gndata.app.ui.util.*;
 
 /**
  * View that shows a dialog with a list of recently opened projects.
  */
-public class RenameInstance2View extends SimpleDialogView<String> {
+public class RenameInstance2View extends ValueDialogView<String> {
 
     /**
      * Constructor.

@@ -8,73 +8,37 @@
 
 package gndata.app.ui.util;
 
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
 
 /**
  * Interface for controllers that can be used in a {@link SimpleDialogView}.
  */
-public abstract class SimpleDialogController<T> {
+public abstract class SimpleDialogController<T> extends DialogController<T> {
 
-    private boolean cancelled;
+    private boolean handlingSuccess;
 
     /**
-     * Creates a dialog controller with {@link #cancelled} set to true.
+     * Creates a dialog controller with {@link #handlingSuccess} set to true.
      */
     public SimpleDialogController() {
-        cancelled = true;
+        handlingSuccess = true;
     }
 
     /**
-     * Return the current value of the controller.
-     * In most cases this should be a non null value.
+     * States whether the dialog has been successfully handled or not.
      *
-     * @return The controller value.
+     * @return The successful handling state of the dialog.
      */
-    abstract public T getValue();
+    public boolean isHandlingSuccess() {
+        return handlingSuccess;
+    }
 
     /**
-     * Checks whether the dialog was cancelled or not.
+     * Sets whether the handling of the dialog was successful or not.
      *
-     * @return The cancelling state of the dialog.
+     * @param handlingSuccess states whether the dialog has been handled successfully.
      */
-    public boolean isCancelled() {
-        return cancelled;
+    public void setHandlingSuccess(boolean handlingSuccess) {
+        this.handlingSuccess = handlingSuccess;
     }
 
-    /**
-     * Sets whether the dialog was cancelled or not.
-     *
-     * @param cancelled The cancelling state of the dialog.
-     */
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    /**
-     * Hides the window if it is currently showing.
-     */
-    public void hide(Node v) {
-        if (v != null && v.getScene().getWindow().isShowing()) {
-            v.getScene().getWindow().hide();
-        }
-    }
-
-    /**
-     * Cancel the editing.
-     * Sets {@link #cancelled} to true and hides the window.
-     */
-    public void cancel(ActionEvent event) {
-        setCancelled(true);
-        hide((Node)event.getTarget());
-    }
-
-    /**
-     * Submit the editing result.
-     * Sets {@link #cancelled} to false and hides the window.
-     */
-    public void ok(ActionEvent event) {
-        setCancelled(false);
-        hide((Node)event.getTarget());
-    }
 }
