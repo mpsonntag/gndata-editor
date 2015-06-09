@@ -10,7 +10,6 @@ package gndata.app.ui.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 
 import javafx.scene.Scene;
 import javafx.stage.*;

@@ -10,7 +10,6 @@ package gndata.app.ui.util;
 
 import java.util.Optional;
 
-
 public abstract class ValueDialogView<T> extends DialogView<T> {
 
     private final ValueDialogController<T> controller;
@@ -28,7 +27,7 @@ public abstract class ValueDialogView<T> extends DialogView<T> {
     /**
      * Shows the view as a modal dialog.
      *
-     * @return The result of the dialog or null if the dialog was cancelled.
+     * @return The result of the dialog or Optional.empty() if the dialog was cancelled.
      */
     public Optional<T> showDialog() {
 

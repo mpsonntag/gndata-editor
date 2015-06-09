@@ -16,7 +16,7 @@ import javafx.fxml.*;
 
 /**
  * Controller for the {@link StringDialogView}
- * This controller receives a title and a value string and returns the updated string value.
+ * This controller receives a title and a value string and returns the updated value string.
  */
 public class StringDialogCtrl extends ValueDialogController<String> implements Initializable {
 
@@ -45,6 +45,9 @@ public class StringDialogCtrl extends ValueDialogController<String> implements I
         promptValue.set("Please enter a value");
     }
 
+    /**
+     * Method returning the updated value string to the parent controller.
+     */
     @Override
     public String getValue() {
         return updateValue.get();
@@ -64,7 +67,7 @@ public class StringDialogCtrl extends ValueDialogController<String> implements I
     // -----------------------------------------
 
     /**
-     * Close window only in the case of a proper update value
+     * The window will only be closed if a proper value has been provided.
      */
     @Override
     public void ok(ActionEvent event) {

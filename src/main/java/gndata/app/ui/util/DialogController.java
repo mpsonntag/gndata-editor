@@ -1,3 +1,11 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.util;
 
 import javafx.event.ActionEvent;
@@ -50,7 +58,7 @@ public abstract class DialogController<T> {
      */
     public void cancel(ActionEvent event) {
         setCancelled(true);
-        hide((Node)event.getTarget());
+        hide((Node) event.getTarget());
     }
 
     /**
@@ -59,6 +67,6 @@ public abstract class DialogController<T> {
      */
     public void ok(ActionEvent event) {
         setCancelled(false);
-        hide((Node)event.getTarget());
+        hide((Node) event.getTarget());
     }
 }

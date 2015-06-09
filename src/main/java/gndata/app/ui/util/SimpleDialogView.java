@@ -9,8 +9,8 @@
 package gndata.app.ui.util;
 
 /**
- * This view returns a boolean value dependent on
- * the state of the {@link SimpleDialogController}.
+ * This view displays a modal window and returns a boolean value
+ * dependent on the state of the {@link SimpleDialogController}.
  */
 public abstract class SimpleDialogView<T> extends DialogView<T> {
 
