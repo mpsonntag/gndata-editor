@@ -42,7 +42,7 @@ public abstract class DialogView<T> extends AbstractView {
      * Creates a new, modal window and displays this window
      * until the stage is hidden.
      */
-    public void showWindow() {
+    public final void showWindow() {
         try {
             Stage stage = new Stage();
             stage.setScene(new Scene(getScene()));

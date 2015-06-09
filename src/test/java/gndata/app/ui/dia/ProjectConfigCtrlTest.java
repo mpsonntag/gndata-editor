@@ -23,7 +23,8 @@ public class ProjectConfigCtrlTest {
 
     // TODO pass an onAction event to the cancel and ok methods
     // TODO required after refactoring of the DialogViewClass
-/*    @Test
+/*
+    @Test
     public void testCancel() throws Exception {
         ctrl.setCancelled(false);
         ctrl.cancel();
