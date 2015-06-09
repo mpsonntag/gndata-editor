@@ -192,8 +192,9 @@ public class MetadataListCtrl implements Initializable {
      * Opens a modal stage window
      */
     public void openAddSelectedResource() {
-        new AddRDFInstanceCtrl(projectState,
+        AddRDFInstanceView addInst = new AddRDFInstanceView(projectState,
                 navState, metadataListSelectionModel.get().getSelectedItem().getResource());
+        Boolean successfullyAdded = addInst.showDialog();
 
         unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
@@ -203,7 +204,9 @@ public class MetadataListCtrl implements Initializable {
      * Opens a modal stage window
      */
     public void openAddResource() {
-        new AddRDFInstanceCtrl(projectState, navState, null);
+        AddRDFInstanceView addInst = new AddRDFInstanceView(projectState,
+                navState, null);
+        Boolean successfullyAdded = addInst.showDialog();
 
         unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }

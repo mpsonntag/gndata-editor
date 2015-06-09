@@ -9,7 +9,8 @@
 package gndata.app.ui.util;
 
 /**
- * View that shows a dialog with a list of recently opened projects.
+ * Dialog for the display of a single TextField and the return
+ * of the provided value.
  */
 public class StringDialogView extends ValueDialogView<String> {
 

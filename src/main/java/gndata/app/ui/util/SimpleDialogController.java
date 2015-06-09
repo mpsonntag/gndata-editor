@@ -26,7 +26,7 @@ public abstract class SimpleDialogController<T> extends DialogController<T> {
     /**
      * States whether the dialog has been successfully handled or not.
      *
-     * @return The successful handling state of the dialog.
+     * @return The boolean value of the successful handling state of the dialog.
      */
     public boolean isHandlingSuccess() {
         return handlingSuccess;

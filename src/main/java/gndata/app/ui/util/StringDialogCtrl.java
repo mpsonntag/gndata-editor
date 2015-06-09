@@ -15,8 +15,8 @@ import javafx.event.*;
 import javafx.fxml.*;
 
 /**
- * Controller for the StringDialogView
- * This controller receives a title and a value string.
+ * Controller for the {@link StringDialogView}
+ * This controller receives a title and a value string and returns the updated string value.
  */
 public class StringDialogCtrl extends ValueDialogController<String> implements Initializable {
 

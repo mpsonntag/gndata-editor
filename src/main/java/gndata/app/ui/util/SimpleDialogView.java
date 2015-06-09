@@ -8,7 +8,10 @@
 
 package gndata.app.ui.util;
 
-
+/**
+ * This view returns a boolean value dependent on
+ * the state of the {@link SimpleDialogController}.
+ */
 public abstract class SimpleDialogView<T> extends DialogView<T> {
 
     private final SimpleDialogController<T> controller;
@@ -26,17 +29,17 @@ public abstract class SimpleDialogView<T> extends DialogView<T> {
     /**
      * Shows the view as a modal dialog.
      *
-     * @return The result of the dialog or null if the dialog was cancelled.
+     * @return The boolean state of the controller or true if the
+     * view has been canceled.
      */
     public boolean showDialog() {
 
         showWindow();
 
-        // TODO proper boolean implementation of boolean
-        if (! controller.isCancelled())
+        if (controller.isCancelled())
             return true;
         else
-            return false;
+            return controller.isHandlingSuccess();
     }
 
 }
