@@ -87,10 +87,8 @@ public class AddRDFInstanceCtrl extends DialogCtrl implements Initializable {
 
                 oh.listDatatypeProperties(selectedNewClass.get().getValue()).stream()
                         .forEach(c -> {
-                            //TODO take care of the case of multiple datatypes
                             Set<RDFDatatype> dts = oh.getRange(c.asDatatypeProperty());
-                            RDFDatatype dt = dts.iterator().next();
-                            newPredicatesList.add(new DataPropertyTableItem(c.asProperty(), dt));
+                            newPredicatesList.add(new DataPropertyTableItem(dts, c.asDatatypeProperty(), dts.iterator().next()));
                         });
 
                 // reset add new DataProperty TextField
@@ -137,9 +135,9 @@ public class AddRDFInstanceCtrl extends DialogCtrl implements Initializable {
         // accordingly, since it is required to set the TextFilter of the
         // value TextField.
         selAddPredType.addListener((observable, oldValue, newValue) -> {
-            if(observable != null && newValue != null){
+            if (observable != null && newValue != null) {
                 addPredType.set(newValue);
-                addPredPromptText.set("Enter a "+ newValue.getJavaClass().getSimpleName() +" value");
+                addPredPromptText.set("Enter a " + newValue.getJavaClass().getSimpleName() + " value");
             }
         });
 
@@ -263,9 +261,11 @@ public class AddRDFInstanceCtrl extends DialogCtrl implements Initializable {
     public void addDataProperty() {
 
         if (selectedPredicate.get() != null && addPredValue.get() != null && !addPredValue.get().isEmpty()) {
+
+            Set<RDFDatatype> dts = oh.getRange(selectedPredicate.get());
             RDFDatatype dt = addPredType.get();
 
-            DataPropertyTableItem newDTI = new DataPropertyTableItem(selectedPredicate.get(), dt);
+            DataPropertyTableItem newDTI = new DataPropertyTableItem(dts, selectedPredicate.get(), dt);
             newDTI.setTextFieldValue(addPredValue.get());
             newPredicatesList.add(newDTI);
         }
