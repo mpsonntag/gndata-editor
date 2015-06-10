@@ -17,7 +17,7 @@ LICENSE file in the root of the Project.
 <?import gndata.app.ui.util.converter.LiteralConverter?>
 <?import gndata.app.ui.util.converter.PropertyStringConverter?>
 <?import gndata.app.ui.util.DeleteButtonCellFactory?>
-<?import gndata.app.ui.util.converter.JenaPropertyClassStringConverter?>
+<?import gndata.app.ui.util.converter.PropertyOntClassStringConverter?>
 
 <?import gndata.app.ui.util.converter.DataTypeStringConverter?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
@@ -42,7 +42,7 @@ LICENSE file in the root of the Project.
             <children>
                 <ComboBox fx:id="newClassFXML" >
                     <converter>
-                        <JenaPropertyClassStringConverter/>
+                        <PropertyOntClassStringConverter />
                     </converter>
                 </ComboBox>
                 <fx:script>

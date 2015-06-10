@@ -19,8 +19,8 @@ import org.junit.*;
  */
 public class DataTypeStringConverterTest {
 
-    DataTypeStringConverter conv;
-    RDFDatatype dt;
+    private DataTypeStringConverter conv;
+    private RDFDatatype dt;
 
     @Before
     public void setUp() {
