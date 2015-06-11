@@ -14,14 +14,14 @@ import javafx.scene.Node;
 /**
  * Interface for controllers that can be used in a {@link DialogView}.
  */
-public abstract class DialogController<T> {
+public abstract class DialogCtrl<T> {
 
     private boolean cancelled;
 
     /**
      * Creates a dialog controller with {@link #cancelled} set to true.
      */
-    public DialogController() {
+    public DialogCtrl() {
         cancelled = true;
     }
 

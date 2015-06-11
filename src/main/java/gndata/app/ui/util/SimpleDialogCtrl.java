@@ -12,14 +12,14 @@ package gndata.app.ui.util;
 /**
  * Interface for controllers that can be used in a {@link SimpleDialogView}.
  */
-public abstract class SimpleDialogController<T> extends DialogController<T> {
+public abstract class SimpleDialogCtrl<T> extends DialogCtrl<T> {
 
     private boolean handlingSuccess;
 
     /**
      * Creates a dialog controller with {@link #handlingSuccess} set to true.
      */
-    public SimpleDialogController() {
+    public SimpleDialogCtrl() {
         handlingSuccess = true;
     }
 

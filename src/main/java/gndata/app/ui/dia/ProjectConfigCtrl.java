@@ -16,13 +16,13 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.*;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.util.ValueDialogController;
+import gndata.app.ui.util.ValueDialogCtrl;
 import gndata.lib.config.ProjectConfig;
 
 /**
  * Controller for the project configuration view.
  */
-public class ProjectConfigCtrl extends ValueDialogController<ProjectConfig> implements Initializable {
+public class ProjectConfigCtrl extends ValueDialogCtrl<ProjectConfig> implements Initializable {
 
     @FXML private BorderPane view;
 

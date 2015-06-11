@@ -32,7 +32,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * Controller for the {@link AddRDFInstanceView}
  * Provides the logic for adding a new RDF class instance
  */
-public class AddRDFInstanceCtrl extends SimpleDialogController implements Initializable {
+public class AddRDFInstanceCtrl extends SimpleDialogCtrl implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataNavState navState;

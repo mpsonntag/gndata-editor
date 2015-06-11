@@ -12,14 +12,14 @@ import java.util.Optional;
 
 public abstract class ValueDialogView<T> extends DialogView<T> {
 
-    private final ValueDialogController<T> controller;
+    private final ValueDialogCtrl<T> controller;
 
     /**
      * Constructor.
      *
      * @param controller The controller which should be passed to the view.
      */
-    public ValueDialogView(ValueDialogController<T> controller) {
+    public ValueDialogView(ValueDialogCtrl<T> controller) {
         super(controller);
         this.controller = controller;
     }

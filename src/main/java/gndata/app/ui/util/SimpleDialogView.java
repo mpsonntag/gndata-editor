@@ -10,18 +10,18 @@ package gndata.app.ui.util;
 
 /**
  * This view displays a modal window and returns a boolean value
- * dependent on the state of the {@link SimpleDialogController}.
+ * dependent on the state of the {@link SimpleDialogCtrl}.
  */
 public abstract class SimpleDialogView<T> extends DialogView<T> {
 
-    private final SimpleDialogController<T> controller;
+    private final SimpleDialogCtrl<T> controller;
 
     /**
      * Constructor.
      *
      * @param controller The controller which should be passed to the view.
      */
-    public SimpleDialogView(SimpleDialogController<T> controller) {
+    public SimpleDialogView(SimpleDialogCtrl<T> controller) {
         super(controller);
         this.controller = controller;
     }

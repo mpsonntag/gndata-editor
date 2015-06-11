@@ -17,12 +17,12 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import gndata.app.ui.util.ValueDialogController;
+import gndata.app.ui.util.ValueDialogCtrl;
 
 /**
  * Controller for the {@link ProjectListView}.
  */
-public class ProjectListCtrl extends ValueDialogController<String> implements Initializable {
+public class ProjectListCtrl extends ValueDialogCtrl<String> implements Initializable {
 
     private Map<String, String> projects;
 

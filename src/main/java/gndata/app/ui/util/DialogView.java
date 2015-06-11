@@ -23,14 +23,14 @@ import javafx.stage.*;
  */
 public abstract class DialogView<T> extends AbstractView {
 
-    private final DialogController<T> controller;
+    private final DialogCtrl<T> controller;
 
     /**
      * Constructor.
      *
      * @param controller The controller which should be passed to the view.
      */
-    public DialogView(DialogController<T> controller) {
+    public DialogView(DialogCtrl<T> controller) {
         this.controller = controller;
         getLoader().setControllerFactory(cls -> this.controller);
 
