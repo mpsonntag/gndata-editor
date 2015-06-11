@@ -10,9 +10,7 @@ package gndata.app.ui.util;
 
 import java.util.Optional;
 
-public abstract class ValueDialogView<T> extends DialogView<T> {
-
-    private final ValueDialogCtrl<T> controller;
+public abstract class ValueDialogView<T> extends DialogView {
 
     /**
      * Constructor.
@@ -21,7 +19,11 @@ public abstract class ValueDialogView<T> extends DialogView<T> {
      */
     public ValueDialogView(ValueDialogCtrl<T> controller) {
         super(controller);
-        this.controller = controller;
+    }
+
+    public T get() {
+        //noinspection unchecked
+        return ((ValueDialogCtrl<T>) controller).get();
     }
 
     /**
@@ -29,12 +31,12 @@ public abstract class ValueDialogView<T> extends DialogView<T> {
      *
      * @return The result of the dialog or Optional.empty() if the dialog was cancelled.
      */
-    public Optional<T> showDialog() {
+    public Optional<T> showAndGet() {
 
-        showWindow();
+        show();
 
         if (! controller.isCancelled())
-            return Optional.of(controller.getValue());
+            return Optional.of(get());
         else
             return Optional.empty();
     }

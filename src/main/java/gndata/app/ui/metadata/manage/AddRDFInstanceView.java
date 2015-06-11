@@ -15,7 +15,7 @@ import gndata.app.ui.util.*;
 /**
  * Modal dialog view providing a dynamic form for the addition of a new RDF class instance.
   */
-public class AddRDFInstanceView extends SimpleDialogView<Boolean> {
+public class AddRDFInstanceView extends DialogView {
 
     /**
      * Constructor

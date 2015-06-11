@@ -170,7 +170,7 @@ public class MetadataListCtrl implements Initializable {
         String parent = navState.getSelectedParent().getFileName();
         String title = "Rename "+ parent;
         StringDialogView renameView = new StringDialogView(title, parent);
-        Optional<String> renameValue = renameView.showDialog();
+        Optional<String> renameValue = renameView.showAndGet();
 
         if(renameValue.isPresent() && !renameValue.get().isEmpty()) {
             navState.getSelectedParent().updateLabel(renameValue.get());
@@ -194,7 +194,7 @@ public class MetadataListCtrl implements Initializable {
     public void openAddSelectedResource() {
         AddRDFInstanceView addInst = new AddRDFInstanceView(projectState,
                 navState, metadataListSelectionModel.get().getSelectedItem().getResource());
-        Boolean successfullyAdded = addInst.showDialog();
+        addInst.show();
 
         unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
@@ -206,7 +206,7 @@ public class MetadataListCtrl implements Initializable {
     public void openAddResource() {
         AddRDFInstanceView addInst = new AddRDFInstanceView(projectState,
                 navState, null);
-        Boolean successfullyAdded = addInst.showDialog();
+        addInst.show();
 
         unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }

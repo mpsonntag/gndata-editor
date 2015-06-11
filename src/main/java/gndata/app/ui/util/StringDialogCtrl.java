@@ -49,7 +49,7 @@ public class StringDialogCtrl extends ValueDialogCtrl<String> implements Initial
      * Method returning the updated value string to the parent controller.
      */
     @Override
-    public String getValue() {
+    public String get() {
         return updateValue.get();
     }
 

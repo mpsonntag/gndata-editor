@@ -60,7 +60,7 @@ public class ProjectConfigCtrl extends ValueDialogCtrl<ProjectConfig> implements
      * @return The edited project configuration.
      */
     @Override
-    public ProjectConfig getValue() {
+    public ProjectConfig get() {
         return config;
     }
 

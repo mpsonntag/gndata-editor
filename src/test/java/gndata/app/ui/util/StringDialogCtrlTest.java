@@ -32,7 +32,7 @@ public class StringDialogCtrlTest {
 
     @Test
     public void testGetValue() throws Exception {
-        assertThat(controller.getValue()).isEqualTo(value);
+        assertThat(controller.get()).isEqualTo(value);
     }
 
     @Test

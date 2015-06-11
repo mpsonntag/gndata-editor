@@ -42,7 +42,7 @@ public class ProjectListCtrl extends ValueDialogCtrl<String> implements Initiali
     }
 
     @Override
-    public String getValue() {
+    public String get() {
         SelectionModel<Entry<String, String>> sel = list.getSelectionModel();
         if (!sel.isEmpty()) {
             return sel.getSelectedItem().getKey();

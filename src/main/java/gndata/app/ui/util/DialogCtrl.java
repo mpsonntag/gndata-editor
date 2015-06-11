@@ -14,7 +14,7 @@ import javafx.scene.Node;
 /**
  * Interface for controllers that can be used in a {@link DialogView}.
  */
-public abstract class DialogCtrl<T> {
+public abstract class DialogCtrl {
 
     private boolean cancelled;
 
@@ -46,7 +46,7 @@ public abstract class DialogCtrl<T> {
     /**
      * Hides the window if it is currently showing.
      */
-    public final void hide(Node v) {
+    protected final void hide(Node v) {
         if (v != null && v.getScene().getWindow().isShowing()) {
             v.getScene().getWindow().hide();
         }

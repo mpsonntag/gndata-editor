@@ -19,18 +19,17 @@ import javafx.stage.*;
  * This class does not use dependency injection for controller instantiation. Instead the
  * controller must be provided for the view creation.
  *
- * @param <T> The return type of the dialog.
  */
-public abstract class DialogView<T> extends AbstractView {
+public abstract class DialogView extends AbstractView {
 
-    private final DialogCtrl<T> controller;
+    protected final DialogCtrl controller;
 
     /**
      * Constructor.
      *
      * @param controller The controller which should be passed to the view.
      */
-    public DialogView(DialogCtrl<T> controller) {
+    public DialogView(DialogCtrl controller) {
         this.controller = controller;
         getLoader().setControllerFactory(cls -> this.controller);
 
@@ -42,7 +41,7 @@ public abstract class DialogView<T> extends AbstractView {
      * Creates a new, modal window and displays this window
      * until the stage is hidden.
      */
-    public final void showWindow() {
+    public final void show() {
         try {
             Stage stage = new Stage();
             stage.setScene(new Scene(getScene()));
