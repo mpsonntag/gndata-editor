@@ -142,13 +142,12 @@ public class ResourceAdapter {
      *
      * @return A collection with related resources.
      */
-    public Collection<ResourceAdapter> getResources() {
+    public Collection<Pair<Property, ResourceAdapter>> getResources() {
         ExtendedIterator<Statement> it;
 
         if (resource.hasProperty(RDF.type, OWL.Class)) {  //resource is an OWL Class
             return resource.getModel().listStatements(null, RDF.type, resource).toList().stream()
-                    .map(Statement::getSubject)
-                    .map(ResourceAdapter::new)
+                    .map(st -> Pair.of(st.getPredicate(), new ResourceAdapter(st.getSubject())))
                     .collect(Collectors.toList());
 
         } else {
@@ -163,8 +162,9 @@ public class ResourceAdapter {
 
             return Stream.concat(forward, reverse)
                     .sorted(new StatementComparator())
-                    .map(stmt -> stmt.getSubject().equals(resource) ? stmt.getObject().asResource() : stmt.getSubject())
-                    .map(ResourceAdapter::new)
+                    .map(stmt -> Pair.of(
+                            stmt.getPredicate(),
+                            new ResourceAdapter(stmt.getSubject().equals(resource) ? stmt.getObject().asResource() : stmt.getSubject())))
                     .collect(Collectors.toList());
         }
     }
@@ -175,7 +175,7 @@ public class ResourceAdapter {
      *
      * @return A collection with available to add resources.
      */
-    public Collection<ResourceAdapter> availableToAdd(ObjectProperty p, OntClass cls) {
+    public Collection<Pair<Property, ResourceAdapter>> availableToAdd(ObjectProperty p, OntClass cls) {
         List<Resource> lst = new ArrayList<>();
 
         // all available Resources of type cls
@@ -197,7 +197,23 @@ public class ResourceAdapter {
                     .collect(Collectors.toList()));
         }
 
-        return lst.stream().map(ResourceAdapter::new).collect(Collectors.toList());
+        return lst.stream()
+                .map(res -> Pair.of((Property) p, new ResourceAdapter(res)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Removes given object properties from the related Model.
+     * (Resources stay in the Model, only connections are removed)
+     */
+    public void addObjectProperties(List<Pair<Property, Resource>> objs) {
+        Model toAdd = ModelFactory.createDefaultModel();
+
+        toAdd.add(objs.stream()
+                .map(pair -> ResourceFactory.createStatement(resource, pair.getKey(), pair.getValue()))
+                .collect(Collectors.toList()));
+
+        resource.getModel().add(toAdd);
     }
 
     /**
