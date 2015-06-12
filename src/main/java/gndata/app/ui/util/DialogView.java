@@ -10,7 +10,6 @@ package gndata.app.ui.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 
 import javafx.scene.Scene;
 import javafx.stage.*;
@@ -20,18 +19,17 @@ import javafx.stage.*;
  * This class does not use dependency injection for controller instantiation. Instead the
  * controller must be provided for the view creation.
  *
- * @param <T> The return type of the dialog.
  */
-public abstract class DialogView<T> extends AbstractView {
+public abstract class DialogView extends AbstractView {
 
-    private final DialogController<T> controller;
+    protected final DialogCtrl controller;
 
     /**
      * Constructor.
      *
      * @param controller The controller which should be passed to the view.
      */
-    public DialogView(DialogController<T> controller) {
+    public DialogView(DialogCtrl controller) {
         this.controller = controller;
         getLoader().setControllerFactory(cls -> this.controller);
 
@@ -40,30 +38,21 @@ public abstract class DialogView<T> extends AbstractView {
     }
 
     /**
-     * Shows the view as a modal dialog.
-     *
-     * @param window The parent window of the dialog.
-     *
-     * @return The result of the dialog or null if the dialog was cancelled.
+     * Creates a new, modal window and displays this window
+     * until the stage is hidden.
      */
-    public Optional<T> showDialog(Window window) {
+    public final void show() {
         try {
             Stage stage = new Stage();
             stage.setScene(new Scene(getScene()));
             stage.setTitle("");
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(window);
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             stage.close();
         } catch (IOException e) {
             // TODO nice exception dialog here
             e.printStackTrace();
         }
-
-        if (! controller.isCancelled())
-            return Optional.of(controller.getValue());
-        else
-            return Optional.empty();
     }
 
 }

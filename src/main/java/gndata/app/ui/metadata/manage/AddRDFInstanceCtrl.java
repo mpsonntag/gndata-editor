@@ -8,18 +8,15 @@
 
 package gndata.app.ui.metadata.manage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import javafx.beans.property.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.geometry.Insets;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.ontology.*;
@@ -32,14 +29,14 @@ import gndata.lib.util.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
- * Provides Modal Popup Window with a dynamic form for adding a new RDF Class Instance
+ * Controller for the {@link AddRDFInstanceView}
+ * Provides the logic for adding a new RDF class instance
  */
-public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
+public class AddRDFInstanceCtrl extends DialogCtrl implements Initializable {
 
     private final ProjectState projectState;
     private final MetadataNavState navState;
     private final OntologyHelper oh;
-    private final Stage st = new Stage();
 
     private final ObjectProperty<Insets> currInsets;
     private final StringProperty labelText;
@@ -134,29 +131,10 @@ public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
                 }
             });
         });
-
-        // Load corresponding FXML and display contents in popup stage
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("AddRDFInstance.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        st.setScene(new Scene(this));
-        st.sizeToScene();
-        st.show();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        // Set application modality to prohibit actions
-        // while the add object property window is open.
-        st.initModality(Modality.APPLICATION_MODAL);
-        st.setTitle("Add new resource");
 
         final String labelInsert =
                 preSelNewClass == null ? "resource" : preSelNewClass.getProperty(RDF.type).getResource().getLocalName();
@@ -168,15 +146,13 @@ public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
         oh.listRelated(navState.getSelectedParent().getResource())
                 .forEach(newClassesList::add);
 
-        // Initialize new class combobox list wrapper with an observable list of available RDF classes
+        // Initialize new class ComboBox list wrapper with an observable list of available RDF classes
         newClasses.set(newClassesList);
 
-        // Initialize data property tableview list wrapper with
-        // Observable list of existing DataProperties
+        // Initialize data property TableView list wrapper with an observable list of existing DataProperties
         newPredicates.set(newPredicatesList);
 
-        // Initialize add data property combobox list wrapper with
-        // Observable list of additionally addable data properties
+        // Initialize add data property ComboBox list wrapper with an observable list of additionally addable data properties
         additionalPredicates.set(additionalPredicatesList);
 
     }
@@ -219,7 +195,6 @@ public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
 
     // List of existing data properties for the currently selected new class
     public final ObjectProperty<ObservableList<DataPropertyTableItem>> newPredicatesProperty() { return newPredicates; }
-
     // Adding additional data properties for the currently selected new class
     public final ObjectProperty<ObservableList<DatatypeProperty>> additionalPredicatesProperty() { return additionalPredicates; }
     // Retrieve selected predicate from the UI element
@@ -233,12 +208,12 @@ public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
     // -----------------------------------------
     // Methods
     // -----------------------------------------
-    public void cancel() {
-        st.hide();
-    }
 
-    // Add a new class instance and all corresponding DataProperties to RDF model
-    public void addToRDFModel() {
+    /**
+     * Add a new class instance and all corresponding DataProperties to RDF model
+     */
+    @Override
+    public void ok(ActionEvent event) {
         // Get the parent resource where the new Instance should be connected to
         Resource parentResource = navState.getSelectedParent().getResource();
 
@@ -270,14 +245,16 @@ public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
             projectState.getMetadata().add(tmpModel);
 
             // TODO add resource successfully added check, only hide the window, if true
-            st.hide();
+            super.ok(event);
 
         } else {
             labelText.set("Please add at least one property value. Only properties containing values will be added");
         }
     }
 
-    // Method for creating and adding an additional DataProperty to the list of new DataProperties
+    /**
+     * Method for adding an additional DataProperty to the list of new DataProperties
+     */
     public void addDataProperty() {
 
         if (selectedPredicate.get() != null && addPredValue.get() != null && ! addPredValue.get().isEmpty()) {
@@ -291,7 +268,7 @@ public class AddRDFInstanceCtrl extends BorderPane implements Initializable {
             newPredicatesList.add(newDTI);
         }
 
-        // Cleanup after dp has been added
+        // Cleanup after DataProperty has been added
         // TODO reset selected predicate
         //selectedPredicate.set(null);
         addPredValue.set("");

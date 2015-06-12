@@ -10,12 +10,12 @@ package gndata.app.ui.dia;
 
 import java.util.Map;
 
-import gndata.app.ui.util.DialogView;
+import gndata.app.ui.util.ValueDialogView;
 
 /**
  * View that shows a dialog with a list of recently opened projects.
  */
-public class ProjectListView extends DialogView<String> {
+public class ProjectListView extends ValueDialogView<String> {
 
     /**
      * Constructor.

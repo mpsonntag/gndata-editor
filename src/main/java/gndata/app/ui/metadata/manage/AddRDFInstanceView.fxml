@@ -11,27 +11,34 @@ LICENSE file in the root of the Project.
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 
 <?import gndata.app.ui.util.filter.LiteralFilter?>
 <?import gndata.app.ui.util.converter.LiteralConverter?>
 <?import gndata.app.ui.util.converter.PropertyStringConverter?>
 <?import gndata.app.ui.util.DeleteButtonCellFactory?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-
 <?import gndata.app.ui.util.converter.JenaPropertyClassStringConverter?>
-<fx:root type="javafx.scene.layout.BorderPane"
-         xmlns:fx="http://javafx.com/fxml/1"
-         xmlns="http://javafx.com/javafx/8"
-         fx:id="addRDFInstancePane"
-         prefWidth="800" prefHeight="500">
-    <center>
-        <VBox fx:id="addRDFInstanceVB" spacing="5">
-            <children>
-                <Label fx:id="addRDFInstanceLabel" />
-                <fx:script>
-                    addRDFInstanceLabel.textProperty().bind(controller.labelTextProperty())
-                </fx:script>
 
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+         xmlns="http://javafx.com/javafx/8"
+         fx:controller="gndata.app.ui.metadata.manage.AddRDFInstanceCtrl">
+    <prefHeight>500</prefHeight>
+    <prefWidth>800</prefWidth>
+
+    <!-- title -->
+    <top>
+        <VBox styleClass="dialog-header">
+            <Label fx:id="addRDFInstanceLabel" />
+            <fx:script>
+                addRDFInstanceLabel.textProperty().bind(controller.labelTextProperty())
+            </fx:script>
+        </VBox>
+    </top>
+
+    <!-- form -->
+    <center>
+        <VBox fx:id="addRDFInstanceVB" styleClass="dialog-form">
+            <children>
                 <ComboBox fx:id="newClassFXML" >
                     <converter>
                         <JenaPropertyClassStringConverter/>
@@ -74,8 +81,8 @@ LICENSE file in the root of the Project.
                     newPredicatesFXML.itemsProperty().bindBidirectional(controller.newPredicatesProperty())
                 </fx:script>
 
-                <Label fx:id="addPredicateLabel" text="Add additional property" />
-                <HBox spacing="5">
+                <Label fx:id="addPredicateLabel" text="Add additional property" styleClass="dialog-addLabel"/>
+                <HBox styleClass="dialog-boxline">
                     <children>
                         <fx:define>
                             <LiteralFilter fx:id="litFilter" />
@@ -105,21 +112,20 @@ LICENSE file in the root of the Project.
                         </fx:script>
                     </children>
                 </HBox>
-                <HBox spacing="5">
-                    <children>
-                        <Button text="Cancel" onAction="#cancel" prefWidth="100" prefHeight="10"/>
-                        <Button text="Add new resource" onAction="#addToRDFModel" prefWidth="150" prefHeight="10"/>
-                    </children>
-                </HBox>
             </children>
         </VBox>
     </center>
 
-    <!-- add padding where needed -->
-    <fx:script>
-        addRDFInstancePane.paddingProperty().bind(controller.insetProperty())
-        addRDFInstanceVB.paddingProperty().bind(controller.insetProperty())
-        addRDFInstanceLabel.paddingProperty().bind(controller.insetProperty())
-        addPredicateLabel.paddingProperty().bind(controller.insetProperty())
-    </fx:script>
-</fx:root>
+    <!-- buttons -->
+    <bottom>
+        <HBox styleClass="dialog-footer">
+            <Button onAction="#cancel">
+                Cancel
+            </Button>
+            <Button onAction="#ok">
+                Add new resource
+            </Button>
+        </HBox>
+    </bottom>
+
+</BorderPane>

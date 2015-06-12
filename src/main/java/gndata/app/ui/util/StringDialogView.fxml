@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?language javascript?>
 
-
 <!--
 Copyright (c) 2014, German Neuroinformatics Node (G-Node)
 
@@ -16,39 +15,26 @@ LICENSE file in the root of the Project.
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gndata.app.ui.dia.ProjectConfigCtrl"
-            fx:id="view">
-
-    <prefHeight>300</prefHeight>
+            fx:controller="gndata.app.ui.util.StringDialogCtrl">
+    <prefHeight>180</prefHeight>
     <prefWidth>500</prefWidth>
 
     <!-- title -->
     <top>
         <VBox styleClass="dialog-header">
-            <Label>Project Settings</Label>
+            <Label fx:id="titleLabel" />
         </VBox>
     </top>
 
     <!-- form -->
     <center>
-        <GridPane styleClass="dialog-form">
-
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
-                Name:
-            </Label>
-
-            <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" />
-
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
-                Description:
-            </Label>
-
-            <TextArea fx:id="descriptionField" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="3" />
-        </GridPane>
-
+        <VBox styleClass="dialog-form">
+            <TextField fx:id="updateText" />
+        </VBox>
         <fx:script>
-            nameField.textProperty().bindBidirectional(controller.nameProperty())
-            descriptionField.textProperty().bindBidirectional(controller.descriptionProperty())
+            titleLabel.textProperty().bind(controller.titleValueProperty())
+            updateText.textProperty().bindBidirectional(controller.updateValueProperty())
+            updateText.promptTextProperty().bindBidirectional(controller.promptValueProperty())
         </fx:script>
     </center>
 

@@ -8,13 +8,13 @@
 
 package gndata.app.ui.dia;
 
-import gndata.app.ui.util.DialogView;
+import gndata.app.ui.util.ValueDialogView;
 import gndata.lib.config.ProjectConfig;
 
 /**
  * View for project configuration implemented as a dialog.
  */
-public class ProjectConfigView extends DialogView<ProjectConfig> {
+public class ProjectConfigView extends ValueDialogView<ProjectConfig> {
 
     /**
      * Creates a new project configuration view.

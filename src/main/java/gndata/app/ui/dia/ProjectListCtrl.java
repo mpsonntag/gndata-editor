@@ -14,16 +14,15 @@ import java.util.Map.Entry;
 
 import gndata.app.ui.util.TwoLineListCell;
 import javafx.fxml.*;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import gndata.app.ui.util.DialogController;
+import gndata.app.ui.util.ValueDialogCtrl;
 
 /**
  * Controller for the {@link ProjectListView}.
  */
-public class ProjectListCtrl extends DialogController<String> implements Initializable {
+public class ProjectListCtrl extends ValueDialogCtrl<String> implements Initializable {
 
     private Map<String, String> projects;
 
@@ -43,18 +42,13 @@ public class ProjectListCtrl extends DialogController<String> implements Initial
     }
 
     @Override
-    public String getValue() {
+    public String get() {
         SelectionModel<Entry<String, String>> sel = list.getSelectionModel();
         if (!sel.isEmpty()) {
             return sel.getSelectedItem().getKey();
         } else {
             return list.getItems().get(0).getKey();
         }
-    }
-
-    @Override
-    public Node getView() {
-        return view;
     }
 
     private class ProjectListCell extends TwoLineListCell<Entry<String, String>> {

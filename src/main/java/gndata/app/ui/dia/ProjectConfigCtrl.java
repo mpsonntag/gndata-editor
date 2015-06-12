@@ -14,17 +14,15 @@ import java.util.ResourceBundle;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.*;
-import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
-import gndata.app.ui.util.DialogController;
+import gndata.app.ui.util.ValueDialogCtrl;
 import gndata.lib.config.ProjectConfig;
 
 /**
  * Controller for the project configuration view.
  */
-public class ProjectConfigCtrl extends DialogController<ProjectConfig> implements Initializable {
+public class ProjectConfigCtrl extends ValueDialogCtrl<ProjectConfig> implements Initializable {
 
     @FXML private BorderPane view;
 
@@ -62,13 +60,8 @@ public class ProjectConfigCtrl extends DialogController<ProjectConfig> implement
      * @return The edited project configuration.
      */
     @Override
-    public ProjectConfig getValue() {
+    public ProjectConfig get() {
         return config;
-    }
-
-    @Override
-    public Node getView() {
-        return view;
     }
 
     public StringProperty nameProperty() {

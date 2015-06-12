@@ -152,12 +152,30 @@ public class MetadataListCtrl implements Initializable {
         cmRemoveInstance.set(delInst);
     }
 
+    // TODO check, if all classes actually support RDFS label or if owl:name has to be used
+    // implement logic to update the labels of the navigation bar after label has been set
+    // how should a refresh actually be done:
+    // we directly tap into the resource adapter. the resource adapter is also registered
+    // in the navigation bar. should we add an observable (resourceContentChange) to the resource adapter, which
+    // state changes, when we update the label. if a resource adapter is added to the navigation bar,
+    // we also register a listener to this particular observable of the resource adapter
+    // if the state of the observable of the resource adapter changes, the navigation bar
+    // calls the private updateButtons method to redraw the whole bar.
     /**
      * Used to edit the RDF label text of the selected parent {@link Resource}
      * Opens a modal stage window
      */
     public void renameParent() {
-        new RenameInstanceCtrl(navState);
+
+        String parent = navState.getSelectedParent().getFileName();
+        String title = "Rename "+ parent;
+        StringDialogView renameView = new StringDialogView(title, parent);
+        Optional<String> renameValue = renameView.showAndGet();
+
+        if(renameValue.isPresent() && !renameValue.get().isEmpty()) {
+            navState.getSelectedParent().updateLabel(renameValue.get());
+        }
+
     }
 
     /**
@@ -174,8 +192,9 @@ public class MetadataListCtrl implements Initializable {
      * Opens a modal stage window
      */
     public void openAddSelectedResource() {
-        new AddRDFInstanceCtrl(projectState,
+        AddRDFInstanceView addInst = new AddRDFInstanceView(projectState,
                 navState, metadataListSelectionModel.get().getSelectedItem().getResource());
+        addInst.show();
 
         unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }
@@ -185,7 +204,9 @@ public class MetadataListCtrl implements Initializable {
      * Opens a modal stage window
      */
     public void openAddResource() {
-        new AddRDFInstanceCtrl(projectState, navState, null);
+        AddRDFInstanceView addInst = new AddRDFInstanceView(projectState,
+                navState, null);
+        addInst.show();
 
         unfilteredList.setAll(navState.getSelectedParent().getChildren());
     }

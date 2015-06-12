@@ -1,35 +1,29 @@
+// Copyright (c) 2014, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 package gndata.app.ui.util;
 
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
 /**
  * Interface for controllers that can be used in a {@link DialogView}.
  */
-public abstract class DialogController<T> {
+public abstract class DialogCtrl {
 
     private boolean cancelled;
 
     /**
      * Creates a dialog controller with {@link #cancelled} set to true.
      */
-    public DialogController() {
+    public DialogCtrl() {
         cancelled = true;
     }
-
-    /**
-     * Return the current value of the controller.
-     * In most cases this should be a non null value.
-     *
-     * @return The controller value.
-     */
-    abstract public T getValue();
-
-    /**
-     * Get the top level scene graph node or view handled by the controller.
-     *
-     * @return A scene graph node.
-     */
-    abstract public Node getView();
 
     /**
      * Checks whether the dialog was cancelled or not.
@@ -52,8 +46,7 @@ public abstract class DialogController<T> {
     /**
      * Hides the window if it is currently showing.
      */
-    public void hide() {
-        Node v = getView();
+    protected final void hide(Node v) {
         if (v != null && v.getScene().getWindow().isShowing()) {
             v.getScene().getWindow().hide();
         }
@@ -63,17 +56,17 @@ public abstract class DialogController<T> {
      * Cancel the editing.
      * Sets {@link #cancelled} to true and hides the window.
      */
-    public void cancel() {
+    public void cancel(ActionEvent event) {
         setCancelled(true);
-        hide();
+        hide((Node) event.getTarget());
     }
 
     /**
      * Submit the editing result.
      * Sets {@link #cancelled} to false and hides the window.
      */
-    public void ok() {
+    public void ok(ActionEvent event) {
         setCancelled(false);
-        hide();
+        hide((Node) event.getTarget());
     }
 }
